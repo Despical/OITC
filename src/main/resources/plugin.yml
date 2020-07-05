@@ -1,0 +1,27 @@
+name: OITC
+main: me.despical.oitc.Main
+author: Despical
+version: ${project.version}
+api-version: 1.13
+softdepend: [PlaceholderAPI]
+
+commands:
+  OneInTheChamber:
+    description: One in the chamber commands
+    aliases: [oitc]
+
+permissions:
+  oitc.admin.*:
+    default: op
+    children:
+      oitc.updatenotify: true
+      oitc.admin: true
+      oitc.admin.create: true
+      oitc.admin.setup: true
+      oitc.admin.delete: true
+      oitc.admin.list: true
+      oitc.admin.stopgame: true
+      oitc.admin.forcestart: true
+      oitc.admin.addsign: true
+      oitc.admin.sign.create: true
+      oitc.admin.sign.break: true
