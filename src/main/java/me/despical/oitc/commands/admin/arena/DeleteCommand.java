@@ -59,16 +59,16 @@ public class DeleteCommand extends SubCommand {
 		}
 		confirmations.remove(sender);
 		ArenaManager.stopGame(true, arena);
+		ArenaRegistry.unregisterArena(arena);
 		FileConfiguration config = ConfigUtils.getConfig(getPlugin(), "arenas");
 		config.set("instances." + args[0], null);
 		ConfigUtils.saveConfig(getPlugin(), config, "arenas");
-		ArenaRegistry.unregisterArena(arena);
 		sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Removed-Game-Instance"));
 	}
 
 	@Override
 	public List<String> getTutorial() {
-		return Arrays.asList("Deletes specified arena.");
+		return Arrays.asList("Delete specified arena");
 	}
 
 	@Override

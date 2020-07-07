@@ -14,5 +14,4 @@ public interface SetupComponent {
 	void prepare(SetupInventory setupInventory);
 
 	void injectComponents(StaticPane pane);
-
 }

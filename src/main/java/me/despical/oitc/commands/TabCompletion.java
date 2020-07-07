@@ -54,7 +54,7 @@ public class TabCompletion implements TabCompleter {
 					if (!statistic.isPersistent()) {
 						continue;
 					}
-					possibilities.add(statistic.name().toLowerCase());
+					possibilities.add(statistic.name().toLowerCase(java.util.Locale.ENGLISH));
 				}
 				return possibilities;
 			}

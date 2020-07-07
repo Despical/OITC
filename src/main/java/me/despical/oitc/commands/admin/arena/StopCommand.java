@@ -42,13 +42,12 @@ public class StopCommand extends SubCommand {
 		}
 		if (ArenaRegistry.getArena((Player) sender).getArenaState() != ArenaState.ENDING) {
 			ArenaManager.stopGame(true, ArenaRegistry.getArena((Player) sender));
-			// todo execute success command message
 		}
 	}
 
 	@Override
 	public List<String> getTutorial() {
-		return Arrays.asList("Stops arena you're in", "You must be in target arena!");
+		return Arrays.asList("Stop the arena you're in", "You must be in target arena!");
 	}
 
 	@Override

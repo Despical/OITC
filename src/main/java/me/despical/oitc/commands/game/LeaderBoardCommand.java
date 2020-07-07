@@ -46,7 +46,7 @@ public class LeaderBoardCommand extends SubCommand {
 			return;
 		}
 		try {
-			StatsStorage.StatisticType statisticType = StatsStorage.StatisticType.valueOf(args[0].toUpperCase());
+			StatsStorage.StatisticType statisticType = StatsStorage.StatisticType.valueOf(args[0].toUpperCase(java.util.Locale.ENGLISH));
 			if (!statisticType.isPersistent()) {
 				sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Statistics.Invalid-Name"));
 				return;
@@ -60,7 +60,7 @@ public class LeaderBoardCommand extends SubCommand {
 	private void printLeaderboard(CommandSender sender, StatsStorage.StatisticType statisticType) {
 		LinkedHashMap<UUID, Integer> stats = (LinkedHashMap<UUID, Integer>) StatsStorage.getStats(statisticType);
 		sender.sendMessage(getPlugin().getChatManager().colorMessage("Commands.Statistics.Header"));
-		String statistic = StringUtils.capitalize(statisticType.toString().toLowerCase().replace("_", " "));
+		String statistic = StringUtils.capitalize(statisticType.toString().toLowerCase(java.util.Locale.ENGLISH).replace("_", " "));
 		for (int i = 0; i < 10; i++) {
 			try {
 				UUID current = (UUID) stats.keySet().toArray()[stats.keySet().toArray().length - 1];

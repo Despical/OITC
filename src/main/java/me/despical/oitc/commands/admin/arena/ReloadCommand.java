@@ -64,7 +64,6 @@ public class ReloadCommand extends SubCommand {
 			long stopTime = System.currentTimeMillis();
 			for (Player player : arena.getPlayers()) {
 				arena.doBarAction(Arena.BarAction.REMOVE, player);
-				arena.teleportToEndLocation(player);
 				if (getPlugin().getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 					InventorySerializer.loadInventory(getPlugin(), player);
 				} else {
@@ -77,7 +76,7 @@ public class ReloadCommand extends SubCommand {
 				}
 			}
 			ArenaManager.stopGame(true, arena);
-			Debugger.debug(Level.INFO, "[Reloader] Instance {0} stopped took {1}ms", arena.getId(), System.currentTimeMillis() - stopTime);
+			Debugger.debug(Level.INFO, "[Reloader] Instance {0} stopped took {1} ms", arena.getId(), System.currentTimeMillis() - stopTime);
 		}
 		ArenaRegistry.registerArenas();
 		sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Admin-Commands.Success-Reload"));

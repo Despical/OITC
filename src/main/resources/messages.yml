@@ -9,12 +9,12 @@
 #     Some messages support their own placeholders
 #                  like %player%
 
-# Murder Mystery commands messages
+# One in the Chamber commands messages
 Commands:
   Did-You-Mean: "&3Did you mean &b/%command%&3?"
   Are-You-Sure: "&cAre you sure you want to do this action? Type the command again &6within 10 seconds &cto confirm!"
   Teleported-To-The-Lobby: "&7Teleported to the lobby!"
-  Removed-Game-Instance: "&cSuccessfully removed game instance!"
+  Removed-Game-Instance: "&aSuccessfully removed game instance!"
   No-Arena-Like-That: "&cNo arena with that ID!"
   Look-Sign: "&cYou have to look at a sign to perform this command!"
   Type-Arena-Name: "&cPlease type arena ID!"
@@ -60,7 +60,7 @@ Scoreboard:
       - ""
       - "&fMap: &e%mapname%"
       - "&fPlayers: &6%players%"
-      - "&fScore: &6%score%"
+      - "&fScore: &6%kills%"
       - ""
       - "&fTime Left: &6%formatted_time%"
       - ""
@@ -120,11 +120,11 @@ In-Game:
       Start-In: "&7The game starts in &b%time%&7 seconds!"
       Waiting-For-Players: "&7Waiting for players... We need at least &b%minplayers%&7 players to start."
       Enough-Players-To-Start: "&7We now have enough players. The game is starting soon!"
-      Game-Started: "&7Game started! First player to get 20 kills wins!"
+      Game-Started: "&7Game started! First player to get 25 kills wins!"
       Kicked-For-Premium-Slot: "&c%player% got removed from the game to make a place for premium players!"
       You-Were-Kicked-For-Premium-Slot: "&cYou got kicked out of the game to make a place for a premium player!"
-    Join: "&b%player%&7 joined the game (%players%/%maxplayers%)!"
-    Leave: "&b%player% &7left the game (%players%/%maxplayers%)!"
+    Join: "&b%player%&7 joined the game &8(&7%players%/%maxplayers%&8)&7!"
+    Leave: "&b%player% &7left the game &8(&7%players%/%maxplayers%&8)&7!"
     Death: "&9%player% &eis slained by &9%killer%!"
     Kill-Streak: "&9%killer% &eis on &b%kill_streak% &ekill streak!"
     Seconds-Left-Title: "&c%time% &eseconds left!"
@@ -142,11 +142,11 @@ In-Game:
         - "&a&m----------------------------------------------------"
         - "&e&lOne in the Chamber"
         - ""
-        - "&fWINNER: &l%winner% (%winner_score%)"
+        - "&f&lWINNER: &f&l%winner% (%winner_score%)"
         - ""
-        - "&8YOUR RANK: &7%rank%"
-        - "&8YOUR SCORE: &7%score%"
-        - "&8YOUR DEATHS: &7%deaths%"
+        - "&8&lYOUR RANK: &7&l%rank%"
+        - "&8&lYOUR SCORE: &7&l%score%"
+        - "&8&lYOUR DEATHS: &7&l%deaths%"
         - ""
         - "&a&m----------------------------------------------------"
     Admin-Messages:
@@ -156,6 +156,7 @@ In-Game:
 Signs:
   Please-Type-Arena-Name: "&cPlease type arena name in second line!"
   Arena-Doesnt-Exists: "&cArena with that name doesn't exists!"
+  Doesnt-Have-Permission: "&cYou don't have enough permission to break this sign!"
   Sign-Created: "&aSign created successfully!"
   Sign-Removed: "&aSign successfully removed!"
   Game-States:

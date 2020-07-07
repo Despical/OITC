@@ -217,8 +217,10 @@ public class Events implements Listener {
 		victim.getKiller().sendTitle("", plugin.getChatManager().colorMessage("In-Game.Messages.Score-Subtitle"), 5, 30, 5);
 		plugin.getUserManager().getUser(victim).setStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 0);
 		plugin.getUserManager().getUser(victim).addStat(StatsStorage.StatisticType.LOCAL_DEATHS, 1);
+		plugin.getUserManager().getUser(victim).addStat(StatsStorage.StatisticType.DEATHS, 1);
 		plugin.getUserManager().getUser(victim.getKiller()).addStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 1);
 		plugin.getUserManager().getUser(victim.getKiller()).addStat(StatsStorage.StatisticType.LOCAL_KILLS, 1);
+		plugin.getUserManager().getUser(victim.getKiller()).addStat(StatsStorage.StatisticType.KILLS, 1);
 		if (plugin.getUserManager().getUser(victim.getKiller()).getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK) == 1){
 			plugin.getChatManager().broadcast(arena, plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Death").replace("%killer%", victim.getKiller().getName()), victim));
 		} else {

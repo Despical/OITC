@@ -11,6 +11,11 @@ import me.despical.oitc.commands.SubCommand;
 import me.despical.oitc.commands.exception.CommandException;
 import me.despical.oitc.handlers.setup.SetupInventory;
 
+/**
+ * @author Despical
+ * <p>
+ * Created at 02.07.2020
+ */
 public class EditCommand extends SubCommand {
 
 	public EditCommand(String name) {
@@ -39,7 +44,7 @@ public class EditCommand extends SubCommand {
 
 	@Override
 	public List<String> getTutorial() {
-		return Arrays.asList("Opens arena editor menu");
+		return Arrays.asList("Open arena editor menu");
 	}
 
 	@Override

@@ -40,7 +40,7 @@ public class SetupInventory {
 	}
 
 	private void prepareGui() {
-		this.gui = new Gui(plugin, 3, "One In The Chamber Arena Setup");
+		this.gui = new Gui(plugin, 3, "OITC Arena Editor");
 		this.gui.setOnGlobalClick(e -> e.setCancelled(true));
 		StaticPane pane = new StaticPane(9, 4);
 		this.gui.addPane(pane);
@@ -68,16 +68,14 @@ public class SetupInventory {
 	private void sendProTip(Player p) {
 		int rand = random.nextInt(16 + 1);
 		switch (rand) {
-//		not implemented yet
 		case 0:
+			p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7We are open source! You can always help us by contributing! Check https://github.com/Despical/OITC"));
 			break;
 		case 1:
+			p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7Need help? Join our discord server: https://discordapp.com/invite/Vhyy4HA"));
 			break;
 		case 2:
-			break;
-		case 3:
-			break;
-		case 4:
+			p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7Need help? Check our wiki: https://github.com/Despical/OITC/wiki"));
 			break;
 		default:
 			break;

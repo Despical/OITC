@@ -57,9 +57,7 @@ public class RandomJoinCommand extends SubCommand {
 			}
 		}
 		for (Arena arena : ArenaRegistry.getArenas()) {
-			if ((arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS
-					|| arena.getArenaState() == ArenaState.STARTING)
-					&& arena.getPlayers().size() < arena.getMaximumPlayers()) {
+			if ((arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS || arena.getArenaState() == ArenaState.STARTING) && arena.getPlayers().size() < arena.getMaximumPlayers()) {
 				ArenaManager.joinAttempt((Player) sender, arena);
 				return;
 			}

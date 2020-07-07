@@ -57,7 +57,7 @@ public class ForceStartCommand extends SubCommand {
 
 	@Override
 	public List<String> getTutorial() {
-		return Arrays.asList("Force starts arena you're in");
+		return Arrays.asList("Force start arena you're in");
 	}
 
 	@Override

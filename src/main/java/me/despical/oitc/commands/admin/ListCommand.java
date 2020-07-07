@@ -39,7 +39,6 @@ public class ListCommand extends SubCommand {
 			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Admin-Commands.List-Command.No-Arenas-Created"));
 			return;
 		}
-
 		List<String> arenas = ArenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());
 		sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Admin-Commands.List-Command.Format").replace("%list%",
 			arenas.toString().substring(1, arenas.toString().length() - 1)));
@@ -47,7 +46,7 @@ public class ListCommand extends SubCommand {
 
 	@Override
 	public List<String> getTutorial() {
-		return Arrays.asList("Shows all of the existing arenas");
+		return Arrays.asList("Show all of the existing arenas");
 	}
 
 	@Override

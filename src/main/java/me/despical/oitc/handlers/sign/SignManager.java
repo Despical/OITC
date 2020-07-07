@@ -105,7 +105,12 @@ public class SignManager implements Listener {
 	@EventHandler
 	public void onSignDestroy(BlockBreakEvent e) {
 		ArenaSign arenaSign = getArenaSignByBlock(e.getBlock());
-		if (!e.getPlayer().hasPermission("oitc.admin.sign.break") || arenaSign == null) {
+		if (arenaSign == null) {
+			return;
+		}
+		if (arenaSign != null && !e.getPlayer().hasPermission("oitc.admin.sign.break")) {
+			e.setCancelled(true);
+			e.getPlayer().sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Signs.Doesnt-Have-Permission"));
 			return;
 		}
 		arenaSigns.remove(arenaSign);
@@ -118,7 +123,7 @@ public class SignManager implements Listener {
 				}
 				List<String> signs = config.getStringList("instances." + arena + ".signs");
 				signs.remove(location);
-				config.set(arena + ".signs", signs);
+				config.set("instances." + arena + ".signs", signs);
 				ConfigUtils.saveConfig(plugin, config, "arenas");
 				e.getPlayer().sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Signs.Sign-Removed"));
 				return;
@@ -166,6 +171,7 @@ public class SignManager implements Listener {
 				if (loc.getBlock().getState() instanceof Sign) {
 					arenaSigns.add(new ArenaSign((Sign) loc.getBlock().getState(), ArenaRegistry.getArena(path)));
 				} else {
+					arenaSigns.remove(getArenaSignByBlock(loc.getBlock()));
 					Debugger.debug(Level.WARNING, "Block at location {0} for arena {1} not a sign", loc, path);
 				}
 			}

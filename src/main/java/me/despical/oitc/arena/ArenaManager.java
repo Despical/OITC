@@ -235,7 +235,7 @@ public class ArenaManager {
 				user.setStat(stat, 0);
 			}
 		}
-		Debugger.debug(Level.INFO, "[{0}] Game leave finished for {1} took {2} ms ", arena.getId(), player.getName(), System.currentTimeMillis() - start);
+		Debugger.debug(Level.INFO, "[{0}] Game leave finished for {1} took {2} ms", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 	}
 
 	/**
@@ -265,9 +265,13 @@ public class ArenaManager {
 			User user = plugin.getUserManager().getUser(player);
 			if (arena.getScoreboardManager().getTopPlayerName(0).equals(player.getName())) {
 				user.addStat(StatsStorage.StatisticType.WINS, 1);
+				player.sendTitle(plugin.getChatManager().colorMessage("In-Game.Messages.Game-End-Messages.Titles.Win"),
+					plugin.getChatManager().colorMessage("In-Game.Messages.Game-End-Messages.Subtitles.Win").replace("%winner%", arena.getScoreboardManager().getTopPlayerName(0)), 5, 40, 5);
 				plugin.getRewardsFactory().performReward(player, Reward.RewardType.WIN);
-			} else if (!user.isSpectator()){
+			} else if (!user.isSpectator()) {
 				user.addStat(StatsStorage.StatisticType.LOSES, 1);
+				player.sendTitle(plugin.getChatManager().colorMessage("In-Game.Messages.Game-End-Messages.Titles.Lose"),
+					plugin.getChatManager().colorMessage("In-Game.Messages.Game-End-Messages.Subtitles.Lose").replace("%winner%", arena.getScoreboardManager().getTopPlayerName(0)), 5, 40, 5);
 				plugin.getRewardsFactory().performReward(player, Reward.RewardType.LOSE);
 			}
 			player.getInventory().clear();

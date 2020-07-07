@@ -51,6 +51,7 @@ public class ScoreboardManager {
 	 */
 	public void createScoreboard(User user) {
 		Scoreboard scoreboard = ScoreboardLib.createScoreboard(user.getPlayer()).setHandler(new ScoreboardHandler() {
+
 			@Override
 			public String getTitle(Player player) {
 				return boardTitle;
@@ -104,10 +105,9 @@ public class ScoreboardManager {
 			}
 		}
 		for (String line : lines) {
-			if (line.equals("%null%")) {
-				continue;
+			if (!formatScoreboardLine(line, user).equals("%empty%")) {
+				builder.next(formatScoreboardLine(line, user));
 			}
-			builder.next(formatScoreboardLine(line, user));
 		}
 		return builder.build();
 	}
@@ -120,10 +120,11 @@ public class ScoreboardManager {
 		formattedLine = StringUtils.replace(formattedLine, "%players%", String.valueOf(arena.getPlayers().size()));
 		formattedLine = StringUtils.replace(formattedLine, "%max_players%", String.valueOf(arena.getMaximumPlayers()));
 		formattedLine = StringUtils.replace(formattedLine, "%min_players%", String.valueOf(arena.getMinimumPlayers()));
-		formattedLine = StringUtils.replace(formattedLine, "%score%", String.valueOf(StatsStorage.getUserStats(user.getPlayer(), StatsStorage.StatisticType.LOCAL_KILLS)));
+		formattedLine = StringUtils.replace(formattedLine, "%kills%", String.valueOf(StatsStorage.getUserStats(user.getPlayer(), StatsStorage.StatisticType.LOCAL_KILLS)));
+		formattedLine = StringUtils.replace(formattedLine, "%deaths%", String.valueOf(StatsStorage.getUserStats(user.getPlayer(), StatsStorage.StatisticType.LOCAL_DEATHS)));
 		formattedLine = StringUtils.replace(formattedLine, "%kill_streak%", String.valueOf(StatsStorage.getUserStats(user.getPlayer(), StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
 		for (int i = 0; i <= arena.getMaximumPlayers(); i++) {
-			formattedLine = StringUtils.replace(formattedLine, "%top_player_" + (i + 1) + "%", arena.getPlayersLeft().size() > i ? formatTopPlayer(getTopPlayerName(i), i) : "%null%");
+			formattedLine = StringUtils.replace(formattedLine, "%top_player_" + (i + 1) + "%", arena.getPlayersLeft().size() > i ? formatTopPlayer(getTopPlayerName(i), i) : "%empty%");
 		}
 		formattedLine = plugin.getChatManager().colorRawMessage(formattedLine);
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {

@@ -58,11 +58,11 @@ public class CreateCommand extends SubCommand {
 			player.sendMessage(getPlugin().getChatManager().getPrefix() + ChatColor.RED + "Instance/Arena already exists! Use another ID or delete it first!");
 		} else {
 			createInstanceInConfig(args[0], player.getWorld().getName());
-			player.sendMessage(ChatColor.BOLD + "------------------------------------------");
+			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
 			player.sendMessage(ChatColor.YELLOW + "      Instance " + args[0] + " created!");
 			player.sendMessage("");
-			player.sendMessage(ChatColor.GREEN + "Edit this arena via " + ChatColor.GOLD + "/oitc " + args[0] + " edit" + ChatColor.GREEN + "!");
-			player.sendMessage(ChatColor.BOLD + "------------------------------------------- ");
+			player.sendMessage(ChatColor.GREEN + "Edit this arena via " + ChatColor.GOLD + "/oitc edit " + args[0] + ChatColor.GREEN + "!");
+			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
 		}
 	}
 	

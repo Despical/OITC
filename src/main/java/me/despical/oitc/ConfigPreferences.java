@@ -5,8 +5,8 @@ import java.util.Map;
 
 /**
  * @author Despical
- *         <p>
- *         Created at 02.07.2020
+ * <p>
+ * Created at 02.07.2020
  */
 public class ConfigPreferences {
 
