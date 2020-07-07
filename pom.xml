@@ -131,6 +131,17 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <windowtitle>One in the Chamber API docs for v${project.version}</windowtitle>
+                    <description>Minecraft survival minigame. Reach 25 points to win! API documentation for hooking One in the Chamber with your plugin.</description>
+                    <destDir>minecraft/oitc</destDir>
+                    <isOffline>false</isOffline>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.1.0</version>
             </plugin>
