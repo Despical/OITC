@@ -17,7 +17,7 @@ Kill everyone with your powerful bow or with your sword to get an new arrow! Rea
 | [Commons Box](https://github.com/Despical/Commons-Box)        | [Despical](https://github.com/Despical)             | [GPLv3](https://github.com/Despical/Commons-Box/blob/master/LICENSE.md)      |
 
 
-## Want to use King of the Ladder API? [![](https://jitpack.io/v/Despical/KOTL.svg)](https://jitpack.io/#Despical/OITC)
+## Want to use One in the Chamber API? [![](https://jitpack.io/v/Despical/OITC.svg)](https://jitpack.io/#Despical/OITC)
 Add repository
 ```xml
     <repositories>
