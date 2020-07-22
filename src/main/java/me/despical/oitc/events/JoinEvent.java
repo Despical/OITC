@@ -1,5 +1,6 @@
 package me.despical.oitc.events;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,6 +12,7 @@ import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.handlers.PermissionsManager;
+import me.despical.oitc.utils.UpdateChecker;
 
 /**
  * @author Despical
@@ -55,18 +57,22 @@ public class JoinEvent implements Listener {
 		}
 	}
 	
-//	@EventHandler not implemented yet
-//	public void onJoinCheckVersion(final PlayerJoinEvent event) {
-//		if (!plugin.getConfig().getBoolean("Update-Notifier.Enabled", true) || !event.getPlayer().hasPermission("oitc.updatenotify")) {
-//			return;
-//		}
-//		Bukkit.getScheduler().runTaskLater(plugin, () -> UpdateChecker.init(plugin, 1).requestUpdateCheck().whenComplete((result, exception) -> {
-//			if (!result.requiresUpdate()) {
-//				return;
-//			}
-//			if (result.getNewestVersion().contains("b")) {
-//				} else {
-//			}
-//		}), 25);
-//	}
+	@EventHandler
+	public void onJoinCheckVersion(final PlayerJoinEvent event) {
+		if (!plugin.getConfig().getBoolean("Update-Notifier.Enabled", true) || !event.getPlayer().hasPermission("oitc.updatenotify")) {
+			return;
+		}
+		Bukkit.getScheduler().runTaskLater(plugin, () -> UpdateChecker.init(plugin, 1).requestUpdateCheck().whenComplete((result, exception) -> {
+			if (!result.requiresUpdate()) {
+				return;
+			}
+			if (result.getNewestVersion().contains("b")) {
+				event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3[OITC] &bFound a beta update: v" + result.getNewestVersion() + " Download"));
+				event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-1.81185/"));
+				} else {
+					event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3[OITC] &bFound an update: v" + result.getNewestVersion() + " Download:"));
+					event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-1.81185/"));
+			}
+		}), 25);
+	}
 }

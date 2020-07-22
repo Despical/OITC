@@ -91,7 +91,7 @@ public class Main extends JavaPlugin {
 		configPreferences = new ConfigPreferences(this);
 		setupFiles();
 		initializeClasses();
-//		checkUpdate(); not implemented yet
+		checkUpdate();
 
 		Debugger.debug(Level.INFO, "Initialization finished took {0} ms", System.currentTimeMillis() - start);
 		if (configPreferences.getOption(ConfigPreferences.Option.NAMETAGS_HIDDEN)) {
@@ -238,14 +238,14 @@ public class Main extends JavaPlugin {
 				if (getConfig().getBoolean("Update-Notifier.Notify-Beta-Versions", true)) {
 					Bukkit.getConsoleSender().sendMessage("[OITC] Found a new beta version available: v" + result.getNewestVersion());
 					Bukkit.getConsoleSender().sendMessage("[OITC] Download it on SpigotMC:");
-					Bukkit.getConsoleSender().sendMessage("[OITC] spigotmc.org/resources/");
+					Bukkit.getConsoleSender().sendMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-1.81185/");
 				}
 				return;
 			}
 			MessageUtils.updateIsHere();
 			Bukkit.getConsoleSender().sendMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
 			Bukkit.getConsoleSender().sendMessage("[OITC] Download it SpigotMC:");
-			Bukkit.getConsoleSender().sendMessage("[OITC] spigotmc.org/resources/");
+			Bukkit.getConsoleSender().sendMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-1.81185/");
 		});
 	}
 	

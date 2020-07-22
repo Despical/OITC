@@ -3,7 +3,7 @@ package me.despical.oitc.arena;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
