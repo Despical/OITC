@@ -36,8 +36,8 @@ rewards:
     - say Ooh and there were playing %players% players
   # Commands executed when player kills someone
   kill:
-    - eco give %PLAYER% 2
-    - chance(10):eco give %PLAYER% 8
+    - eco give %player% 2
+    - chance(10):eco give %player% 8
   # Commands executed when player wins the game
   win:
     - say I won the game!

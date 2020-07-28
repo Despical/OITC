@@ -66,5 +66,4 @@ public class Utils {
 		sender.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands-No-Permission"));
 		return false;
 	}
-
 }

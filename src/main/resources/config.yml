@@ -1,6 +1,6 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # +---------------------------------------------------------+ #
-# |     One in the Chamber by Despical (Version 1.0.0)      | #
+# |     One in the Chamber by Despical (Version 1.0.2)      | #
 # +---------------------------------------------------------+ #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -32,14 +32,14 @@ DatabaseActivated: false
 InventoryManager: true
 
 # Should in-game chat format be enabled?
-# You can edit the formatting in language.yml
+# You can edit the formatting in messages.yml
 ChatFormat-Enabled: true
 
 # Should we disable all chat related stuff?
-# It will disable the separated chat, for example
+# It will disable the separated chat.
 Disable-Separate-Chat: false
 
-# Basic permissions for game, permissions explained here: wiki koycam işte .d
+# Basic permissions for game, permissions explained here: https://github.com/Despical/OITC/wiki/Commands-and-permissions#basic-permissions
 Basic-Permissions:
   Full-Games-Permission: "oitc.fullgames"
   # <arena> represents arena name (NOT MAP NAME!), for example: 'oitc.join.OITC02'
@@ -49,10 +49,10 @@ Basic-Permissions:
 # Should we enable short commands such as /start and /leave
 Enable-Short-Commands: false
 
-# Should /mm leave command be blocked?
+# Should /oitc leave command be blocked?
 Disable-Leave-Command: false
 
-# Should players get no fall damage?
+# Should players get fall damage?
 Disable-Fall-Damage: false
 
 # Commands which can be used in game, remove all of them to disable
@@ -63,7 +63,7 @@ Whitelisted-Commands:
 # Enable in game rewards? See rewards.yml for more...
 Rewards-Enabled: false
 
-# First player to reach this score wins
+# First player to reach this score wins.
 Winning-Score: 25
 
 # Should we block every not One in the Chamber associated commands in game?
@@ -87,7 +87,6 @@ Signs-Block-States-Enabled: true
 
 Update-Notifier:
   # Should we check for updates on plugin start/after admin join?
-  # You REALLY should have this true!
   Enabled: true
   # Should we inform you when beta version is out?
   # Also note that BETA IS NOT ALWAYS AS STABLE AS NORMAL RELEASE!
