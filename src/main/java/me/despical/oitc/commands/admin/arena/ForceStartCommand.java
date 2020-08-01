@@ -20,7 +20,7 @@ import me.despical.oitc.utils.Utils;
  */
 public class ForceStartCommand extends SubCommand {
 
-	public ForceStartCommand(String name) {
+	public ForceStartCommand() {
 		super("forcestart");
 		setPermission("oitc.admin.forcestart");
 	}

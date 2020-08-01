@@ -1,6 +1,7 @@
 package me.despical.oitc.commands.admin;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,7 @@ import me.despical.oitc.commands.exception.CommandException;
  */
 public class ListCommand extends SubCommand {
 
-	public ListCommand(String name) {
+	public ListCommand() {
 		super("list");
 		setPermission("oitc.admin.list");
 	}
@@ -46,7 +47,7 @@ public class ListCommand extends SubCommand {
 
 	@Override
 	public List<String> getTutorial() {
-		return Arrays.asList("Show all of the existing arenas");
+		return Collections.singletonList("Show all of the existing arenas");
 	}
 
 	@Override

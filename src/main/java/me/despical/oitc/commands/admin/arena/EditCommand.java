@@ -18,7 +18,7 @@ import me.despical.oitc.handlers.setup.SetupInventory;
  */
 public class EditCommand extends SubCommand {
 
-	public EditCommand(String name) {
+	public EditCommand() {
 		super("edit");
 		setPermission("oitc.admin.setup");
 	}

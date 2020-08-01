@@ -20,7 +20,7 @@ import me.despical.oitc.utils.Utils;
  */
 public class StopCommand extends SubCommand {
 
-	public StopCommand(String name) {
+	public StopCommand() {
 		super("stop");
 		setPermission("oitc.admin.stop");
 	}

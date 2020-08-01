@@ -22,7 +22,7 @@ import net.md_5.bungee.api.chat.TextComponent;
  */
 public class HelpCommand extends SubCommand {
 	
-	public HelpCommand(String name) {
+	public HelpCommand() {
 		super("help");
 		setPermission("oitc.admin");
 	}

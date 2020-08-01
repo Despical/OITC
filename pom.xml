@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -147,10 +147,6 @@
 								<relocation>
 									<pattern>com.github.stefvanschie.inventoryframework</pattern>
 									<shadedPattern>me.despical.oitc.utils.inventoryframework</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>com.zaxxer.hikari</pattern>
-									<shadedPattern>me.despical.oitc.database.hikari</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>me.despical.commonsbox</pattern>

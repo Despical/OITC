@@ -22,7 +22,7 @@ import me.despical.oitc.utils.Utils;
  */
 public class LeaveCommand extends SubCommand {
 
-	public LeaveCommand(String name) {
+	public LeaveCommand() {
 		super("leave");
 	}
 

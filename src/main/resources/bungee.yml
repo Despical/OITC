@@ -17,7 +17,7 @@ End-Location-Hub: true
 # %state% - Game state will be visible at MOTD.
 MOTD:
   Manager: false
-  Message: "The actual game state of oitc is %state%"
+  Message: "The actual game state of OITC is %state%"
   Game-States:
     Inactive: "&lInactive..."
     In-Game: "&lIn-game"

@@ -27,7 +27,7 @@ import me.despical.oitc.utils.Debugger;
  */
 public class ReloadCommand extends SubCommand {
 
-	public ReloadCommand(String name) {
+	public ReloadCommand() {
 		super("reload");
 		setPermission("oitc.admin.reload");
 	}

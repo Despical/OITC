@@ -1,9 +1,6 @@
 package me.despical.oitc.commands.admin.arena;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -23,9 +20,9 @@ import me.despical.oitc.commands.exception.CommandException;
  */
 public class DeleteCommand extends SubCommand {
 
-	private Set<CommandSender> confirmations = new HashSet<>();
+	private final Set<CommandSender> confirmations = new HashSet<>();
 	
-	public DeleteCommand(String name) {
+	public DeleteCommand() {
 		super("delete");
 		setPermission("oitc.admin.delete");
 	}
@@ -68,7 +65,7 @@ public class DeleteCommand extends SubCommand {
 
 	@Override
 	public List<String> getTutorial() {
-		return Arrays.asList("Delete specified arena");
+		return Collections.singletonList("Delete specified arena");
 	}
 
 	@Override

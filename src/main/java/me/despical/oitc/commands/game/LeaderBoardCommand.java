@@ -25,7 +25,7 @@ import me.despical.oitc.user.data.MysqlManager;
  */
 public class LeaderBoardCommand extends SubCommand {
 
-	public LeaderBoardCommand(String name) {
+	public LeaderBoardCommand() {
 		super("top");
 	}
 

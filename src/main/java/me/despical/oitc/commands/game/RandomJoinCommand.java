@@ -23,7 +23,7 @@ import me.despical.oitc.commands.exception.CommandException;
  */
 public class RandomJoinCommand extends SubCommand {
 
-	public RandomJoinCommand(String name) {
+	public RandomJoinCommand() {
 		super("randomjoin");
 	}
 

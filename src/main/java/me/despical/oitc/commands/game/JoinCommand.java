@@ -18,7 +18,7 @@ import me.despical.oitc.commands.exception.CommandException;
  */
 public class JoinCommand extends SubCommand {
 
-	public JoinCommand(String name) {
+	public JoinCommand() {
 		super("join");
 	}
 

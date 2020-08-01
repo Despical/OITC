@@ -1,7 +1,7 @@
 package me.despical.oitc.commands.game;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -25,7 +25,7 @@ import me.despical.oitc.commands.exception.CommandException;
  */
 public class CreateCommand extends SubCommand {
 
-	public CreateCommand(String name) {
+	public CreateCommand() {
 		super("create");
 		setPermission("oitc.admin.create");
 	}
@@ -57,7 +57,7 @@ public class CreateCommand extends SubCommand {
 		if (ConfigUtils.getConfig(getPlugin(), "arenas").contains("instances." + args[0])) {
 			player.sendMessage(getPlugin().getChatManager().getPrefix() + ChatColor.RED + "Instance/Arena already exists! Use another ID or delete it first!");
 		} else {
-			createInstanceInConfig(args[0], player.getWorld().getName());
+			createInstanceInConfig(args[0]);
 			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
 			player.sendMessage(ChatColor.YELLOW + "      Instance " + args[0] + " created!");
 			player.sendMessage("");
@@ -66,7 +66,7 @@ public class CreateCommand extends SubCommand {
 		}
 	}
 	
-	private void createInstanceInConfig(String id, String worldName) {
+	private void createInstanceInConfig(String id) {
 		String path = "instances." + id + ".";
 		FileConfiguration config = ConfigUtils.getConfig(getPlugin(), "arenas");
 		config.set(path + "lobbylocation", LocationSerializer.locationToString(Bukkit.getServer().getWorlds().get(0).getSpawnLocation()));
@@ -93,7 +93,7 @@ public class CreateCommand extends SubCommand {
 
 	@Override
 	public List<String> getTutorial() {
-		return Arrays.asList("Create new arena");
+		return Collections.singletonList("Create new arena");
 	}
 
 	@Override

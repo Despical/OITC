@@ -33,7 +33,7 @@ import me.despical.oitc.user.User;
  */
 public class SpectatorEvents implements Listener {
 
-	private Main plugin;
+	private final Main plugin;
 
 	public SpectatorEvents(Main plugin) {
 		this.plugin = plugin;
