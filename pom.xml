@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -43,6 +43,10 @@
 		<repository>
 			<id>codemc-repo</id>
 			<url>https://repo.codemc.org/repository/maven-public/</url>
+		</repository>
+		<repository>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 	<dependencies>

@@ -1,4 +1,3 @@
-
 # One in the Chamber [![](https://img.shields.io/badge/wiki-click-blue.svg)](https://github.com/Despical/OITC/wiki) [![Discord](https://img.shields.io/discord/719922452259668000.svg?color=7289DA&label=discord)](https://discord.gg/Vhyy4HA)
 One in the Chamber is a Minecraft survival minigame designed for small and big servers. This minigame is unique and very configurable, 100% free and open source! 
 
@@ -33,7 +32,7 @@ Then add the dependency
         <dependency>
             <groupId>com.github.Despical</groupId>
             <artifactId>OITC</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.3</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

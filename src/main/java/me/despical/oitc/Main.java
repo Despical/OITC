@@ -165,6 +165,7 @@ public class Main extends JavaPlugin {
 	
 	private void initializeClasses() {
 		ScoreboardLib.setPluginInstance(this);
+		chatManager = new ChatManager(this);
 		if (getConfig().getBoolean("BungeeActivated", false)) {
 			bungeeManager = new BungeeManager(this);
 		}
@@ -172,7 +173,6 @@ public class Main extends JavaPlugin {
 			FileConfiguration config = ConfigUtils.getConfig(this, "mysql");
 			database = new MysqlDatabase(config.getString("user"), config.getString("password"), config.getString("address"));
 		}
-		chatManager = new ChatManager(this);
 		userManager = new UserManager(this);
 		Utils.init(this);
 		ArenaSign.init(this);

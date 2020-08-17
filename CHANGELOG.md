@@ -1,3 +1,6 @@
+### 1.0.3 Release (17.08.2020)
+* Fixed Bungee-cord mode getting null pointer exception.
+
 ### 1.0.2 Release (01.08.2020)
 * Fixed all of the messages.
 * Performance improvements.
