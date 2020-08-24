@@ -68,10 +68,10 @@ public class JoinEvent implements Listener {
 			}
 			if (result.getNewestVersion().contains("b")) {
 				event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3[OITC] &bFound a beta update: v" + result.getNewestVersion() + " Download"));
-				event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-1.81185/"));
+				event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-2.81185/"));
 				} else {
 					event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3[OITC] &bFound an update: v" + result.getNewestVersion() + " Download:"));
-					event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-1.81185/"));
+					event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-2.81185/"));
 			}
 		}), 25);
 	}

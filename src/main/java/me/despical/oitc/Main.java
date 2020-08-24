@@ -107,7 +107,8 @@ public class Main extends JavaPlugin {
 		version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
 		if (!(version.equalsIgnoreCase("v1_12_R1") || version.equalsIgnoreCase("v1_13_R1") 
 			|| version.equalsIgnoreCase("v1_13_R2") || version.equalsIgnoreCase("v1_14_R1") 
-			|| version.equalsIgnoreCase("v1_15_R1") || version.equalsIgnoreCase("v1_16_R1"))) {
+			|| version.equalsIgnoreCase("v1_15_R1") || version.equalsIgnoreCase("v1_16_R1")
+			|| version.equalsIgnoreCase("v1_16_R2"))) {
 			MessageUtils.thisVersionIsNotSupported();
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Your server version is not supported by One in the Chamber!");
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Sadly, we must shut off. Maybe you consider changing your server version?");
@@ -238,14 +239,14 @@ public class Main extends JavaPlugin {
 				if (getConfig().getBoolean("Update-Notifier.Notify-Beta-Versions", true)) {
 					Bukkit.getConsoleSender().sendMessage("[OITC] Found a new beta version available: v" + result.getNewestVersion());
 					Bukkit.getConsoleSender().sendMessage("[OITC] Download it on SpigotMC:");
-					Bukkit.getConsoleSender().sendMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-1.81185/");
+					Bukkit.getConsoleSender().sendMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-2.81185/");
 				}
 				return;
 			}
 			MessageUtils.updateIsHere();
 			Bukkit.getConsoleSender().sendMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
 			Bukkit.getConsoleSender().sendMessage("[OITC] Download it SpigotMC:");
-			Bukkit.getConsoleSender().sendMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-1.81185/");
+			Bukkit.getConsoleSender().sendMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-2.81185/");
 		});
 	}
 	
@@ -272,6 +273,10 @@ public class Main extends JavaPlugin {
 
 	public boolean is1_16_R1() {
 		return version.equalsIgnoreCase("v1_16_R1");
+	}
+
+	public boolean is1_16_R2() {
+		return version.equalsIgnoreCase("v1_16_R2");
 	}
 	
 	public RewardsFactory getRewardsFactory() {
