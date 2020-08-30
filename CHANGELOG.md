@@ -1,3 +1,6 @@
+### 1.0.5 Pre-Release (30.08.2020
+* Generated JavaDocs.
+
 ### 1.0.4 (24.08.2020)
 * Added Minecraft 1.16.2 compatibility.
 

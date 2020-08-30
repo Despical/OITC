@@ -92,12 +92,6 @@
 			<version>13.0</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
-			<version>3.0.2</version>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<resources>
@@ -120,17 +114,18 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.0.1</version>
-				<configuration>
-					<windowtitle>One in the Chamber API docs for v${project.version}</windowtitle>
-					<description>Minecraft survival minigame. Reach 25 points to win!
-						API documentation for hooking One in the Chamber with your plugin.</description>
-					<destDir>minecraft/oitc</destDir>
-					<isOffline>false</isOffline>
-				</configuration>
-			</plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>

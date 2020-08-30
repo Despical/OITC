@@ -426,7 +426,7 @@ public class Arena extends BukkitRunnable {
 	 * Executes boss bar action for arena
 	 *
 	 * @param action add or remove a player from boss bar
-	 * @param p      player
+	 * @param p player
 	 */
 	public void doBarAction(BarAction action, Player p) {
 		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
