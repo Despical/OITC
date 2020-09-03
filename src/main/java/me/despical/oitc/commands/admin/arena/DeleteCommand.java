@@ -54,8 +54,10 @@ public class DeleteCommand extends SubCommand {
 			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Are-You-Sure"));
 			return;
 		}
+		
 		confirmations.remove(sender);
 		ArenaManager.stopGame(true, arena);
+		getPlugin().getSignManager().getArenaSigns().remove(getPlugin().getSignManager().getArenaSignByArena(arena));
 		ArenaRegistry.unregisterArena(arena);
 		FileConfiguration config = ConfigUtils.getConfig(getPlugin(), "arenas");
 		config.set("instances." + args[0], null);

@@ -1,3 +1,8 @@
+### 1.0.5 Release (03.09.2020)
+* Added new message options.
+* Improved arena creation.
+* Some bug fixes.
+
 ### 1.0.5 Pre-Release (30.08.2020
 * Generated JavaDocs.
 

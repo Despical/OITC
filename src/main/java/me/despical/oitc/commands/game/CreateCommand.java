@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,6 +16,11 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.commands.SubCommand;
 import me.despical.oitc.commands.exception.CommandException;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * @author Despical
@@ -46,6 +50,7 @@ public class CreateCommand extends SubCommand {
 			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Type-Arena-Name"));
 			return;
 		}
+		
 		Player player = (Player) sender;
 		for (Arena arena : ArenaRegistry.getArenas()) {
 			if (arena.getId().equalsIgnoreCase(args[0])) {
@@ -61,7 +66,9 @@ public class CreateCommand extends SubCommand {
 			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
 			player.sendMessage(ChatColor.YELLOW + "      Instance " + args[0] + " created!");
 			player.sendMessage("");
-			player.sendMessage(ChatColor.GREEN + "Edit this arena via " + ChatColor.GOLD + "/oitc edit " + args[0] + ChatColor.GREEN + "!");
+			player.spigot().sendMessage(new ComponentBuilder(ChatColor.GREEN + "Edit this arena via ").color(ChatColor.GREEN)
+				.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/oitc edit " + args[0])).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+				TextComponent.fromLegacyText(String.join("\n", ChatColor.AQUA + "Click to edit this arena")))).append(ChatColor.GREEN + "/" + label + " edit " + args[0]+ "!").create());
 			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
 		}
 	}

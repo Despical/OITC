@@ -50,12 +50,13 @@ public class StatsStorage {
 				Statement statement = connection.createStatement();
 				ResultSet set = statement.executeQuery("SELECT UUID, " + stat.getName() + " FROM " + ((MysqlManager) plugin.getUserManager().getDatabase()).getTableName() + " ORDER BY " + stat.getName());
 				Map<java.util.UUID, java.lang.Integer> column = new LinkedHashMap<>();
+				
 				while (set.next()) {
 					column.put(java.util.UUID.fromString(set.getString("UUID")), set.getInt(stat.getName()));
 				}
 				return column;
 			} catch (SQLException e) {
-				plugin.getLogger().log(Level.WARNING, "SQLException occurred! " + e.getSQLState() + " (" + e.getErrorCode() + ")");
+				plugin.getLogger().log(Level.WARNING, "SQL Exception occurred! " + e.getSQLState() + " (" + e.getErrorCode() + ")");
 				MessageUtils.errorOccurred();
 				Bukkit.getConsoleSender().sendMessage("Cannot get contents from MySQL database!");
 				Bukkit.getConsoleSender().sendMessage("Check configuration of mysql.yml file or disable mysql option in config.yml");

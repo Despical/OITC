@@ -1,6 +1,6 @@
 package me.despical.oitc.commands.admin.arena;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -39,12 +39,13 @@ public class EditCommand extends SubCommand {
 			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.No-Arena-Like-That"));
 			return;
 		}
+		
 		new SetupInventory(ArenaRegistry.getArena(args[0]), (Player) sender).openInventory();	
 	}
 
 	@Override
 	public List<String> getTutorial() {
-		return Arrays.asList("Open arena editor menu");
+		return Collections.singletonList("Open arena editor menu");
 	}
 
 	@Override

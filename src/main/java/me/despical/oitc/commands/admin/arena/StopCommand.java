@@ -27,7 +27,7 @@ public class StopCommand extends SubCommand {
 
 	@Override
 	public String getPossibleArguments() {
-		return "";
+		return null;
 	}
 
 	@Override
@@ -40,6 +40,7 @@ public class StopCommand extends SubCommand {
 		if (!Utils.checkIsInGameInstance((Player) sender)) {
 			return;
 		}
+		
 		if (ArenaRegistry.getArena((Player) sender).getArenaState() != ArenaState.ENDING) {
 			ArenaManager.stopGame(true, ArenaRegistry.getArena((Player) sender));
 		}

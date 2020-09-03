@@ -26,17 +26,17 @@ import me.despical.oitc.utils.Debugger;
  * Created at 02.07.2020
  */
 public class ReloadCommand extends SubCommand {
-
+	
+	private Set<CommandSender> confirmations = new HashSet<>();
+	
 	public ReloadCommand() {
 		super("reload");
 		setPermission("oitc.admin.reload");
 	}
 
-	private Set<CommandSender> confirmations = new HashSet<>();
-
 	@Override
 	public String getPossibleArguments() {
-		return "";
+		return null;
 	}
 
 	@Override

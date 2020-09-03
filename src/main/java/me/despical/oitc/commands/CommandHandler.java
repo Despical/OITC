@@ -57,9 +57,8 @@ public class CommandHandler implements CommandExecutor {
 		registerSubCommand(new StatsCommand());
 		registerSubCommand(new LeaderBoardCommand());
 
-		TabCompletion tabCompletion = new TabCompletion(this);
 		plugin.getCommand("oitc").setExecutor(this);
-		plugin.getCommand("oitc").setTabCompleter(tabCompletion);
+		plugin.getCommand("oitc").setTabCompleter(new TabCompletion(this));
 	}
 	
 	public void registerSubCommand(SubCommand subCommand) {

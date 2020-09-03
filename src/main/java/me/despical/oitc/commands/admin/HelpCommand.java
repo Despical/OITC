@@ -44,7 +44,7 @@ public class HelpCommand extends SubCommand {
 		sender.sendMessage("");
 		for (SubCommand subCommand : this.getPlugin().getCommandHandler().getSubCommands()) {
 			if (subCommand.getType() == SubCommand.CommandType.GENERIC) {
-				String usage = "/" + label + " " + subCommand.getName() + (subCommand.getPossibleArguments().length() > 0 ? " " + subCommand.getPossibleArguments() : "");
+				String usage = "/" + label + " " + subCommand.getName() + (subCommand.getPossibleArguments() != null ? " " + subCommand.getPossibleArguments() : "");
 
 				if (sender instanceof Player) {
 					List<String> help = new ArrayList<>();

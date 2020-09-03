@@ -1,6 +1,5 @@
 package me.despical.oitc.commands.admin;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +25,7 @@ public class ListCommand extends SubCommand {
 
 	@Override
 	public String getPossibleArguments() {
-		return "";
+		return null;
 	}
 
 	@Override
