@@ -1,11 +1,10 @@
 package me.despical.oitc.user.data;
 
-import org.bukkit.configuration.file.FileConfiguration;
-
 import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  * @author Despical
@@ -14,8 +13,8 @@ import me.despical.oitc.user.User;
  */
 public class FileStats implements UserDatabase {
 
-	private Main plugin;
-	private FileConfiguration config;
+	private final Main plugin;
+	private final FileConfiguration config;
 
 	public FileStats(Main plugin) {
 		this.plugin = plugin;
@@ -25,6 +24,16 @@ public class FileStats implements UserDatabase {
 	@Override
 	public void saveStatistic(User user, StatsStorage.StatisticType stat) {
 		config.set(user.getPlayer().getUniqueId().toString() + "." + stat.getName(), user.getStat(stat));
+		ConfigUtils.saveConfig(plugin, config, "stats");
+	}
+
+	@Override
+	public void saveAllStatistic(User user) {
+		for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+			if (!stat.isPersistent()) continue;
+			config.set(user.getPlayer().getUniqueId().toString() + "." + stat.getName(), user.getStat(stat));
+		}
+
 		ConfigUtils.saveConfig(plugin, config, "stats");
 	}
 

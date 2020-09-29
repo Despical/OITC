@@ -1,9 +1,8 @@
 package me.despical.oitc.handlers.items;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import me.despical.commonsbox.compat.XMaterial;
+import me.despical.commonsbox.configuration.ConfigUtils;
+import me.despical.oitc.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,9 +10,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.despical.commonsbox.compat.XMaterial;
-import me.despical.commonsbox.configuration.ConfigUtils;
-import me.despical.oitc.Main;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Despical
@@ -22,10 +21,10 @@ import me.despical.oitc.Main;
  */
 public class SpecialItem {
 
-	private Main plugin = JavaPlugin.getPlugin(Main.class);
+	private final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private ItemStack itemStack;
 	private int slot;
-	private String name;
+	private final String name;
 
 	public SpecialItem(String name) {
 		this.name = name;
@@ -46,21 +45,25 @@ public class SpecialItem {
 			config.set(name + ".material-name", material.toString());
 			config.set(name + ".slot", slot);
 		}
+
 		ConfigUtils.saveConfig(JavaPlugin.getPlugin(Main.class), config, "lobbyitems");
 		ItemStack stack = XMaterial.fromString(config.getString(name + ".material-name").toUpperCase()).parseItem();
 		ItemMeta meta = stack.getItemMeta();
 		meta.setDisplayName(plugin.getChatManager().colorRawMessage(config.getString(name + ".displayname")));
 
 		List<String> colorizedLore = new ArrayList<>();
+
 		for (String str : config.getStringList(name + ".lore")) {
 			colorizedLore.add(plugin.getChatManager().colorRawMessage(str));
 		}
+
 		meta.setLore(colorizedLore);
 		stack.setItemMeta(meta);
 
 		SpecialItem item = new SpecialItem(name);
 		item.itemStack = stack;
 		item.slot = config.getInt(name + ".slot");
+
 		SpecialItemManager.addItem(name, item);
 	}
 

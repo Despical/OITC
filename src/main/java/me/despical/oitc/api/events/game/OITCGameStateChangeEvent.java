@@ -1,10 +1,9 @@
 package me.despical.oitc.api.events.game;
 
-import org.bukkit.event.HandlerList;
-
 import me.despical.oitc.api.events.OITCEvent;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaState;
+import org.bukkit.event.HandlerList;
 
 /**
  * @author Despical
@@ -15,7 +14,7 @@ import me.despical.oitc.arena.ArenaState;
 public class OITCGameStateChangeEvent extends OITCEvent {
 
 	private static final HandlerList HANDLERS = new HandlerList();
-	private ArenaState arenaState;
+	private final ArenaState arenaState;
 
 	public OITCGameStateChangeEvent(Arena eventArena, ArenaState arenaState) {
 		super(eventArena);

@@ -1,5 +1,7 @@
 package me.despical.oitc.events.spectator;
 
+import me.despical.commonsbox.compat.XMaterial;
+import me.despical.commonsbox.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,9 +13,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import me.despical.commonsbox.compat.XMaterial;
-import me.despical.commonsbox.item.ItemBuilder;
 
 /**
  * @author Despical

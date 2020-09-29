@@ -1,5 +1,14 @@
 package me.despical.oitc.commands.game;
 
+import me.despical.oitc.ConfigPreferences;
+import me.despical.oitc.api.StatsStorage;
+import me.despical.oitc.commands.SubCommand;
+import me.despical.oitc.commands.exception.CommandException;
+import me.despical.oitc.user.data.MysqlManager;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,16 +16,6 @@ import java.sql.Statement;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-
-import me.despical.oitc.ConfigPreferences;
-import me.despical.oitc.api.StatsStorage;
-import me.despical.oitc.commands.SubCommand;
-import me.despical.oitc.commands.exception.CommandException;
-import me.despical.oitc.user.data.MysqlManager;
 
 /**
  * @author Despical
@@ -45,12 +44,15 @@ public class LeaderBoardCommand extends SubCommand {
 			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Statistics.Type-Name"));
 			return;
 		}
+
 		try {
 			StatsStorage.StatisticType statisticType = StatsStorage.StatisticType.valueOf(args[0].toUpperCase(java.util.Locale.ENGLISH));
+
 			if (!statisticType.isPersistent()) {
 				sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Statistics.Invalid-Name"));
 				return;
 			}
+
 			printLeaderboard(sender, statisticType);
 		} catch (IllegalArgumentException e) {
 			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Statistics.Invalid-Name"));
@@ -61,6 +63,7 @@ public class LeaderBoardCommand extends SubCommand {
 		LinkedHashMap<UUID, Integer> stats = (LinkedHashMap<UUID, Integer>) StatsStorage.getStats(statisticType);
 		sender.sendMessage(getPlugin().getChatManager().colorMessage("Commands.Statistics.Header"));
 		String statistic = StringUtils.capitalize(statisticType.toString().toLowerCase(java.util.Locale.ENGLISH).replace("_", " "));
+
 		for (int i = 0; i < 10; i++) {
 			try {
 				UUID current = (UUID) stats.keySet().toArray()[stats.keySet().toArray().length - 1];

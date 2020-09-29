@@ -1,26 +1,20 @@
 package me.despical.oitc.events;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.user.User;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import java.util.regex.Pattern;
 
 /**
  * @author Despical
@@ -29,11 +23,12 @@ import me.despical.oitc.user.User;
  */
 public class ChatEvents implements Listener {
 
-	private Main plugin;
-	private String[] regexChars = new String[] { "$", "\\" };
+	private final Main plugin;
+	private final String[] regexChars = new String[] { "$", "\\" };
 
 	public ChatEvents(Main plugin) {
 		this.plugin = plugin;
+
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
@@ -41,40 +36,48 @@ public class ChatEvents implements Listener {
 	public void onChatIngame(AsyncPlayerChatEvent event) {
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
 		if (arena == null) {
+			if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT)) {
+				for (Arena loopArena : ArenaRegistry.getArenas()) {
+					for (Player player : loopArena.getPlayers()) {
+						event.getRecipients().remove(player);
+					}
+				}
+			}
+
 			return;
 		}
+
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.CHAT_FORMAT_ENABLED)) {
-			event.setCancelled(true);
-			Iterator<Player> iterator = event.getRecipients().iterator();
-			List<Player> remove = new ArrayList<>();
-			while (iterator.hasNext()) {
-				Player player = iterator.next();
-				remove.add(player);
-			}
-			for (Player player : remove) {
-				event.getRecipients().remove(player);
-			}
-			remove.clear();
-			String message;
 			String eventMessage = event.getMessage();
-			boolean dead = !arena.getPlayersLeft().contains(event.getPlayer());
 			for (String regexChar : regexChars) {
 				if (eventMessage.contains(regexChar)) {
 					eventMessage = eventMessage.replaceAll(Pattern.quote(regexChar), "");
 				}
 			}
-			FileConfiguration config = ConfigUtils.getConfig(plugin, "messages");
-			message = formatChatPlaceholders(config.getString("In-Game.Game-Chat-Format"), plugin.getUserManager().getUser(event.getPlayer()), eventMessage);
-			for (Player player : arena.getPlayers()) {
-				if (dead && arena.getPlayersLeft().contains(player)) {
-					continue;
+
+			String message = formatChatPlaceholders(plugin.getChatManager().colorMessage("In-Game.Game-Chat-Format"), plugin.getUserManager().getUser(event.getPlayer()), eventMessage);
+
+			if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT)) {
+				event.setCancelled(true);
+				boolean dead = !arena.getPlayersLeft().contains(event.getPlayer());
+
+				for (Player player : arena.getPlayers()) {
+					if (dead && arena.getPlayersLeft().contains(player)) {
+						continue;
+					}
+
+					if (dead) {
+						String prefix = formatChatPlaceholders(plugin.getChatManager().colorMessage("In-Game.Game-Death-Format"), plugin.getUserManager().getUser(event.getPlayer()), null);
+						player.sendMessage(prefix + message);
+					} else {
+						player.sendMessage(message);
+					}
 				}
-				player.sendMessage(message);
+
+				Bukkit.getConsoleSender().sendMessage(message);
+			} else {
+				event.setMessage(message);
 			}
-			Bukkit.getConsoleSender().sendMessage(message);
-		} else if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT)) {
-			event.getRecipients().clear();
-			event.getRecipients().addAll(new ArrayList<>(arena.getPlayers()));
 		}
 	}
 
@@ -83,9 +86,11 @@ public class ChatEvents implements Listener {
 		formatted = plugin.getChatManager().colorRawMessage(formatted);
 		formatted = StringUtils.replace(formatted, "%player%", user.getPlayer().getName());
 		formatted = StringUtils.replace(formatted, "%message%", ChatColor.stripColor(saidMessage));
+
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 			formatted = PlaceholderAPI.setPlaceholders(user.getPlayer(), formatted);
 		}
+
 		return formatted;
 	}
 }

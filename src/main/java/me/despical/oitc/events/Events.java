@@ -1,15 +1,23 @@
 package me.despical.oitc.events;
 
+import me.despical.commonsbox.compat.XMaterial;
+import me.despical.commonsbox.item.ItemBuilder;
+import me.despical.commonsbox.item.ItemUtils;
+import me.despical.oitc.ConfigPreferences;
+import me.despical.oitc.Main;
+import me.despical.oitc.api.StatsStorage;
+import me.despical.oitc.arena.Arena;
+import me.despical.oitc.arena.ArenaManager;
+import me.despical.oitc.arena.ArenaRegistry;
+import me.despical.oitc.handlers.items.SpecialItemManager;
+import me.despical.oitc.handlers.rewards.Reward;
+import me.despical.oitc.utils.ItemPosition;
+import me.despical.oitc.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,30 +31,9 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerPickupArrowEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-
-import me.despical.commonsbox.compat.XMaterial;
-import me.despical.commonsbox.item.ItemBuilder;
-import me.despical.oitc.ConfigPreferences;
-import me.despical.oitc.Main;
-import me.despical.oitc.api.StatsStorage;
-import me.despical.oitc.arena.Arena;
-import me.despical.oitc.arena.ArenaManager;
-import me.despical.oitc.arena.ArenaRegistry;
-import me.despical.oitc.handlers.items.SpecialItemManager;
-import me.despical.oitc.handlers.rewards.Reward;
-import me.despical.oitc.utils.ItemPosition;
-import me.despical.oitc.utils.Utils;
 
 /**
  * @author Despical
@@ -55,7 +42,7 @@ import me.despical.oitc.utils.Utils;
  */
 public class Events implements Listener {
 
-	private Main plugin;
+	private final Main plugin;
 
 	public Events(Main plugin) {
 		this.plugin = plugin;
@@ -129,7 +116,7 @@ public class Events implements Listener {
 		}
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
 		ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
-		if (arena == null || !Utils.isNamed(itemStack)) {
+		if (arena == null || !ItemUtils.isNamed(itemStack)) {
 			return;
 		}
 		String key = SpecialItemManager.getRelatedSpecialItem(itemStack);

@@ -1,14 +1,7 @@
 package me.despical.oitc.handlers.setup;
 
-import java.util.Random;
-
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.github.stefvanschie.inventoryframework.Gui;
-import com.github.stefvanschie.inventoryframework.pane.StaticPane;
-
+import com.github.despical.inventoryframework.Gui;
+import com.github.despical.inventoryframework.pane.StaticPane;
 import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
@@ -16,6 +9,11 @@ import me.despical.oitc.handlers.setup.components.ArenaRegisterComponent;
 import me.despical.oitc.handlers.setup.components.MiscComponents;
 import me.despical.oitc.handlers.setup.components.PlayerAmountComponents;
 import me.despical.oitc.handlers.setup.components.SpawnComponents;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Random;
 
 /**
  * @author Despical
@@ -24,18 +22,19 @@ import me.despical.oitc.handlers.setup.components.SpawnComponents;
  */
 public class SetupInventory {
 
-	private static Random random = new Random();
-	private static Main plugin = JavaPlugin.getPlugin(Main.class);
-	private FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
-	private Arena arena;
-	private Player player;
+	private static final Random random = new Random();
+	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
+	private final FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
+	private final Arena arena;
+	private final Player player;
 	private Gui gui;
-	private SetupUtilities setupUtilities;
+	private final SetupUtilities setupUtilities;
 
 	public SetupInventory(Arena arena, Player player) {
 		this.arena = arena;
 		this.player = player;
 		this.setupUtilities = new SetupUtilities(config, arena);
+
 		prepareGui();
 	}
 
@@ -66,7 +65,8 @@ public class SetupInventory {
 	}
 
 	private void sendProTip(Player p) {
-		int rand = random.nextInt(16 + 1);
+		int rand = random.nextInt(8 + 1);
+
 		switch (rand) {
 		case 0:
 			p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7We are open source! You can always help us by contributing! Check https://github.com/Despical/OITC"));
@@ -76,6 +76,9 @@ public class SetupInventory {
 			break;
 		case 2:
 			p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7Need help? Check our wiki: https://github.com/Despical/OITC/wiki"));
+			break;
+		case 3:
+			p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7Want to access exclusive maps, addons and more? Check our Patreon page: https://www.patreon.com/despical"));
 			break;
 		default:
 			break;
@@ -101,10 +104,6 @@ public class SetupInventory {
 
 	public Player getPlayer() {
 		return player;
-	}
-
-	public Gui getGui() {
-		return gui;
 	}
 
 	public SetupUtilities getSetupUtilities() {

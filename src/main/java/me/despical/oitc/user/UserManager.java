@@ -1,12 +1,5 @@
 package me.despical.oitc.user;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
@@ -15,6 +8,12 @@ import me.despical.oitc.user.data.FileStats;
 import me.despical.oitc.user.data.MysqlManager;
 import me.despical.oitc.user.data.UserDatabase;
 import me.despical.oitc.utils.Debugger;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Despical
@@ -23,25 +22,23 @@ import me.despical.oitc.utils.Debugger;
  */
 public class UserManager {
 
-	private UserDatabase database;
-	private List<User> users = new ArrayList<>();
+	private final UserDatabase database;
+	private final List<User> users = new ArrayList<>();
 
 	public UserManager(Main plugin) {
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
 			database = new MysqlManager(plugin);
-			Debugger.debug(Level.INFO, "MySQL Stats enabled");
+			Debugger.debug("MySQL Stats enabled");
 		} else {
 			database = new FileStats(plugin);
-			Debugger.debug(Level.INFO, "File Stats enabled");
+			Debugger.debug("File Stats enabled");
 		}
+
 		loadStatsForPlayersOnline();
 	}
 
 	private void loadStatsForPlayersOnline() {
-		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			User user = getUser(player);
-			loadStatistics(user);
-		}
+		Bukkit.getServer().getOnlinePlayers().stream().map(this::getUser).forEach(this::loadStatistics);
 	}
 
 	public User getUser(Player player) {
@@ -50,25 +47,27 @@ public class UserManager {
 				return user;
 			}
 		}
-		Debugger.debug(Level.INFO, "Registering new user {0} ({1})", player.getUniqueId(), player.getName());
+
+		Debugger.debug("Registering new user {0} ({1})", player.getUniqueId(), player.getName());
 		User user = new User(player);
 		users.add(user);
 		return user;
 	}
 	
 	public List<User> getUsers(Arena arena) {
-		List<User> users = new ArrayList<>();
-		for (Player player : arena.getPlayers()) {
-			users.add(getUser(player));
-		}
-		return users;
+		return arena.getPlayers().stream().map(this::getUser).collect(Collectors.toList());
 	}
 
 	public void saveStatistic(User user, StatsStorage.StatisticType stat) {
 		if (!stat.isPersistent()) {
 			return;
 		}
+
 		database.saveStatistic(user, stat);
+	}
+
+	public void saveAllStatistic(User user) {
+		database.saveAllStatistic(user);
 	}
 
 	public void loadStatistics(User user) {

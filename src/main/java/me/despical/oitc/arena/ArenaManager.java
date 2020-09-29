@@ -1,21 +1,5 @@
 package me.despical.oitc.arena;
 
-import java.util.List;
-import java.util.logging.Level;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.despical.commonsbox.compat.XMaterial;
 import me.despical.commonsbox.configuration.ConfigUtils;
@@ -34,6 +18,21 @@ import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.utils.Debugger;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -42,7 +41,7 @@ import me.despical.oitc.utils.Debugger;
  */
 public class ArenaManager {
 
-	private static Main plugin = JavaPlugin.getPlugin(Main.class);
+	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	private ArenaManager() {}
 
@@ -56,7 +55,7 @@ public class ArenaManager {
 	 * @see OITCGameJoinAttemptEvent
 	 */
 	public static void joinAttempt(Player player, Arena arena) {
-		Debugger.debug(Level.INFO, "[{0}] Initial join attempt for {1}", arena.getId(), player.getName());
+		Debugger.debug("[{0}] Initial join attempt for {1}", arena.getId(), player.getName());
 		long start = System.currentTimeMillis();
 		OITCGameJoinAttemptEvent gameJoinAttemptEvent = new OITCGameJoinAttemptEvent(player, arena);
 		Bukkit.getPluginManager().callEvent(gameJoinAttemptEvent);
@@ -117,6 +116,7 @@ public class ArenaManager {
 		player.getInventory().setArmorContents(new ItemStack[] { new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR) });
 		player.getInventory().clear();
 		player.setGameMode(GameMode.ADVENTURE);
+
 		if (arena.getArenaState() == ArenaState.IN_GAME || arena.getArenaState() == ArenaState.ENDING) {
 			arena.teleportToStartLocation(player);
 			player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.You-Are-Spectator"));
@@ -124,9 +124,7 @@ public class ArenaManager {
 			player.getInventory().setItem(0, new ItemBuilder(XMaterial.COMPASS.parseItem()).name(plugin.getChatManager().colorMessage("In-Game.Spectator.Spectator-Item-Name")).build());
 			player.getInventory().setItem(4, new ItemBuilder(XMaterial.COMPARATOR.parseItem()).name(plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Item-Name")).build());
 			player.getInventory().setItem(8, SpecialItemManager.getSpecialItem("Leave").getItemStack());
-			for (PotionEffect potionEffect : player.getActivePotionEffects()) {
-				player.removePotionEffect(potionEffect.getType());
-			}
+			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false), false);
 			ArenaUtils.hidePlayer(player, arena);
 			user.setSpectator(true);
@@ -177,7 +175,7 @@ public class ArenaManager {
 	 * @see OITCGameLeaveAttemptEvent
 	 */
 	public static void leaveAttempt(Player player, Arena arena) {
-		Debugger.debug(Level.INFO, "[{0}] Initial leave attempt for {1}", arena.getId(), player.getName());
+		Debugger.debug("[{0}] Initial leave attempt for {1}", arena.getId(), player.getName());
 		long start = System.currentTimeMillis();
 
 		OITCGameLeaveAttemptEvent event = new OITCGameLeaveAttemptEvent(player, arena);
@@ -212,31 +210,32 @@ public class ArenaManager {
 		player.setExp(0);
 		player.setFlying(false);
 		player.setAllowFlight(false);
-		for (PotionEffect effect : player.getActivePotionEffects()) {
-			player.removePotionEffect(effect.getType());
-		}
+		player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 		player.setWalkSpeed(0.2f);
 		player.setFireTicks(0);
+
 		if (arena.getArenaState() != ArenaState.WAITING_FOR_PLAYERS && arena.getArenaState() != ArenaState.STARTING && arena.getPlayers().size() == 0) {
 			arena.setArenaState(ArenaState.ENDING);
 			arena.setTimer(0);
 		}
+
 		player.setGameMode(GameMode.SURVIVAL);
+
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
 			if (ArenaRegistry.getArena(players) == null) {
 				players.showPlayer(plugin, player);
 			}
+
 			player.showPlayer(plugin, players);
 		}
+
 		arena.teleportToEndLocation(player);
+
 		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED) && plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.loadInventory(plugin, player);
 		}
-		for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
-			if (!stat.isPersistent()) {
-				user.setStat(stat, 0);
-			}
-		}
+
+		plugin.getUserManager().saveAllStatistic(user);
 		Debugger.debug(Level.INFO, "[{0}] Game leave finished for {1} took {2} ms", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 	}
 
@@ -249,7 +248,7 @@ public class ArenaManager {
 	 * @see OITCGameStopEvent
 	 */
 	public static void stopGame(boolean quickStop, Arena arena) {
-		Debugger.debug(Level.INFO, "[{0}] Stop game event initialized with quickStop {1}", arena.getId(), quickStop);
+		Debugger.debug("[{0}] Stop game event initialized with quickStop {1}", arena.getId(), quickStop);
 		FileConfiguration config = ConfigUtils.getConfig(plugin, "messages");
 		long start = System.currentTimeMillis();
 
@@ -299,7 +298,7 @@ public class ArenaManager {
 				}.runTaskTimer(plugin, 30, 30);
 			}
 		}
-		Debugger.debug(Level.INFO, "[{0}] Stop game event finished took {1} ms", arena.getId(), System.currentTimeMillis() - start);
+		Debugger.debug("[{0}] Stop game event finished took {1} ms", arena.getId(), System.currentTimeMillis() - start);
 	}
 
 	private static String formatSummaryPlaceholders(String msg, Arena arena, Player player) {

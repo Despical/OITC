@@ -1,11 +1,10 @@
 package me.despical.oitc.handlers;
 
-import org.bukkit.entity.Player;
-
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
+import org.bukkit.entity.Player;
 
 /**
  * @author Despical
@@ -32,13 +31,14 @@ public class PlaceholderManager extends PlaceholderExpansion {
 	}
 
 	public String getVersion() {
-		return "1.0.0";
+		return "1.0.6";
 	}
 
 	public String onPlaceholderRequest(Player player, String id) {
 		if (player == null) {
 			return null;
 		}
+
 		switch (id.toLowerCase()) {
 		case "kills":
 			return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.KILLS));
@@ -61,11 +61,14 @@ public class PlaceholderManager extends PlaceholderExpansion {
 		if (!id.contains(":")) {
 			return null;
 		}
+
 		String[] data = id.split(":");
 		Arena arena = ArenaRegistry.getArena(data[0]);
+
 		if (arena == null) {
 			return null;
 		}
+
 		switch (data[1].toLowerCase()) {
 		case "players":
 			return String.valueOf(arena.getPlayers().size());

@@ -110,6 +110,7 @@ In-Game:
   Join-Cancelled-Via-API: "&cYou can't join this game!"
   Arena-Not-Configured: "&cArena is not configured yet! Contact staff!"
   Game-Chat-Format: "&7%player%: &f%message%"
+  Game-Death-Format: "&7[&4☠&7] &r"
   Spectator:
     Spectator-Item-Name: "&7Players list"
     Spectator-Menu-Name: "&8Players list"

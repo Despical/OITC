@@ -1,8 +1,8 @@
 package me.despical.oitc.handlers.items;
 
-import java.util.HashMap;
-
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
 
 /**
  * @author Despical
@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class SpecialItemManager {
 
-	private static HashMap<String, SpecialItem> specialItems = new HashMap<>();
+	private static final HashMap<String, SpecialItem> specialItems = new HashMap<>();
 
 	public static void addItem(String name, SpecialItem entityItem) {
 		specialItems.put(name, entityItem);
@@ -21,16 +21,19 @@ public class SpecialItemManager {
 		if (specialItems.containsKey(name)) {
 			return specialItems.get(name);
 		}
+
 		return null;
 	}
 
 	public static String getRelatedSpecialItem(ItemStack itemStack) {
 		for (String key : specialItems.keySet()) {
 			SpecialItem entityItem = specialItems.get(key);
+
 			if (entityItem.getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase(itemStack.getItemMeta().getDisplayName())) {
 				return key;
 			}
 		}
+
 		return null;
 	}
 }

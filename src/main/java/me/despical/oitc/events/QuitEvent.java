@@ -1,13 +1,12 @@
 package me.despical.oitc.events;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
-
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.user.User;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * @author Despical
@@ -16,7 +15,7 @@ import me.despical.oitc.user.User;
  */
 public class QuitEvent implements Listener {
 
-	private Main plugin;
+	private final Main plugin;
 
 	public QuitEvent(Main plugin) {
 		this.plugin = plugin;
@@ -28,6 +27,7 @@ public class QuitEvent implements Listener {
 		if (ArenaRegistry.isInArena(event.getPlayer())) {
 			ArenaManager.leaveAttempt(event.getPlayer(), ArenaRegistry.getArena(event.getPlayer()));
 		}
+
 		final User user = plugin.getUserManager().getUser(event.getPlayer());
 		plugin.getUserManager().removeUser(user);
 	}

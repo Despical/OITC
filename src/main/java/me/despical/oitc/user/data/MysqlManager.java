@@ -1,14 +1,5 @@
 package me.despical.oitc.user.data;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.commonsbox.database.MysqlDatabase;
 import me.despical.oitc.Main;
@@ -16,6 +7,14 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
 import me.despical.oitc.utils.Debugger;
 import me.despical.oitc.utils.MessageUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -24,12 +23,13 @@ import me.despical.oitc.utils.MessageUtils;
  */
 public class MysqlManager implements UserDatabase {
 
-	private Main plugin;
-	private MysqlDatabase database;
+	private final Main plugin;
+	private final MysqlDatabase database;
 
 	public MysqlManager(Main plugin) {
 		this.plugin = plugin;
 		database = plugin.getMysqlDatabase();
+
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			try (Connection connection = database.getConnection()) {
 				Statement statement = connection.createStatement();
@@ -60,22 +60,43 @@ public class MysqlManager implements UserDatabase {
 	}
 
 	@Override
+	public void saveAllStatistic(User user) {
+		StringBuilder update = new StringBuilder(" SET ");
+
+		for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+			if (!stat.isPersistent()) continue;
+			if (update.toString().equalsIgnoreCase(" SET ")) {
+				update.append(stat.getName()).append("=").append(user.getStat(stat));
+			}
+
+			update.append(", ").append(stat.getName()).append("=").append(user.getStat(stat));
+		}
+
+		String finalUpdate = update.toString();
+
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> database.executeUpdate("UPDATE " + getTableName() + finalUpdate + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';"));
+	}
+
+	@Override
 	public void loadStatistics(User user) {
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			String uuid = user.getPlayer().getUniqueId().toString();
+
 			try (Connection connection = database.getConnection()) {
 				Statement statement = connection.createStatement();
 				ResultSet rs = statement.executeQuery("SELECT * from " + getTableName() + " WHERE UUID='" + uuid + "';");
 				if (rs.next()) {
-					Debugger.debug(Level.INFO, "MySQL Stats | Player {0} already exist. Getting Stats...", user.getPlayer().getName());
+					Debugger.debug("MySQL Stats | Player {0} already exist. Getting Stats...", user.getPlayer().getName());
+
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 						if (!stat.isPersistent()) continue;
 						int val = rs.getInt(stat.getName());
 						user.setStat(stat, val);
 					}
 				} else {
-					Debugger.debug(Level.INFO, "MySQL Stats | Player {0} does not exist. Creating new one...", user.getPlayer().getName());
+					Debugger.debug("MySQL Stats | Player {0} does not exist. Creating new one...", user.getPlayer().getName());
 					statement.executeUpdate("INSERT INTO " + getTableName() + " (UUID,name) VALUES ('" + uuid + "','" + user.getPlayer().getName() + "');");
+
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 						if (!stat.isPersistent())
 							continue;

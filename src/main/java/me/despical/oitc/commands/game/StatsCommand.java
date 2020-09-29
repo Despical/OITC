@@ -1,15 +1,14 @@
 package me.despical.oitc.commands.game;
 
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.commands.SubCommand;
 import me.despical.oitc.commands.exception.CommandException;
 import me.despical.oitc.user.User;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 /**
  * @author Despical

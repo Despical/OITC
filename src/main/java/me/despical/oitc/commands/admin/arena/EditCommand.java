@@ -1,15 +1,14 @@
 package me.despical.oitc.commands.admin.arena;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.commands.SubCommand;
 import me.despical.oitc.commands.exception.CommandException;
 import me.despical.oitc.handlers.setup.SetupInventory;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Despical

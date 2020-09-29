@@ -1,33 +1,23 @@
 package me.despical.oitc.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import me.despical.commonsbox.string.StringMatcher;
+import me.despical.oitc.Main;
+import me.despical.oitc.commands.SubCommand.SenderType;
+import me.despical.oitc.commands.admin.HelpCommand;
+import me.despical.oitc.commands.admin.ListCommand;
+import me.despical.oitc.commands.admin.arena.*;
+import me.despical.oitc.commands.exception.CommandException;
+import me.despical.oitc.commands.game.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.despical.commonsbox.string.StringMatcher;
-import me.despical.oitc.Main;
-import me.despical.oitc.commands.SubCommand.SenderType;
-import me.despical.oitc.commands.admin.HelpCommand;
-import me.despical.oitc.commands.admin.ListCommand;
-import me.despical.oitc.commands.admin.arena.DeleteCommand;
-import me.despical.oitc.commands.admin.arena.EditCommand;
-import me.despical.oitc.commands.admin.arena.ForceStartCommand;
-import me.despical.oitc.commands.admin.arena.ReloadCommand;
-import me.despical.oitc.commands.admin.arena.StopCommand;
-import me.despical.oitc.commands.exception.CommandException;
-import me.despical.oitc.commands.game.CreateCommand;
-import me.despical.oitc.commands.game.JoinCommand;
-import me.despical.oitc.commands.game.LeaderBoardCommand;
-import me.despical.oitc.commands.game.LeaveCommand;
-import me.despical.oitc.commands.game.RandomJoinCommand;
-import me.despical.oitc.commands.game.StatsCommand;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Despical
@@ -99,14 +89,18 @@ public class CommandHandler implements CommandExecutor {
 						sender.sendMessage(ChatColor.RED + "Usage: /" + label + " " + subCommand.getName() + " " + (subCommand.getPossibleArguments().length() > 0 ? subCommand.getPossibleArguments() : ""));
 					}
 				}
+
 				return true;
 			}
 		}
+
 		List<StringMatcher.Match> matches = StringMatcher.match(args[0], subCommands.stream().map(SubCommand::getName).collect(Collectors.toList()));
+
         if (!matches.isEmpty()) {
           sender.sendMessage(plugin.getChatManager().colorMessage("Commands.Did-You-Mean").replace("%command%", label + " " + matches.get(0).getMatch()));
           return true;
         }
+
         return true;
 	}
 }

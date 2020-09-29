@@ -13,7 +13,7 @@ public enum ItemPosition {
 
 	SWORD(0), BOW(1), ARROW(7);
 	
-	private int itemPosition;
+	private final int itemPosition;
 
 	ItemPosition(int itemPosition) {
 		this.itemPosition = itemPosition;
@@ -33,13 +33,13 @@ public enum ItemPosition {
 		if (player == null) {
 			return;
 		}
+
 		Inventory inv = player.getInventory();
+
 		if (inv.getItem(itemPosition.getItemPosition()) != null) {
 			inv.getItem(itemPosition.getItemPosition()).setAmount(inv.getItem(itemPosition.getItemPosition()).getAmount() + itemStack.getAmount());
-			return;
 		} else {
 			inv.setItem(itemPosition.getItemPosition(), itemStack);
-			return;
 		}
 	}
 
@@ -56,6 +56,7 @@ public enum ItemPosition {
 		if (player == null) {
 			return;
 		}
+
 		Inventory inv = player.getInventory();
 		inv.setItem(itemPosition.getItemPosition(), itemStack);
 	}

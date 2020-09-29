@@ -1,21 +1,7 @@
 package me.despical.oitc.handlers.setup.components;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Sign;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-
-import com.github.stefvanschie.inventoryframework.GuiItem;
-import com.github.stefvanschie.inventoryframework.pane.StaticPane;
-
+import com.github.despical.inventoryframework.GuiItem;
+import com.github.despical.inventoryframework.pane.StaticPane;
 import me.despical.commonsbox.compat.XMaterial;
 import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.commonsbox.item.ItemBuilder;
@@ -26,6 +12,18 @@ import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.setup.SetupInventory;
 import me.despical.oitc.handlers.sign.ArenaSign;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Sign;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Despical
@@ -45,7 +43,9 @@ public class ArenaRegisterComponent implements SetupComponent {
 	public void injectComponents(StaticPane pane) {
 		FileConfiguration config = setupInventory.getConfig();
 		Main plugin = setupInventory.getPlugin();
+		Arena arena = setupInventory.getArena();
 		ItemStack registeredItem;
+
 		if (!setupInventory.getArena().isReady()) {
 			registeredItem = new ItemBuilder(XMaterial.FIREWORK_ROCKET.parseItem())
 				.name(plugin.getChatManager().colorRawMessage("&e&lRegister Arena - Finish Setup"))
@@ -62,32 +62,39 @@ public class ArenaRegisterComponent implements SetupComponent {
 				.flag(ItemFlag.HIDE_ENCHANTS)
 				.build();
 		}
+
 		pane.addItem(new GuiItem(registeredItem, e -> {
-			Arena arena = setupInventory.getArena();
 			e.getWhoClicked().closeInventory();
+
 			if (ArenaRegistry.getArena(setupInventory.getArena().getId()).isReady()) {
 				e.getWhoClicked().sendMessage(plugin.getChatManager().colorRawMessage("&a&l✔ &aThis arena was already validated and is ready to use!"));
 				return;
 			}
-			String[] locations = new String[] { "lobbylocation", "Endlocation" };
-			String[] spawns = new String[] { "playerspawnpoints" };
+
+			String[] locations = new String[] {"lobbylocation", "Endlocation"};
+			String[] spawns = new String[] {"playerspawnpoints"};
+
 			for (String s : locations) {
 				if (!config.isSet("instances." + arena.getId() + "." + s) || config.getString("instances." + arena.getId() + "." + s).equals(LocationSerializer.locationToString(Bukkit.getWorlds().get(0).getSpawnLocation()))) {
 					e.getWhoClicked().sendMessage(plugin.getChatManager().colorRawMessage("&c&l✘ &cArena validation failed! Please configure following spawn properly: " + s + " (cannot be world spawn location)"));
 					return;
 				}
 			}
+
 			for (String s : spawns) {
 				if (!config.isSet("instances." + arena.getId() + "." + s) || config.getStringList("instances." + arena.getId() + "." + s).size() < arena.getMaximumPlayers()) {
 					e.getWhoClicked().sendMessage(plugin.getChatManager().colorRawMessage("&c&l✘ &cArena validation failed! Please configure following spawns properly: " + s + " (must be minimum " + arena.getMaximumPlayers() + " spawns)"));
 					return;
 				}
 			}
+
 			e.getWhoClicked().sendMessage(plugin.getChatManager().colorRawMessage("&a&l✔ &aValidation succeeded! Registering new arena instance: " + arena.getId()));
 			config.set("instances." + arena.getId() + ".isdone", true);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
+
 			List<Sign> signsToUpdate = new ArrayList<>();
 			ArenaRegistry.unregisterArena(setupInventory.getArena());
+
 			for (ArenaSign arenaSign : plugin.getSignManager().getArenaSigns()) {
 				if (arenaSign.getArena().equals(setupInventory.getArena())) {
 					signsToUpdate.add(arenaSign.getSign());
@@ -95,19 +102,25 @@ public class ArenaRegisterComponent implements SetupComponent {
 			}
 			arena.setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 			arena.setReady(true);
+
 			List<Location> playerSpawnPoints = new ArrayList<>();
+
 			for (String loc : config.getStringList("instances." + arena.getId() + ".playerspawnpoints")) {
 				playerSpawnPoints.add(LocationSerializer.locationFromString(loc));
 			}
+
 			arena.setPlayerSpawnPoints(playerSpawnPoints);
 			arena.setMinimumPlayers(config.getInt("instances." + arena.getId() + ".minimumplayers"));
 			arena.setMaximumPlayers(config.getInt("instances." + arena.getId() + ".maximumplayers"));
 			arena.setMapName(config.getString("instances." + arena.getId() + ".mapname"));
 			arena.setLobbyLocation(LocationSerializer.locationFromString(config.getString("instances." + arena.getId() + ".lobbylocation")));
 			arena.setEndLocation(LocationSerializer.locationFromString(config.getString("instances." + arena.getId() + ".Endlocation")));
+
 			ArenaRegistry.registerArena(arena);
 			arena.start();
+
 			ConfigUtils.saveConfig(plugin, config, "arenas");
+
 			for (Sign s : signsToUpdate) {
 				plugin.getSignManager().getArenaSigns().add(new ArenaSign(s, arena));
 			}

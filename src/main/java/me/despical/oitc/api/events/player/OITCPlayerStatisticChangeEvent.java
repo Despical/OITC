@@ -1,11 +1,10 @@
 package me.despical.oitc.api.events.player;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.api.events.OITCEvent;
 import me.despical.oitc.arena.Arena;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 /**
  * @author Despical
@@ -17,9 +16,9 @@ import me.despical.oitc.arena.Arena;
 public class OITCPlayerStatisticChangeEvent extends OITCEvent {
 
 	private static final HandlerList HANDLERS = new HandlerList();
-	private Player player;
-	private StatsStorage.StatisticType statisticType;
-	private int number;
+	private final Player player;
+	private final StatsStorage.StatisticType statisticType;
+	private final int number;
 
 	public OITCPlayerStatisticChangeEvent(Arena eventArena, Player player, StatsStorage.StatisticType statisticType, int number) {
 		super(eventArena);

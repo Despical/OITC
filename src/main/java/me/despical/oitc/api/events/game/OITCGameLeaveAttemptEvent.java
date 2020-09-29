@@ -1,10 +1,9 @@
 package me.despical.oitc.api.events.game;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-
 import me.despical.oitc.api.events.OITCEvent;
 import me.despical.oitc.arena.Arena;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 /**
  * @author Despical

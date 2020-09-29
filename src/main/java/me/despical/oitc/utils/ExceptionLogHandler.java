@@ -1,14 +1,13 @@
 package me.despical.oitc.utils;
 
+import me.despical.oitc.Main;
+import org.bukkit.Bukkit;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-
-import org.bukkit.Bukkit;
-
-import me.despical.oitc.Main;
 
 /**
  * @author Despical

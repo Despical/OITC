@@ -1,17 +1,5 @@
 package me.despical.oitc.arena.managers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.commonsbox.scoreboard.ScoreboardLib;
@@ -25,6 +13,13 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.user.User;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Despical
@@ -33,11 +28,10 @@ import me.despical.oitc.user.User;
  */
 public class ScoreboardManager {
 
-	private static Main plugin = JavaPlugin.getPlugin(Main.class);
-	private static String boardTitle = plugin.getChatManager().colorMessage("Scoreboard.Title");
-	private List<Scoreboard> scoreboards = new ArrayList<>();
-	private Arena arena;
-	private FileConfiguration config = ConfigUtils.getConfig(plugin, "messages");
+	private final Main plugin = JavaPlugin.getPlugin(Main.class);
+	private final List<Scoreboard> scoreboards = new ArrayList<>();
+	private final Arena arena;
+	private final FileConfiguration config = ConfigUtils.getConfig(plugin, "messages");
 	
 	public ScoreboardManager(Arena arena) {
 		this.arena = arena;
@@ -54,7 +48,7 @@ public class ScoreboardManager {
 
 			@Override
 			public String getTitle(Player player) {
-				return boardTitle;
+				return plugin.getChatManager().colorMessage("Scoreboard.Title");
 			}
 
 			@Override
@@ -62,6 +56,7 @@ public class ScoreboardManager {
 				return formatScoreboard(user);
 			}
 		});
+
 		scoreboard.activate();
 		scoreboards.add(scoreboard);
 	}
@@ -95,6 +90,7 @@ public class ScoreboardManager {
 	private List<Entry> formatScoreboard(User user) {
 		EntryBuilder builder = new EntryBuilder();
 		List<String> lines;
+
 		if (arena.getArenaState() == ArenaState.IN_GAME) {
 			lines = config.getStringList("Scoreboard.Content.Playing");
 		} else {
@@ -104,11 +100,13 @@ public class ScoreboardManager {
 				lines = config.getStringList("Scoreboard.Content." + arena.getArenaState().getFormattedName());
 			}
 		}
+
 		for (String line : lines) {
 			if (!formatScoreboardLine(line, user).equals("%empty%")) {
 				builder.next(formatScoreboardLine(line, user));
 			}
 		}
+
 		return builder.build();
 	}
 
@@ -123,10 +121,13 @@ public class ScoreboardManager {
 		formattedLine = StringUtils.replace(formattedLine, "%kills%", String.valueOf(StatsStorage.getUserStats(user.getPlayer(), StatsStorage.StatisticType.LOCAL_KILLS)));
 		formattedLine = StringUtils.replace(formattedLine, "%deaths%", String.valueOf(StatsStorage.getUserStats(user.getPlayer(), StatsStorage.StatisticType.LOCAL_DEATHS)));
 		formattedLine = StringUtils.replace(formattedLine, "%kill_streak%", String.valueOf(StatsStorage.getUserStats(user.getPlayer(), StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
+
 		for (int i = 0; i <= arena.getMaximumPlayers(); i++) {
 			formattedLine = StringUtils.replace(formattedLine, "%top_player_" + (i + 1) + "%", arena.getPlayersLeft().size() > i ? formatTopPlayer(getTopPlayerName(i), i) : "%empty%");
 		}
+
 		formattedLine = plugin.getChatManager().colorRawMessage(formattedLine);
+
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 			formattedLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), formattedLine);
 		}
@@ -135,44 +136,55 @@ public class ScoreboardManager {
 	
 	private Map<Player, Integer> getSortedLeaderboard(){
 		Map<Player, Integer> statistics = new HashMap<>();
+
 		for (Player player : arena.getPlayersLeft()) {
 			statistics.put(player, StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS));
 		}
+
 		return statistics.entrySet().stream().sorted(Map.Entry.<Player, Integer>comparingByValue().reversed()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));	
 	}
 	
 	public String getTopPlayerName(int rank) {
 		List<String> names = new ArrayList<>();
+
 		for(Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
 			names.add(entry.getKey().getName());
 		}
+
 		if(rank < getSortedLeaderboard().size()) {
 			return names.get(rank);
 		}
+
 		return "";
 	}
 
 	public int getTopPlayerScore(int rank) {
 		List<Integer> scores = new ArrayList<>();
+
 		for(Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
 			scores.add(entry.getValue());
 		}
+
 		if(rank < getSortedLeaderboard().size()) {
 			return scores.get(rank);
 		}
+
 		return 0;
 	}
 	
 	public int getRank(Player player) {
 		List<Player> ranks = new ArrayList<>();
+
 		for(Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
 			ranks.add(entry.getKey());
 		}
+
 		for(int i = 0; i <= ranks.size(); i++) {
 			if(ranks.get(i) == player) {
 				return i + 1;
 			}
 		}
+
 		return 0;
 	}
 	

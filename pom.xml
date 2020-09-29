@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -49,30 +49,24 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.destroystokyo.paper</groupId>
 			<artifactId>paper-api</artifactId>
-			<version>1.12.2-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>1.12.2-R0.1-SNAPSHOT</version>
+			<version>1.16.1-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Despical</groupId>
-			<artifactId>Commons-Box</artifactId>
-			<version>1.1.0</version>
+			<artifactId>commons-box</artifactId>
+			<version>1.1.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.stefvanschie.inventoryframework</groupId>
-			<artifactId>IF</artifactId>
-			<version>0.5.19</version>
-			<scope>compile</scope>
+			<groupId>com.github.Despical</groupId>
+			<artifactId>InventoryFramework</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>me.clip</groupId>

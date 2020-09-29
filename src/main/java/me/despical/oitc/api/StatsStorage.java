@@ -1,16 +1,11 @@
 package me.despical.oitc.api;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.UUID;
-import java.util.logging.Level;
-
+import me.despical.commonsbox.configuration.ConfigUtils;
+import me.despical.commonsbox.sorter.SortUtils;
+import me.despical.oitc.ConfigPreferences;
+import me.despical.oitc.Main;
+import me.despical.oitc.user.data.MysqlManager;
+import me.despical.oitc.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -18,12 +13,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import me.despical.commonsbox.configuration.ConfigUtils;
-import me.despical.commonsbox.sorter.SortUtils;
-import me.despical.oitc.ConfigPreferences;
-import me.despical.oitc.Main;
-import me.despical.oitc.user.data.MysqlManager;
-import me.despical.oitc.utils.MessageUtils;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -33,7 +28,7 @@ import me.despical.oitc.utils.MessageUtils;
  */
 public class StatsStorage {
 
-	private static Main plugin = JavaPlugin.getPlugin(Main.class);
+	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	/**
 	 * Get all UUID's sorted ascending by Statistic Type
@@ -49,7 +44,7 @@ public class StatsStorage {
 			try (Connection connection = plugin.getMysqlDatabase().getConnection()) {
 				Statement statement = connection.createStatement();
 				ResultSet set = statement.executeQuery("SELECT UUID, " + stat.getName() + " FROM " + ((MysqlManager) plugin.getUserManager().getDatabase()).getTableName() + " ORDER BY " + stat.getName());
-				Map<java.util.UUID, java.lang.Integer> column = new LinkedHashMap<>();
+				Map<UUID, Integer> column = new LinkedHashMap<>();
 				
 				while (set.next()) {
 					column.put(java.util.UUID.fromString(set.getString("UUID")), set.getInt(stat.getName()));
@@ -94,8 +89,8 @@ public class StatsStorage {
 		LOSES("loses", true), WINS("wins", true), LOCAL_KILLS("local_kills", false), LOCAL_DEATHS("local_deaths", false),
 		LOCAL_KILL_STREAK("local_kill_streak", false);
 
-		private String name;
-		private boolean persistent;
+		private final String name;
+		private final boolean persistent;
 
 		StatisticType(String name, boolean persistent) {
 			this.name = name;

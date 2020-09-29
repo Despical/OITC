@@ -1,11 +1,5 @@
 package me.despical.oitc.commands.game;
 
-import java.util.List;
-import java.util.logging.Level;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
@@ -14,6 +8,11 @@ import me.despical.oitc.commands.SubCommand;
 import me.despical.oitc.commands.exception.CommandException;
 import me.despical.oitc.utils.Debugger;
 import me.despical.oitc.utils.Utils;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -43,15 +42,18 @@ public class LeaveCommand extends SubCommand {
 			if (!Utils.checkIsInGameInstance((Player) sender)) {
 				return;
 			}
+
 			player.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Teleported-To-The-Lobby", player));
+
 			if (getPlugin().getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				getPlugin().getBungeeManager().connectToHub(player);
-				Debugger.debug(Level.INFO, "{0} was teleported to the Hub server", player.getName());
+				Debugger.debug("{0} was teleported to the Hub server", player.getName());
 				return;
 			}
+
 			Arena arena = ArenaRegistry.getArena(player);
 			ArenaManager.leaveAttempt(player, arena);
-			Debugger.debug(Level.INFO, "{0} has left the arena {1}! Teleported to end location.", player.getName(), arena.getId());
+			Debugger.debug("{0} has left the arena {1}! Teleported to end location.", player.getName(), arena.getId());
 		}
 	}
 

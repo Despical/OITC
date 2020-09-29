@@ -1,18 +1,17 @@
 package me.despical.oitc.user;
 
-import java.util.EnumMap;
-import java.util.Map;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.ScoreboardManager;
-
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.api.events.player.OITCPlayerStatisticChangeEvent;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.ScoreboardManager;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * @author Despical
@@ -21,11 +20,11 @@ import me.despical.oitc.arena.ArenaRegistry;
  */
 public class User {
 
-	private static Main plugin = JavaPlugin.getPlugin(Main.class);
-	private ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
-	private Player player;
+	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
+	private final ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+	private final Player player;
 	private boolean spectator = false;
-	private Map<StatsStorage.StatisticType, Integer> stats = new EnumMap<>(StatsStorage.StatisticType.class);
+	private final Map<StatsStorage.StatisticType, Integer> stats = new EnumMap<>(StatsStorage.StatisticType.class);
 
 	public User(Player player) {
 		this.player = player;
@@ -54,6 +53,7 @@ public class User {
 		} else if (stats.get(stat) == null) {
 			return 0;
 		}
+
 		return stats.get(stat);
 	}
 	
@@ -63,6 +63,7 @@ public class User {
 
 	public void setStat(StatsStorage.StatisticType stat, int i) {
 		stats.put(stat, i);
+
 		Bukkit.getScheduler().runTask(plugin, () -> {
 			OITCPlayerStatisticChangeEvent playerStatisticChangeEvent = new OITCPlayerStatisticChangeEvent(getArena(), player, stat, i);
 			Bukkit.getPluginManager().callEvent(playerStatisticChangeEvent);
@@ -71,6 +72,7 @@ public class User {
 
 	public void addStat(StatsStorage.StatisticType stat, int i) {
 		stats.put(stat, getStat(stat) + i);
+
 		Bukkit.getScheduler().runTask(plugin, () -> {
 			OITCPlayerStatisticChangeEvent playerStatisticChangeEvent = new OITCPlayerStatisticChangeEvent(getArena(), player, stat, getStat(stat));
 			Bukkit.getPluginManager().callEvent(playerStatisticChangeEvent);

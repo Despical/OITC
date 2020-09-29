@@ -1,10 +1,14 @@
 package me.despical.oitc.utils;
 
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.ArenaRegistry;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.SkullMeta;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Despical
@@ -30,24 +34,8 @@ public class Utils {
 	 * @return serialized number
 	 */
 	public static int serializeInt(Integer i) {
-		if ((i % 9) == 0) {
-			return i;
-		} else {
-			return (int) ((Math.ceil(i / 9) * 9) + 9);
-		}
-	}
-
-	/**
-	 * Checks whether itemstack is named (not null, has meta and display name)
-	 *
-	 * @param stack item stack to check
-	 * @return true if named, false otherwise
-	 */
-	public static boolean isNamed(ItemStack stack) {
-		if (stack == null) {
-			return false;
-		}
-		return stack.hasItemMeta() && stack.getItemMeta().hasDisplayName();
+		if (i == 0) return 9;
+		return (i % 9) == 0 ? i : (i + 9 - 1) / 9 * 9;
 	}
 
 	public static boolean checkIsInGameInstance(Player player) {
@@ -55,6 +43,40 @@ public class Utils {
 			player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.Not-Playing", player));
 			return false;
 		}
+
 		return true;
+	}
+
+	public static boolean setPlayerHead(Player player, SkullMeta meta) {
+		if (Bukkit.getServer().getVersion().contains("Paper") && player.getPlayerProfile().hasTextures()) {
+			return CompletableFuture.supplyAsync(() -> {
+				meta.setPlayerProfile(player.getPlayerProfile());
+				return true;
+			}).exceptionally(e -> {
+				Debugger.debug(java.util.logging.Level.WARNING, "Retrieving player profile of "+ player.getName() +" failed!");
+				return null;
+			}).isDone();
+		}
+
+		meta.setOwningPlayer(player);
+		return true;
+	}
+
+	public static String matchColorRegex(String s) {
+		String regex = "&?#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})";
+		Matcher matcher = Pattern.compile(regex).matcher(s);
+
+		while (matcher.find()) {
+			String group = matcher.group(0);
+			String group2 = matcher.group(1);
+
+			try {
+				s = s.replace(group, net.md_5.bungee.api.ChatColor.of("#" + group2) + "");
+			} catch (Exception e) {
+				Debugger.debug("Wrong hex color match: " + group);
+			}
+		}
+
+		return s;
 	}
 }

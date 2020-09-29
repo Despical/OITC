@@ -58,7 +58,7 @@ public class BowTrailsHandler implements Listener {
 							this.cancel();
 						}
 
-						Debugger.debug(Level.INFO, "Spawned particle with perm {0} for player {1}", perm, e.getEntity().getName());
+						Debugger.debug("Spawned particle with perm {0} for player {1}", perm, e.getEntity().getName());
 
 						e.getProjectile().getWorld().spawnParticle(registeredTrails.get(perm), e.getProjectile().getLocation(), 3, 0, 0, 0, 0);
 					}

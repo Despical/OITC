@@ -1,8 +1,7 @@
 package me.despical.oitc.api.events;
 
-import org.bukkit.event.Event;
-
 import me.despical.oitc.arena.Arena;
+import org.bukkit.event.Event;
 
 /**
  * Represents One in the Chamber game related events.

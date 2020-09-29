@@ -1,11 +1,12 @@
 package me.despical.oitc.events.spectator;
 
-import java.util.Collections;
-import java.util.Set;
-
+import me.despical.commonsbox.compat.XMaterial;
+import me.despical.oitc.Main;
+import me.despical.oitc.arena.Arena;
+import me.despical.oitc.arena.ArenaRegistry;
+import me.despical.oitc.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -19,11 +20,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import me.despical.commonsbox.compat.XMaterial;
-import me.despical.oitc.Main;
-import me.despical.oitc.arena.Arena;
-import me.despical.oitc.arena.ArenaRegistry;
-import me.despical.oitc.utils.Utils;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * @author Despical
@@ -68,21 +66,15 @@ public class SpectatorItemEvents implements Listener {
 		Set<Player> players = ArenaRegistry.getArena(p).getPlayers();
 		for (Player player : world.getPlayers()) {
 			if (players.contains(player) && !plugin.getUserManager().getUser(player).isSpectator()) {
-				ItemStack skull;
-				if (plugin.is1_12_R1()) {
-					skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-				} else {
-					skull = XMaterial.PLAYER_HEAD.parseItem();
-				}
+				ItemStack skull = XMaterial.PLAYER_HEAD.parseItem();
 				SkullMeta meta = (SkullMeta) skull.getItemMeta();
-				if (usesPaperSpigot && player.getPlayerProfile().hasTextures()) {
-					meta.setPlayerProfile(player.getPlayerProfile());
-				} else {
-					meta.setOwningPlayer(player);
+				if (!Utils.setPlayerHead(p, meta)) {
+					continue;
 				}
-				meta.setDisplayName(player.getName());
 				String score = plugin.getChatManager().colorMessage("In-Game.Spectator.Target-Player-Score", p).replace("%score%", String.valueOf(ArenaRegistry.getArena(p).getScoreboardManager().getRank(p)));
-				skull.setLore(Collections.singletonList(score));
+
+				meta.setDisplayName(player.getName());
+				meta.setLore(Collections.singletonList(score));
 				skull.setDurability((short) SkullType.PLAYER.ordinal());
 				skull.setItemMeta(meta);
 				inventory.addItem(skull);

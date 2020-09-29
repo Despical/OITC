@@ -11,10 +11,10 @@ import java.util.logging.Logger;
  */
 public class Debugger {
 
-	private static HashSet<String> listenedPerformance = new HashSet<>();
+	private static final HashSet<String> listenedPerformance = new HashSet<>();
 	private static boolean enabled = false;
 	private static boolean deep = false;
-	private static Logger logger = Logger.getLogger("");
+	private static final Logger logger = Logger.getLogger("");
 
 	private Debugger() {}
 
@@ -41,7 +41,28 @@ public class Debugger {
 		if (!enabled && (level != Level.WARNING || level != Level.SEVERE)) {
 			return;
 		}
+
 		logger.log(level, "[OITCDBG] " + msg);
+	}
+
+	/**
+	 * Prints debug message with selected INFO log level.
+	 *
+	 * @param msg debugged message
+	 * @param params to debug
+	 */
+	public static void debug(String msg, Object... params) {
+		debug(Level.INFO, "[OITCDBG] " + msg, params);
+	}
+
+	/**
+	 * Prints debug message with selected log level. Messages of level INFO or TASK
+	 * won't be posted if debugger is enabled, warnings and errors will be.
+	 *
+	 * @param msg debugged message
+	 */
+	public static void debug(String msg) {
+		debug(Level.INFO, msg);
 	}
 
 	/**
@@ -57,6 +78,7 @@ public class Debugger {
 		if (!enabled && (level != Level.WARNING || level != Level.FINE)) {
 			return;
 		}
+
 		logger.log(level, "[OITCDBG] " + msg, params);
 	}
 
@@ -69,12 +91,10 @@ public class Debugger {
 	 * @param params any params to debug
 	 */
 	public static void performance(String monitorName, String msg, Object... params) {
-		if (!deep) {
+		if (!deep || !listenedPerformance.contains(monitorName)) {
 			return;
 		}
-		if (!listenedPerformance.contains(monitorName)) {
-			return;
-		}
+
 		logger.log(Level.INFO, "[OITCDBG] " + msg, params);
 	}
 }

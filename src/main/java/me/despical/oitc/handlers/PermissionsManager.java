@@ -1,11 +1,10 @@
 package me.despical.oitc.handlers;
 
-import java.util.logging.Level;
-
-import org.bukkit.plugin.java.JavaPlugin;
-
 import me.despical.oitc.Main;
 import me.despical.oitc.utils.Debugger;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -14,7 +13,7 @@ import me.despical.oitc.utils.Debugger;
  */
 public class PermissionsManager {
 
-	private static Main plugin = JavaPlugin.getPlugin(Main.class);
+	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private static String joinFullPerm = "oitc.fullgames";
 	private static String joinPerm = "oitc.join.<arena>";
 
@@ -41,6 +40,6 @@ public class PermissionsManager {
 	private static void setupPermissions() {
 		PermissionsManager.setJoinFullGames(plugin.getConfig().getString("Basic-Permissions.Full-Games-Permission", "oitc.fullgames"));
 		PermissionsManager.setJoinPerm(plugin.getConfig().getString("Basic-Permissions.Join-Permission", "oitc.join.<arena>"));
-		Debugger.debug(Level.INFO, "Basic permissions registered");
+		Debugger.debug("Basic permissions registered");
 	}
 }

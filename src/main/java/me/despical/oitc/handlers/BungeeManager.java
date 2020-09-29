@@ -1,8 +1,12 @@
 package me.despical.oitc.handlers;
 
-import java.util.EnumMap;
-import java.util.Map;
-
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import me.despical.commonsbox.configuration.ConfigUtils;
+import me.despical.oitc.Main;
+import me.despical.oitc.arena.ArenaManager;
+import me.despical.oitc.arena.ArenaRegistry;
+import me.despical.oitc.arena.ArenaState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,15 +15,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-
-import me.despical.commonsbox.configuration.ConfigUtils;
-import me.despical.oitc.Main;
-import me.despical.oitc.arena.Arena;
-import me.despical.oitc.arena.ArenaManager;
-import me.despical.oitc.arena.ArenaRegistry;
-import me.despical.oitc.arena.ArenaState;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * @author Despical
@@ -28,18 +25,21 @@ import me.despical.oitc.arena.ArenaState;
  */
 public class BungeeManager implements Listener {
 
-	private Main plugin;
-	private Map<ArenaState, String> gameStateToString = new EnumMap<>(ArenaState.class);
-	private String MOTD;
+	private final Main plugin;
+	private final Map<ArenaState, String> gameStateToString = new EnumMap<>(ArenaState.class);
+	private final String motd;
 
 	public BungeeManager(Main plugin) {
 		this.plugin = plugin;
-		gameStateToString.put(ArenaState.WAITING_FOR_PLAYERS, plugin.getChatManager().colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Inactive", "Inactive")));
-		gameStateToString.put(ArenaState.STARTING, plugin.getChatManager().colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Starting", "Starting")));
-		gameStateToString.put(ArenaState.IN_GAME, plugin.getChatManager().colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.In-Game", "In-Game")));
-		gameStateToString.put(ArenaState.ENDING, plugin.getChatManager().colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Ending", "Ending")));
-		gameStateToString.put(ArenaState.RESTARTING, plugin.getChatManager().colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Restarting", "Restarting")));
-		MOTD = plugin.getChatManager().colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Message", "The actual game state of oitc is %state%"));
+		ChatManager chatManager = plugin.getChatManager();
+		
+		gameStateToString.put(ArenaState.WAITING_FOR_PLAYERS, chatManager.colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Inactive", "Inactive")));
+		gameStateToString.put(ArenaState.STARTING, chatManager.colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Starting", "Starting")));
+		gameStateToString.put(ArenaState.IN_GAME, chatManager.colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.In-Game", "In-Game")));
+		gameStateToString.put(ArenaState.ENDING, chatManager.colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Ending", "Ending")));
+		gameStateToString.put(ArenaState.RESTARTING, chatManager.colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Restarting", "Restarting")));
+		motd = plugin.getChatManager().colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Message", "The actual game state of oitc is %state%"));
+
 		plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, "BungeeCord");
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
@@ -48,15 +48,16 @@ public class BungeeManager implements Listener {
 		if (!ConfigUtils.getConfig(plugin, "bungee").getBoolean("Connect-To-Hub", true)) {
 			return;
 		}
+
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("Connect");
 		out.writeUTF(getHubServerName());
+
 		player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
 	}
 
 	private ArenaState getArenaState() {
-		Arena arena = ArenaRegistry.getArenas().get(ArenaRegistry.getBungeeArena());
-		return arena.getArenaState();
+		return ArenaRegistry.getArenas().get(ArenaRegistry.getBungeeArena()).getArenaState();
 	}
 
 	private String getHubServerName() {
@@ -68,11 +69,13 @@ public class BungeeManager implements Listener {
 		if (!ConfigUtils.getConfig(plugin, "bungee").getBoolean("MOTD.Manager", false)) {
 			return;
 		}
+
 		if (ArenaRegistry.getArenas().isEmpty()) {
 			return;
 		}
+
 		event.setMaxPlayers(ArenaRegistry.getArenas().get(ArenaRegistry.getBungeeArena()).getMaximumPlayers());
-		event.setMotd(MOTD.replace("%state%", gameStateToString.get(getArenaState())));
+		event.setMotd(motd.replace("%state%", gameStateToString.get(getArenaState())));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

@@ -1,13 +1,12 @@
 package me.despical.oitc.arena;
 
+import me.despical.oitc.ConfigPreferences;
+import me.despical.oitc.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-
-import me.despical.oitc.ConfigPreferences;
-import me.despical.oitc.Main;
 
 /**
  * @author Despical

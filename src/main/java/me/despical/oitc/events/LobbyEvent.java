@@ -1,16 +1,15 @@
 package me.despical.oitc.events;
 
+import me.despical.oitc.Main;
+import me.despical.oitc.arena.Arena;
+import me.despical.oitc.arena.ArenaRegistry;
+import me.despical.oitc.arena.ArenaState;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-
-import me.despical.oitc.Main;
-import me.despical.oitc.arena.Arena;
-import me.despical.oitc.arena.ArenaRegistry;
-import me.despical.oitc.arena.ArenaState;
 
 /**
  * @author Despical

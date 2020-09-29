@@ -1,8 +1,7 @@
 package me.despical.oitc.utils;
 
 import org.junit.Test;
-
-import junit.framework.Assert;
+import static junit.framework.Assert.assertEquals;
 
 /**
  * @author Despical
@@ -13,8 +12,10 @@ public class UtilsTest {
 
 	@Test
 	public void serializeInt() {
-		Assert.assertEquals(9, Utils.serializeInt(3));
-		Assert.assertEquals(45, Utils.serializeInt(37));
-		Assert.assertEquals(45, Utils.serializeInt(43));
+		assertEquals(9, Utils.serializeInt(3));
+		assertEquals(9, Utils.serializeInt(9));
+		assertEquals(27, Utils.serializeInt(24));
+		assertEquals(45, Utils.serializeInt(37));
+		assertEquals(45, Utils.serializeInt(43));
 	}
 }

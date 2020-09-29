@@ -1,29 +1,5 @@
 package me.despical.oitc.arena;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.logging.Level;
-
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import me.despical.commonsbox.compat.XMaterial;
 import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.commonsbox.item.ItemBuilder;
@@ -39,6 +15,23 @@ import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.utils.Debugger;
 import me.despical.oitc.utils.ItemPosition;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.*;
+import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -51,15 +44,15 @@ public class Arena extends BukkitRunnable {
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private final String id;
 
-	private Set<Player> players = new HashSet<>();
+	private final Set<Player> players = new HashSet<>();
 	private List<Location> playerSpawnPoints = new ArrayList<>();
 
-	private Map<ArenaOption, Integer> arenaOptions = new EnumMap<>(ArenaOption.class);
-	private Map<GameLocation, Location> gameLocations = new EnumMap<>(GameLocation.class);
+	private final Map<ArenaOption, Integer> arenaOptions = new EnumMap<>(ArenaOption.class);
+	private final Map<GameLocation, Location> gameLocations = new EnumMap<>(GameLocation.class);
 
 	private ArenaState arenaState = ArenaState.INACTIVE;
 	private BossBar gameBar;
-	private ScoreboardManager scoreboardManager;
+	private final ScoreboardManager scoreboardManager;
 	private String mapName = "";
 	private boolean ready;
 	private boolean forceStart = false;
@@ -88,6 +81,7 @@ public class Arena extends BukkitRunnable {
 		if (getPlayers().isEmpty() && getArenaState() == ArenaState.WAITING_FOR_PLAYERS) {
 			return;
 		}
+
 		Debugger.performance("ArenaTask", "[PerformanceMonitor] [{0}] Running game task", getId());
 		long start = System.currentTimeMillis();
 
@@ -96,9 +90,10 @@ public class Arena extends BukkitRunnable {
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				plugin.getServer().setWhitelist(false);
 			}
+
 			if (getPlayers().size() < getMinimumPlayers()) {
 				if (getTimer() <= 0) {
-					setTimer(15);
+					setTimer(45);
 					plugin.getChatManager().broadcast(this, plugin.getChatManager().formatMessage(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Waiting-For-Players"), getMinimumPlayers()));
 					break;
 				}
@@ -106,10 +101,11 @@ public class Arena extends BukkitRunnable {
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
 					gameBar.setTitle(plugin.getChatManager().colorMessage("Bossbar.Waiting-For-Players"));
 				}
+
 				plugin.getChatManager().broadcast(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Enough-Players-To-Start"));
 				setArenaState(ArenaState.STARTING);
 				setTimer(plugin.getConfig().getInt("Starting-Waiting-Time", 60));
-				this.showPlayers();
+				showPlayers();
 			}
 			setTimer(getTimer() - 1);
 			break;
@@ -180,11 +176,7 @@ public class Arena extends BukkitRunnable {
 			break;
 		case IN_GAME:
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-				if (getMaximumPlayers() <= getPlayers().size()) {
-					plugin.getServer().setWhitelist(true);
-				} else {
-					plugin.getServer().setWhitelist(false);
-				}
+				plugin.getServer().setWhitelist(getMaximumPlayers() <= getPlayers().size());
 			}
 			if (getTimer() <= 0) {
 				ArenaManager.stopGame(false, this);
@@ -243,12 +235,7 @@ public class Arena extends BukkitRunnable {
 				for (User user : plugin.getUserManager().getUsers(this)) {
 					user.setSpectator(false);
 					user.getPlayer().setCollidable(true);
-					for (StatsStorage.StatisticType statistic : StatsStorage.StatisticType.values()) {
-						if (!statistic.isPersistent()) {
-							user.setStat(statistic, 0);
-						}
-						plugin.getUserManager().saveStatistic(user, statistic);
-					}
+					plugin.getUserManager().saveAllStatistic(user);
 				}
 				plugin.getRewardsFactory().performReward(this, Reward.RewardType.END_GAME);
 				players.clear();
@@ -277,6 +264,7 @@ public class Arena extends BukkitRunnable {
 		default:
 			break;
 		}
+
 		Debugger.performance("ArenaTask", "[PerformanceMonitor] [{0}] Game task finished took {1} ms", getId(), System.currentTimeMillis() - start);
 	}
 
@@ -416,9 +404,12 @@ public class Arena extends BukkitRunnable {
 		}
 		player.setWalkSpeed(0.2f);
 		Location location = getLobbyLocation();
+
 		if (location == null) {
 			System.out.print("Lobby location isn't intialized for arena " + getId());
+			return;
 		}
+
 		player.teleport(location);
 	}
 
@@ -535,7 +526,7 @@ public class Arena extends BukkitRunnable {
 	}
 
 	public void start() {
-		Debugger.debug(Level.INFO, "[{0}] Game instance started", getId());
+		Debugger.debug("[{0}] Game instance started", getId());
 		this.runTaskTimer(plugin, 20L, 20L);
 		this.setArenaState(ArenaState.RESTARTING);
 	}
@@ -576,10 +567,6 @@ public class Arena extends BukkitRunnable {
 
 	public void setOptionValue(ArenaOption option, int value) {
 		arenaOptions.put(option, value);
-	}
-
-	public void addOptionValue(ArenaOption option, int value) {
-		arenaOptions.put(option, arenaOptions.get(option) + value);
 	}
 
 	public enum BarAction {

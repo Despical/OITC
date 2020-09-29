@@ -1,3 +1,20 @@
+### 1.0.6 Release (29.09.2020)
+* Added more in-game tips.
+* Added arena selector.
+* Added death prefix.
+* Added support for 1.16 hex colors
+* Fixed wrong order in bow trails.
+* Fixed NPE when trying to teleport players to lobby location.
+* Fixed update links.
+* Fixed plugin version for PAPI.
+* Fixed update checker.
+* Fixed separate chat.
+* Fixed prefix is not updating on reload with plugin command.
+* Changed MySQL updates to do only one instead of more than nearly 15.
+* Changed message delay of "Waiting for players" from 15 to 45 seconds.
+* So many improvements for newer version of Java.
+* Made code more readable.
+
 ### 1.0.5 Release (03.09.2020)
 * Added new message options.
 * Improved arena creation.

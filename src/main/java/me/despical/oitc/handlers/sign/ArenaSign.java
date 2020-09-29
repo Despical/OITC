@@ -1,17 +1,15 @@
 package me.despical.oitc.handlers.sign;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.annotation.Nullable;
-
+import me.despical.oitc.Main;
+import me.despical.oitc.arena.Arena;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 
-import me.despical.oitc.Main;
-import me.despical.oitc.arena.Arena;
+import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created for 1.14 compatibility purposes, it will cache block behind
@@ -24,13 +22,14 @@ import me.despical.oitc.arena.Arena;
 public class ArenaSign {
 
 	private static Main plugin;
-	private Sign sign;
+	private final Sign sign;
 	private Block behind;
-	private Arena arena;
+	private final Arena arena;
 
 	public ArenaSign(Sign sign, Arena arena) {
 		this.sign = sign;
 		this.arena = arena;
+
 		setBehindBlock();
 	}
 
@@ -40,7 +39,9 @@ public class ArenaSign {
 
 	private void setBehindBlock() {
 		this.behind = null;
-		if (sign.getBlock().getType() == Material.WALL_SIGN) {
+
+		// TODO: add method to check if current server version equal or higher than current to CommonsBox
+		if (sign.getBlock().getType() == Material.getMaterial("WALL_SIGN")) {
 			if (plugin.is1_14_R1() || plugin.is1_15_R1() || plugin.is1_16_R1() || plugin.is1_16_R2()) {
 				this.behind = getBlockBehind();
 			} else {

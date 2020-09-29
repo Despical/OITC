@@ -1,11 +1,5 @@
 package me.despical.oitc.commands.admin;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import me.despical.oitc.commands.SubCommand;
 import me.despical.oitc.commands.exception.CommandException;
 import net.md_5.bungee.api.ChatColor;
@@ -14,6 +8,11 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Despical
@@ -42,7 +41,8 @@ public class HelpCommand extends SubCommand {
 		sender.sendMessage("");
 		sender.sendMessage(getPlugin().getChatManager().colorRawMessage("&3&l---- One in the Chamber Admin Commands ----"));
 		sender.sendMessage("");
-		for (SubCommand subCommand : this.getPlugin().getCommandHandler().getSubCommands()) {
+
+		for (SubCommand subCommand : getPlugin().getCommandHandler().getSubCommands()) {
 			if (subCommand.getType() == SubCommand.CommandType.GENERIC) {
 				String usage = "/" + label + " " + subCommand.getName() + (subCommand.getPossibleArguments() != null ? " " + subCommand.getPossibleArguments() : "");
 

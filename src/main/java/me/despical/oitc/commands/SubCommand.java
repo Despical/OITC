@@ -1,12 +1,11 @@
 package me.despical.oitc.commands;
 
-import java.util.List;
-
+import me.despical.oitc.Main;
+import me.despical.oitc.commands.exception.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.despical.oitc.Main;
-import me.despical.oitc.commands.exception.CommandException;
+import java.util.List;
 
 /**
  * @author Despical
