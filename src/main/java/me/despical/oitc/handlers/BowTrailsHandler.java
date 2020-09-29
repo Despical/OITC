@@ -1,9 +1,8 @@
 package me.despical.oitc.handlers;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-
+import me.despical.oitc.Main;
+import me.despical.oitc.arena.ArenaRegistry;
+import me.despical.oitc.utils.Debugger;
 import org.bukkit.Particle;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -12,9 +11,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.despical.oitc.Main;
-import me.despical.oitc.arena.ArenaRegistry;
-import me.despical.oitc.utils.Debugger;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -23,8 +22,8 @@ import me.despical.oitc.utils.Debugger;
  */
 public class BowTrailsHandler implements Listener {
 
-	private Main plugin;
-	private Map<String, Particle> registeredTrails = new HashMap<>();
+	private final Main plugin;
+	private final Map<String, Particle> registeredTrails = new LinkedHashMap<>();
 
 	public BowTrailsHandler(Main plugin) {
 		this.plugin = plugin;
@@ -44,9 +43,11 @@ public class BowTrailsHandler implements Listener {
 		if (!(e.getEntity() instanceof Player && e.getProjectile() instanceof Arrow)) {
 			return;
 		}
+
 		if (!ArenaRegistry.isInArena((Player) e.getEntity()) || e.getProjectile() == null || e.getProjectile().isDead() || e.getProjectile().isOnGround()) {
 			return;
 		}
+
 		for (String perm : registeredTrails.keySet()) {
 			if (e.getEntity().hasPermission(perm)) {
 				new BukkitRunnable() {
@@ -56,10 +57,13 @@ public class BowTrailsHandler implements Listener {
 						if (e.getProjectile() == null || e.getProjectile().isDead() || e.getProjectile().isOnGround()) {
 							this.cancel();
 						}
+
 						Debugger.debug(Level.INFO, "Spawned particle with perm {0} for player {1}", perm, e.getEntity().getName());
+
 						e.getProjectile().getWorld().spawnParticle(registeredTrails.get(perm), e.getProjectile().getLocation(), 3, 0, 0, 0, 0);
 					}
 				}.runTaskTimer(plugin, 0, 0);
+
 				break;
 			}
 		}
