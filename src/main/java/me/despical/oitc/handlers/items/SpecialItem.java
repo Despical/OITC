@@ -10,9 +10,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Despical
@@ -37,7 +37,7 @@ public class SpecialItem {
 	}
 
 	public void load(String displayName, String[] lore, Material material, int slot) {
-		FileConfiguration config = ConfigUtils.getConfig(JavaPlugin.getPlugin(Main.class), "lobbyitems");
+		FileConfiguration config = ConfigUtils.getConfig(plugin, "lobbyitems");
 
 		if (!config.contains(name)) {
 			config.set(name + ".displayname", displayName);
@@ -47,15 +47,11 @@ public class SpecialItem {
 		}
 
 		ConfigUtils.saveConfig(JavaPlugin.getPlugin(Main.class), config, "lobbyitems");
-		ItemStack stack = XMaterial.fromString(config.getString(name + ".material-name").toUpperCase()).parseItem();
+		ItemStack stack = XMaterial.matchXMaterial(config.getString(name + ".material-name", "STONE").toUpperCase()).orElse(XMaterial.STONE).parseItem();
 		ItemMeta meta = stack.getItemMeta();
 		meta.setDisplayName(plugin.getChatManager().colorRawMessage(config.getString(name + ".displayname")));
 
-		List<String> colorizedLore = new ArrayList<>();
-
-		for (String str : config.getStringList(name + ".lore")) {
-			colorizedLore.add(plugin.getChatManager().colorRawMessage(str));
-		}
+		List<String> colorizedLore = config.getStringList(name + ".lore").stream().map(str -> plugin.getChatManager().colorRawMessage(str)).collect(Collectors.toList());
 
 		meta.setLore(colorizedLore);
 		stack.setItemMeta(meta);

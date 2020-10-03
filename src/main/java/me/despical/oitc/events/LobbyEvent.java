@@ -27,11 +27,14 @@ public class LobbyEvent implements Listener {
 		if (event.getEntity().getType() != EntityType.PLAYER) {
 			return;
 		}
+
 		Player player = (Player) event.getEntity();
 		Arena arena = ArenaRegistry.getArena(player);
+
 		if (arena == null || arena.getArenaState() == ArenaState.IN_GAME) {
 			return;
 		}
+
 		event.setCancelled(true);
 		player.setFireTicks(0);
 		player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());

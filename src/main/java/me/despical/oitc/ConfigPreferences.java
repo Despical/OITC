@@ -1,5 +1,6 @@
 package me.despical.oitc;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,9 +30,7 @@ public class ConfigPreferences {
 	}
 
 	private void loadOptions() {
-		for (Option option : Option.values()) {
-			options.put(option, plugin.getConfig().getBoolean(option.getPath(), option.getDefault()));
-		}
+		Arrays.stream(Option.values()).forEach(option -> options.put(option, plugin.getConfig().getBoolean(option.getPath(), option.getDefault())));
 	}
 
 	public enum Option {

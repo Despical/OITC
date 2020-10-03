@@ -3,11 +3,11 @@
 #
 #              Use \n to make new line
 #        Some messages like kit and kit items
-#        descriptions dont't support new lines
+#        descriptions don't support new lines
 # they are wrapped every 40 characters automatically
 #
 #     Some messages support their own placeholders
-#                  like %player%
+#                 like %player%
 
 # One in the Chamber command messages
 Commands:
@@ -18,10 +18,7 @@ Commands:
   No-Arena-Like-That: "&cNo arena with that ID!"
   Look-Sign: "&cYou have to look at a sign to perform this command!"
   Type-Arena-Name: "&cPlease type arena ID!"
-  No-Free-Arenas: "&cThere are no free arenas!"
-  Conversation:
-    Operation-Timeout: "&7Operation cancelled!"
-    Only-By-Player: "&4Only by players!"
+  No-Free-Arenas: "&cThere isn't any available arena!"
   Statistics:
     Type-Name: "&cPlease type statistic name to view!"
     Invalid-Name: "&cName of statistic is invalid! Type: kills, deaths, games_played, wins, loses, highest_score"
@@ -106,19 +103,26 @@ In-Game:
   No-Slots-For-Premium: "&cThis game is already full of premium players! Sorry"
   You-Are-Spectator: "&cYou're now a spectator! You can fly now!"
   Only-Command-Ingame-Is-Leave: "&cYou have to leave the game first to perform commands. The only command that works is /oitc leave!"
-  # Join cancelled via external plugin that uses OITC api.
+  # Join cancelled via external plugin that uses OITC API.
   Join-Cancelled-Via-API: "&cYou can't join this game!"
   Arena-Not-Configured: "&cArena is not configured yet! Contact staff!"
   Game-Chat-Format: "&7%player%: &f%message%"
   Game-Death-Format: "&7[&4☠&7] &r"
   Spectator:
-    Spectator-Item-Name: "&7Players list"
-    Spectator-Menu-Name: "&8Players list"
+    Spectator-Item-Name: "&b&lTeleporter &7(Right Click)"
+    Spectator-Menu-Name: "&8Teleporter"
     Target-Player-Score: "&7Score: %score%"
     Settings-Menu:
-      Item-Name: "&7Spectator settings"
-      Inventory-Name: "&7Spectator settings"
+      Item-Name: "&b&lSpectator settings &7(Right Click)"
+      Inventory-Name: "&8Spectator settings"
       Speed-Name: "&aSpeed"
+      No-Speed: "&aNo Speed"
+      Disable-Night-Vision: "&cDisable Night Vision"
+      Disable-Night-Vision-Lore:
+        - "&7Click to disable night vision!"
+      Hide-Spectators: "&cHide Spectators"
+      Hide-Spectators-Lore:
+        - "&7Click to hide other spectators!"
   Messages:
     Lobby-Messages:
       Start-In: "&7The game starts in &b%time%&7 seconds!"
@@ -177,7 +181,23 @@ Signs:
     - "%mapname%"
     - "&5[%players%/%maxplayers%]"
 
+Arena-Selector:
+  Inventory-Title: "Arena selector"
+  Item:
+    Lore:
+      - "&7OITC &f- &e%mapname%"
+      - " "
+      - " "
+      - "  &fOnline: %playersize%/%maxplayers%"
+      - "  &fState: %state%"
+      - " "
+      - " "
+      - "&eClick to join this arena"
+
 Validator:
   Invalid-Arena-Configuration: "[OITC] Arena %arena% has invalid configuration! Missing node: %error%"
   Instance-Started: "[OITC] Arena %arena% instance successfully started!"
   No-Instances-Created: "[OITC] There are no arena instances created in configuration!"
+
+# Don't edit it. But who's stopping you? It's your server!
+File-Version: 0

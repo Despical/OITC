@@ -5,8 +5,8 @@ import me.despical.commonsbox.sorter.SortUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.user.data.MysqlManager;
+import me.despical.oitc.utils.Debugger;
 import me.despical.oitc.utils.MessageUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -47,25 +47,30 @@ public class StatsStorage {
 				Map<UUID, Integer> column = new LinkedHashMap<>();
 				
 				while (set.next()) {
-					column.put(java.util.UUID.fromString(set.getString("UUID")), set.getInt(stat.getName()));
+					column.put(UUID.fromString(set.getString("UUID")), set.getInt(stat.getName()));
 				}
+
 				return column;
 			} catch (SQLException e) {
 				plugin.getLogger().log(Level.WARNING, "SQL Exception occurred! " + e.getSQLState() + " (" + e.getErrorCode() + ")");
 				MessageUtils.errorOccurred();
-				Bukkit.getConsoleSender().sendMessage("Cannot get contents from MySQL database!");
-				Bukkit.getConsoleSender().sendMessage("Check configuration of mysql.yml file or disable mysql option in config.yml");
+				Debugger.sendConsoleMessage("Cannot get contents from MySQL database!");
+				Debugger.sendConsoleMessage("Check configuration of mysql.yml file or disable mysql option in config.yml");
 				return Collections.emptyMap();
 			}
 		}
+
 		FileConfiguration config = ConfigUtils.getConfig(plugin, "stats");
 		Map<UUID, Integer> stats = new TreeMap<>();
+
 		for (String string : config.getKeys(false)) {
 			if (string.equals("data-version")) {
 				continue;
 			}
+
 			stats.put(UUID.fromString(string), config.getInt(string + "." + stat.getName()));
 		}
+
 		return SortUtils.sortByValue(stats);
 	}
 

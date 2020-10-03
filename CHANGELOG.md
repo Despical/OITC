@@ -1,17 +1,29 @@
 ### 1.0.6 Release (29.09.2020)
 * Added more in-game tips.
+* Added missing 1.14, 1.15 and 1.16 items.
 * Added arena selector.
+* Added new death reward.
 * Added death prefix.
 * Added support for 1.16 hex colors
 * Fixed wrong order in bow trails.
 * Fixed NPE when trying to teleport players to lobby location.
 * Fixed update links.
 * Fixed plugin version for PAPI.
+* Fixed player skulls on spectator menu.
 * Fixed update checker.
 * Fixed separate chat.
 * Fixed prefix is not updating on reload with plugin command.
+* Removed system message options.
+* Removed unnecessary command exceptions.
 * Changed MySQL updates to do only one instead of more than nearly 15.
 * Changed message delay of "Waiting for players" from 15 to 45 seconds.
+* Reworked on update checker.
+* Reworked on tab completion.
+* Reworked on spectator settings menu.
+  * Added no speed option.
+  * Added disable night vision option.
+  * Added hide spectators option.
+* Updated dependencies to latest versions.
 * So many improvements for newer version of Java.
 * Made code more readable.
 

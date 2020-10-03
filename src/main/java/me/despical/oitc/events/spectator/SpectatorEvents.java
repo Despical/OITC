@@ -28,22 +28,24 @@ public class SpectatorEvents implements Listener {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onSpectatorTarget(EntityTargetEvent e) {
 		if (!(e.getTarget() instanceof Player)) {
 			return;
 		}
+
 		if (plugin.getUserManager().getUser((Player) e.getTarget()).isSpectator()) {
 			e.setCancelled(true);
 			e.setTarget(null);
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onSpectatorTarget(EntityTargetLivingEntityEvent e) {
 		if (!(e.getTarget() instanceof Player)) {
 			return;
 		}
+
 		if (plugin.getUserManager().getUser((Player) e.getTarget()).isSpectator()) {
 			e.setCancelled(true);
 			e.setTarget(null);
@@ -104,7 +106,9 @@ public class SpectatorEvents implements Listener {
 		if (!(event.getEntity() instanceof Player)) {
 			return;
 		}
+
 		Player player = (Player) event.getEntity();
+
 		if (plugin.getUserManager().getUser(player).isSpectator()) {
 			event.setCancelled(true);
 		}
@@ -115,13 +119,17 @@ public class SpectatorEvents implements Listener {
 		if (!(event.getEntity() instanceof Player)) {
 			return;
 		}
+
 		Player player = (Player) event.getEntity();
+
 		if (!plugin.getUserManager().getUser(player).isSpectator() || ArenaRegistry.getArena(player) == null) {
 			return;
 		}
+
 		if (player.getLocation().getY() < 1) {
 			player.teleport(ArenaRegistry.getArena(player).getPlayerSpawnPoints().get(0));
 		}
+
 		event.setCancelled(true);
 	}
 
@@ -130,7 +138,9 @@ public class SpectatorEvents implements Listener {
 		if (!(event.getEntity() instanceof Player)) {
 			return;
 		}
+
 		Player player = (Player) event.getEntity();
+
 		if (plugin.getUserManager().getUser(player).isSpectator()) {
 			event.setCancelled(true);
 		}
@@ -141,7 +151,9 @@ public class SpectatorEvents implements Listener {
 		if (!(event.getDamager() instanceof Player)) {
 			return;
 		}
+
 		Player player = (Player) event.getDamager();
+
 		if (plugin.getUserManager().getUser(player).isSpectator()) {
 			event.setCancelled(true);
 		}
@@ -154,35 +166,39 @@ public class SpectatorEvents implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onSpectate(PlayerPickupItemEvent event) {
 		if (plugin.getUserManager().getUser(event.getPlayer()).isSpectator()) {
 			event.setCancelled(true);
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onSpectate(PlayerDropItemEvent event) {
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
+
 		if (arena == null) {
 			return;
 		}
+
 		if (arena.getArenaState() != ArenaState.IN_GAME || plugin.getUserManager().getUser(event.getPlayer()).isSpectator()) {
 			event.setCancelled(true);
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onInteractEntityInteract(PlayerInteractEntityEvent event) {
 		User user = plugin.getUserManager().getUser(event.getPlayer());
+
 		if (user.isSpectator()) {
 			event.setCancelled(true);
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onRightClick(PlayerInteractEvent event) {
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
+
 		if (arena != null && plugin.getUserManager().getUser(event.getPlayer()).isSpectator()) {
 			event.setCancelled(true);
 		}

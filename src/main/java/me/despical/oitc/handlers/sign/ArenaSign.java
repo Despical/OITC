@@ -1,6 +1,6 @@
 package me.despical.oitc.handlers.sign;
 
-import me.despical.oitc.Main;
+import me.despical.commonsbox.compat.VersionResolver;
 import me.despical.oitc.arena.Arena;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,7 +21,6 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class ArenaSign {
 
-	private static Main plugin;
 	private final Sign sign;
 	private Block behind;
 	private final Arena arena;
@@ -33,20 +32,11 @@ public class ArenaSign {
 		setBehindBlock();
 	}
 
-	public static void init(Main plugin) {
-		ArenaSign.plugin = plugin;
-	}
-
 	private void setBehindBlock() {
 		this.behind = null;
 
-		// TODO: add method to check if current server version equal or higher than current to CommonsBox
 		if (sign.getBlock().getType() == Material.getMaterial("WALL_SIGN")) {
-			if (plugin.is1_14_R1() || plugin.is1_15_R1() || plugin.is1_16_R1() || plugin.is1_16_R2()) {
-				this.behind = getBlockBehind();
-			} else {
-				this.behind = getBlockBehindLegacy();
-			}
+			this.behind = VersionResolver.isCurrentEqualOrHigher(VersionResolver.ServerVersion.v1_14_R1) ? getBlockBehind() : getBlockBehindLegacy();
 		}
 	}
 

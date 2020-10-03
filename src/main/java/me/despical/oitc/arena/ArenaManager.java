@@ -32,7 +32,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -59,14 +58,17 @@ public class ArenaManager {
 		long start = System.currentTimeMillis();
 		OITCGameJoinAttemptEvent gameJoinAttemptEvent = new OITCGameJoinAttemptEvent(player, arena);
 		Bukkit.getPluginManager().callEvent(gameJoinAttemptEvent);
+
 		if (!arena.isReady()) {
 			player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Arena-Not-Configured"));
 			return;
 		}
+
 		if (gameJoinAttemptEvent.isCancelled()) {
 			player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Join-Cancelled-Via-API"));
 			return;
 		}
+
 		if (ArenaRegistry.isInArena(player)) {
 			player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Already-Playing"));
 			return;
@@ -78,37 +80,48 @@ public class ArenaManager {
 				return;
 			}
 		}
+
 		if (arena.getArenaState() == ArenaState.RESTARTING) {
 			return;
 		}
+
 		if (arena.getPlayers().size() >= arena.getMaximumPlayers() && arena.getArenaState() == ArenaState.STARTING) {
 			if (!player.hasPermission(PermissionsManager.getJoinFullGames())) {
 				player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Full-Game-No-Permission"));
 				return;
 			}
+
 			boolean foundSlot = false;
+
 			for (Player loopPlayer : arena.getPlayers()) {
 				if (loopPlayer.hasPermission(PermissionsManager.getJoinFullGames())) {
 					continue;
 				}
+
 				ArenaManager.leaveAttempt(loopPlayer, arena);
 				loopPlayer.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.You-Were-Kicked-For-Premium-Slot"));
 				plugin.getChatManager().broadcast(arena, plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Kicked-For-Premium-Slot"), loopPlayer));
 				foundSlot = true;
 				break;
 			}
+
 			if (!foundSlot) {
 				player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.No-Slots-For-Premium"));
 				return;
 			}
 		}
-		Debugger.debug(Level.INFO, "[{0}] Checked join attempt for {1} initialized", arena.getId(), player.getName());
+
+		Debugger.debug("[{0}] Checked join attempt for {1} initialized", arena.getId(), player.getName());
 		User user = plugin.getUserManager().getUser(player);
+
 		arena.getScoreboardManager().createScoreboard(user);
+
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.saveInventoryToFile(plugin, player);
 		}
+
 		arena.addPlayer(player);
+
 		player.setLevel(0);
 		player.setExp(1);
 		player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
@@ -125,17 +138,19 @@ public class ArenaManager {
 			player.getInventory().setItem(4, new ItemBuilder(XMaterial.COMPARATOR.parseItem()).name(plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Item-Name")).build());
 			player.getInventory().setItem(8, SpecialItemManager.getSpecialItem("Leave").getItemStack());
 			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false), false);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
 			ArenaUtils.hidePlayer(player, arena);
 			user.setSpectator(true);
 			player.setCollidable(false);
 			player.setAllowFlight(true);
 			player.setFlying(true);
+
 			for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 				if (!stat.isPersistent()) {
 					user.setStat(stat, 0);
 				}
 			}
+
 			for (Player spectator : arena.getPlayers()) {
 				if (plugin.getUserManager().getUser(spectator).isSpectator()) {
 					player.hidePlayer(plugin, spectator);
@@ -143,27 +158,32 @@ public class ArenaManager {
 					player.showPlayer(plugin, spectator);
 				}
 			}
+
 			ArenaUtils.hidePlayersOutsideTheGame(player, arena);
-			Debugger.debug(Level.INFO, "[{0}] Join attempt as spectator finished for {1} took {2} ms", arena.getId(), player.getName(), System.currentTimeMillis() - start);
+			Debugger.debug("[{0}] Join attempt as spectator finished for {1} took {2} ms", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 			return;
 		}
+
 		arena.teleportToLobby(player);
 		player.setFlying(false);
 		player.setAllowFlight(false);
 		arena.doBarAction(Arena.BarAction.ADD, player);
+
 		if (!plugin.getUserManager().getUser(player).isSpectator()) {
 			plugin.getChatManager().broadcastAction(arena, player, ActionType.JOIN);
 		}
+
 		if (arena.getArenaState() == ArenaState.STARTING || arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS) {
 			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Leave").getSlot(), SpecialItemManager.getSpecialItem("Leave").getItemStack());
 		}
+
 		player.updateInventory();
-		for (Player arenaPlayer : arena.getPlayers()) {
-			ArenaUtils.showPlayer(arenaPlayer, arena);
-		}
+
+		arena.getPlayers().forEach(arenaPlayer -> ArenaUtils.showPlayer(arenaPlayer, arena));
 		arena.showPlayers();
+
 		ArenaUtils.updateNameTagsVisibility(player);
-		Debugger.debug(Level.INFO, "[{0}] Join attempt as player for {1} took {2} ms", arena.getId(), player.getName(), System.currentTimeMillis() - start);
+		Debugger.debug("[{0}] Join attempt as player for {1} took {2} ms", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 	}
 
 	/**
@@ -177,28 +197,33 @@ public class ArenaManager {
 	public static void leaveAttempt(Player player, Arena arena) {
 		Debugger.debug("[{0}] Initial leave attempt for {1}", arena.getId(), player.getName());
 		long start = System.currentTimeMillis();
-
 		OITCGameLeaveAttemptEvent event = new OITCGameLeaveAttemptEvent(player, arena);
 		Bukkit.getPluginManager().callEvent(event);
 		User user = plugin.getUserManager().getUser(player);
+
 		if (user.getStat(StatsStorage.StatisticType.LOCAL_KILLS) > user.getStat(StatsStorage.StatisticType.HIGHEST_SCORE)) {
 			user.setStat(StatsStorage.StatisticType.HIGHEST_SCORE, user.getStat(StatsStorage.StatisticType.LOCAL_KILLS));
 		}
+
 		arena.getScoreboardManager().removeScoreboard(user);
+
 		if (arena.getArenaState() == ArenaState.IN_GAME && !user.isSpectator()) {
 			if (arena.getPlayersLeft().size() - 1 == 1) {
 				ArenaManager.stopGame(false, arena);
 				return;
 			}
 		}
+
 		player.setFlySpeed(0.1f);
 		player.getInventory().clear();
 		player.getInventory().setArmorContents(null);
 		arena.removePlayer(player);
 		arena.teleportToEndLocation(player);
+
 		if (!user.isSpectator()) {
 			plugin.getChatManager().broadcastAction(arena, player, ActionType.LEAVE);
 		}
+
 		player.setGlowing(false);
 		user.setSpectator(false);
 		player.setCollidable(true);
@@ -236,7 +261,7 @@ public class ArenaManager {
 		}
 
 		plugin.getUserManager().saveAllStatistic(user);
-		Debugger.debug(Level.INFO, "[{0}] Game leave finished for {1} took {2} ms", arena.getId(), player.getName(), System.currentTimeMillis() - start);
+		Debugger.debug("[{0}] Game leave finished for {1} took {2} ms", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 	}
 
 	/**
@@ -278,12 +303,15 @@ public class ArenaManager {
 			}
 			player.getInventory().clear();
 			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Leave").getSlot(), SpecialItemManager.getSpecialItem("Leave").getItemStack());
+
 			if (!quickStop) {
 				for (String msg : summaryMessages) {
 					MiscUtils.sendCenteredMessage(player, formatSummaryPlaceholders(msg, arena, player));
 				}
 			}
+
 			user.removeScoreboard();
+
 			if (!quickStop && plugin.getConfig().getBoolean("Firework-When-Game-Ends", true)) {
 				new BukkitRunnable() {
 					int i = 0;
@@ -292,12 +320,14 @@ public class ArenaManager {
 						if (i == 4 || !arena.getPlayers().contains(player)) {
 							this.cancel();
 						}
+
 						MiscUtils.spawnRandomFirework(player.getLocation());
 						i++;
 					}
 				}.runTaskTimer(plugin, 30, 30);
 			}
 		}
+
 		Debugger.debug("[{0}] Stop game event finished took {1} ms", arena.getId(), System.currentTimeMillis() - start);
 	}
 
@@ -308,9 +338,11 @@ public class ArenaManager {
 		formatted = StringUtils.replace(formatted, "%rank%", String.valueOf(arena.getScoreboardManager().getRank(player)));
 		formatted = StringUtils.replace(formatted, "%winner%", String.valueOf(arena.getScoreboardManager().getTopPlayerName(0)));
 		formatted = StringUtils.replace(formatted, "%winner_score%", String.valueOf(StatsStorage.getUserStats(Bukkit.getPlayerExact(arena.getScoreboardManager().getTopPlayerName(0)), StatsStorage.StatisticType.LOCAL_KILLS)));
+
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 			formatted = PlaceholderAPI.setPlaceholders(player, formatted);
 		}
+
 		return formatted;
 	}
 }

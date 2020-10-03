@@ -22,8 +22,8 @@ import java.util.Random;
  */
 public class SetupInventory {
 
-	private static final Random random = new Random();
-	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
+	private final Random random = new Random();
+	private final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private final FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
 	private final Arena arena;
 	private final Player player;
@@ -41,7 +41,7 @@ public class SetupInventory {
 	private void prepareGui() {
 		this.gui = new Gui(plugin, 3, "OITC Arena Editor");
 		this.gui.setOnGlobalClick(e -> e.setCancelled(true));
-		StaticPane pane = new StaticPane(9, 4);
+		StaticPane pane = new StaticPane(9, 3);
 		this.gui.addPane(pane);
 		prepareComponents(pane);
 	}
@@ -68,20 +68,20 @@ public class SetupInventory {
 		int rand = random.nextInt(8 + 1);
 
 		switch (rand) {
-		case 0:
-			p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7We are open source! You can always help us by contributing! Check https://github.com/Despical/OITC"));
-			break;
-		case 1:
-			p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7Need help? Join our discord server: https://discordapp.com/invite/Vhyy4HA"));
-			break;
-		case 2:
-			p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7Need help? Check our wiki: https://github.com/Despical/OITC/wiki"));
-			break;
-		case 3:
-			p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7Want to access exclusive maps, addons and more? Check our Patreon page: https://www.patreon.com/despical"));
-			break;
-		default:
-			break;
+			case 0:
+				p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7We are open source! You can always help us by contributing! Check https://github.com/Despical/OITC"));
+				break;
+			case 1:
+				p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7Need help? Join our discord server: https://discordapp.com/invite/Vhyy4HA"));
+				break;
+			case 2:
+				p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7Need help? Check our wiki: https://github.com/Despical/OITC/wiki"));
+				break;
+			case 3:
+				p.sendMessage(plugin.getChatManager().colorRawMessage("&e&lTIP: &7Want to access exclusive maps, addons and more? Check our Patreon page: https://www.patreon.com/despical"));
+				break;
+			default:
+				break;
 		}
 	}
 

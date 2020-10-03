@@ -27,7 +27,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -40,8 +39,8 @@ import java.util.logging.Level;
  */
 public class Arena extends BukkitRunnable {
 
-	private static final Random random = new Random();
-	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
+	private final Random random = new Random();
+	private final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private final String id;
 
 	private final Set<Player> players = new HashSet<>();
@@ -59,12 +58,15 @@ public class Arena extends BukkitRunnable {
 
 	public Arena(String id) {
 		this.id = id;
+
 		for (ArenaOption option : ArenaOption.values()) {
 			arenaOptions.put(option, option.getDefaultValue());
 		}
+
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
 			gameBar = Bukkit.createBossBar(plugin.getChatManager().colorMessage("Bossbar.Main-Title"), BarColor.BLUE, BarStyle.SOLID);
 		}
+
 		scoreboardManager = new ScoreboardManager(this);
 	}
 
@@ -107,6 +109,7 @@ public class Arena extends BukkitRunnable {
 				setTimer(plugin.getConfig().getInt("Starting-Waiting-Time", 60));
 				showPlayers();
 			}
+
 			setTimer(getTimer() - 1);
 			break;
 		case STARTING:
@@ -114,44 +117,57 @@ public class Arena extends BukkitRunnable {
 				setTimer(plugin.getConfig().getInt("Start-Time-On-Full-Lobby", 15));
 				plugin.getChatManager().broadcast(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Start-In").replace("%time%", String.valueOf(getTimer())));
 			}
+
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
 				gameBar.setTitle(plugin.getChatManager().colorMessage("Bossbar.Starting-In").replace("%time%", String.valueOf(getTimer())));
 				gameBar.setProgress(getTimer() / plugin.getConfig().getDouble("Starting-Waiting-Time", 60));
 			}
+
 			for (Player player : getPlayers()) {
 				player.setExp((float) (getTimer() / plugin.getConfig().getDouble("Starting-Waiting-Time", 60)));
 				player.setLevel(getTimer());
 			}
+
 			if (getPlayers().size() < getMinimumPlayers() && !forceStart) {
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
 					gameBar.setTitle(plugin.getChatManager().colorMessage("Bossbar.Waiting-For-Players"));
 					gameBar.setProgress(1.0);
 				}
+
 				plugin.getChatManager().broadcast(this, plugin.getChatManager().formatMessage(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Waiting-For-Players"), getMinimumPlayers()));
 				setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 				Bukkit.getPluginManager().callEvent(new OITCGameStartEvent(this));
 				setTimer(15);
+
 				for (Player player : getPlayers()) {
 					player.setExp(1);
 					player.setLevel(0);
 				}
+
 				if (forceStart) {
 					forceStart = false;
 				}
+
 				break;
 			}
+
 			if (getTimer() == 0 || forceStart) {
 				OITCGameStartEvent gameStartEvent = new OITCGameStartEvent(this);
 				Bukkit.getPluginManager().callEvent(gameStartEvent);
 				setArenaState(ArenaState.IN_GAME);
+
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
 					gameBar.setProgress(1.0);
 				}
+
 				setTimer(5);
+
 				if (players.isEmpty()) {
 					break;
 				}
+
 				teleportAllToStartLocation();
+
 				for (Player player : getPlayers()) {
 					ArenaUtils.updateNameTagsVisibility(player);
 					player.getInventory().clear();
@@ -166,56 +182,68 @@ public class Arena extends BukkitRunnable {
 					player.updateInventory();
 				}
 			}
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
-					gameBar.setTitle(plugin.getChatManager().colorMessage("Bossbar.In-Game-Info"));
+
+			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
+				gameBar.setTitle(plugin.getChatManager().colorMessage("Bossbar.In-Game-Info"));
 			}
+
 			if (forceStart) {
 				forceStart = false;
 			}
+
 			setTimer(getTimer() - 1);
 			break;
 		case IN_GAME:
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				plugin.getServer().setWhitelist(getMaximumPlayers() <= getPlayers().size());
 			}
+
 			if (getTimer() <= 0) {
 				ArenaManager.stopGame(false, this);
 			}
+
 			if (getTimer() == 30 || getTimer() == 60) {
 				String title = plugin.getChatManager().colorMessage("In-Game.Messages.Seconds-Left-Title").replace("%time%", String.valueOf(getTimer()));
 				String subtitle = plugin.getChatManager().colorMessage("In-Game.Messages.Seconds-Left-Subtitle").replace("%time%", String.valueOf(getTimer()));
+
 				for (Player p : getPlayers()) {
 					p.sendTitle(title, subtitle, 5, 40, 5);
 				}
 			}
-			if (getPlayersLeft().size() == 0) {
+
+			if (getPlayersLeft().isEmpty()) {
 				ArenaManager.stopGame(false, this);
-			} 
+			}
+
 			setTimer(getTimer() - 1);
 			break;
 		case ENDING:
 			scoreboardManager.stopAllScoreboards();
+
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				plugin.getServer().setWhitelist(false);
 			}
+
 			if (getTimer() <= 0) {
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
 					gameBar.setTitle(plugin.getChatManager().colorMessage("Bossbar.Game-Ended"));
 				}
 
 				List<Player> playersToQuit = new ArrayList<>(getPlayers());
+
 				for (Player player : playersToQuit) {
 					plugin.getUserManager().getUser(player).removeScoreboard();
 					player.setGameMode(GameMode.SURVIVAL);
+
 					for (Player players : Bukkit.getOnlinePlayers()) {
 						player.showPlayer(plugin, players);
+
 						if (ArenaRegistry.getArena(players) == null) {
 							players.showPlayer(plugin, player);
 						}
 					}
-					for (PotionEffect effect : player.getActivePotionEffects()) {
-						player.removePotionEffect(effect.getType());
-					}
+
+					player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 					player.setWalkSpeed(0.2f);
 					player.setFlying(false);
 					player.setAllowFlight(false);
@@ -225,41 +253,53 @@ public class Arena extends BukkitRunnable {
 					player.setFireTicks(0);
 					player.setFoodLevel(20);
 				}
+
 				teleportAllToEndLocation();
+
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 					for (Player player : getPlayers()) {
 						InventorySerializer.loadInventory(plugin, player);
 					}
 				}
+
 				plugin.getChatManager().broadcast(this, plugin.getChatManager().colorMessage("Commands.Teleported-To-The-Lobby"));
+
 				for (User user : plugin.getUserManager().getUsers(this)) {
 					user.setSpectator(false);
 					user.getPlayer().setCollidable(true);
 					plugin.getUserManager().saveAllStatistic(user);
 				}
+
 				plugin.getRewardsFactory().performReward(this, Reward.RewardType.END_GAME);
 				players.clear();
+
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 					if (ConfigUtils.getConfig(plugin, "bungee").getBoolean("Shutdown-When-Game-Ends")) {
 						plugin.getServer().shutdown();
 					}
 				}
+
 				setArenaState(ArenaState.RESTARTING);
 			}
+
 			setTimer(getTimer() - 1);
 			break;
 		case RESTARTING:
 			getPlayers().clear();
 			setArenaState(ArenaState.WAITING_FOR_PLAYERS);
+
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				ArenaRegistry.shuffleBungeeArena();
+
 				for (Player player : Bukkit.getOnlinePlayers()) {
 					ArenaManager.joinAttempt(player, ArenaRegistry.getArenas().get(ArenaRegistry.getBungeeArena()));
 				}
 			}
+
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
 				gameBar.setTitle(plugin.getChatManager().colorMessage("Bossbar.Waiting-For-Players"));
 			}
+
 			break;
 		default:
 			break;
@@ -306,6 +346,7 @@ public class Arena extends BukkitRunnable {
 			setOptionValue(ArenaOption.MINIMUM_PLAYERS, 2);
 			return;
 		}
+
 		setOptionValue(ArenaOption.MINIMUM_PLAYERS, minimumPlayers);
 	}
 
@@ -399,9 +440,7 @@ public class Arena extends BukkitRunnable {
 		player.setFoodLevel(20);
 		player.setFlying(false);
 		player.setAllowFlight(false);
-		for (PotionEffect effect : player.getActivePotionEffects()) {
-			player.removePotionEffect(effect.getType());
-		}
+		player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 		player.setWalkSpeed(0.2f);
 		Location location = getLobbyLocation();
 
@@ -423,15 +462,16 @@ public class Arena extends BukkitRunnable {
 		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
 			return;
 		}
+
 		switch (action) {
-		case ADD:
-			gameBar.addPlayer(p);
-			break;
-		case REMOVE:
-			gameBar.removePlayer(p);
-			break;
-		default:
-			break;
+			case ADD:
+				gameBar.addPlayer(p);
+				break;
+			case REMOVE:
+				gameBar.removePlayer(p);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -468,20 +508,22 @@ public class Arena extends BukkitRunnable {
 	}
 
 	public void teleportAllToEndLocation() {
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)
-				&& ConfigUtils.getConfig(plugin, "bungee").getBoolean("End-Location-Hub", true)) {
-			for (Player player : getPlayers()) {
-				plugin.getBungeeManager().connectToHub(player);
-			}
+		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED) && ConfigUtils.getConfig(plugin, "bungee").getBoolean("End-Location-Hub", true)) {
+			getPlayers().forEach(plugin.getBungeeManager()::connectToHub);
 			return;
 		}
+
 		Location location = getEndLocation();
+
 		if (location == null) {
 			location = getLobbyLocation();
-			System.out.print("EndLocation for arena " + getId() + " isn't intialized!");
+			System.out.print("End location for arena " + getId() + " isn't intialized!");
 		}
-		for (Player player : getPlayers()) {
-			player.teleport(location);
+
+		if (location != null) {
+			for (Player player : getPlayers()) {
+				player.teleport(location);
+			}
 		}
 	}
 
@@ -490,13 +532,17 @@ public class Arena extends BukkitRunnable {
 			plugin.getBungeeManager().connectToHub(player);
 			return;
 		}
+
 		Location location = getEndLocation();
+
 		if (location == null) {
 			location = getLobbyLocation();
-			System.out.print("EndLocation for arena " + getId() + " isn't intialized!");
+			System.out.print("End location for arena " + getId() + " isn't intialized!");
 		}
 
-		player.teleport(location);
+		if (location != null) {
+			player.teleport(location);
+		}
 	}
 
 	public List<Location> getPlayerSpawnPoints() {
@@ -536,10 +582,9 @@ public class Arena extends BukkitRunnable {
 	}
 
 	void removePlayer(Player player) {
-		if (player == null) {
-			return;
+		if (player != null) {
+			players.remove(player);
 		}
-		players.remove(player);
 	}
 
 	public List<Player> getPlayersLeft() {

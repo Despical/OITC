@@ -29,6 +29,7 @@ public class OITCGameLeaveAttemptEvent extends OITCEvent {
 		return player;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return HANDLERS;
 	}

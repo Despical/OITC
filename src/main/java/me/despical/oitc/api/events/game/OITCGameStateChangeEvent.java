@@ -25,6 +25,7 @@ public class OITCGameStateChangeEvent extends OITCEvent {
 		return HANDLERS;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return HANDLERS;
 	}

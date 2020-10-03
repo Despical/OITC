@@ -16,7 +16,6 @@ import me.despical.oitc.events.spectator.SpectatorItemEvents;
 import me.despical.oitc.handlers.*;
 import me.despical.oitc.handlers.items.SpecialItem;
 import me.despical.oitc.handlers.rewards.RewardsFactory;
-import me.despical.oitc.handlers.sign.ArenaSign;
 import me.despical.oitc.handlers.sign.SignManager;
 import me.despical.oitc.user.User;
 import me.despical.oitc.user.UserManager;
@@ -24,14 +23,11 @@ import me.despical.oitc.user.data.MysqlManager;
 import me.despical.oitc.utils.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -42,7 +38,6 @@ import java.util.Arrays;
 public class Main extends JavaPlugin {
 
 	private ExceptionLogHandler exceptionLogHandler;
-	private VersionResolver.ServerVersion version;
 	private boolean forceDisable = false;
 	private BungeeManager bungeeManager;	
 	private RewardsFactory rewardsFactory;
@@ -68,7 +63,7 @@ public class Main extends JavaPlugin {
 		if (getConfig().getBoolean("Developer-Mode", false)) {
 			Debugger.deepDebug(true);
 			Debugger.debug("Deep debug enabled");
-			for (String listenable : new ArrayList<>(getConfig().getStringList("Listenable-Performances"))) {
+			for (String listenable : getConfig().getStringList("Listenable-Performances")) {
 				Debugger.monitorPerformance(listenable);
 			}
 		}
@@ -88,12 +83,10 @@ public class Main extends JavaPlugin {
 	}
 	
 	private boolean validateIfPluginShouldStart() {
-		version = VersionResolver.resolveVersion();
-
-		if (VersionResolver.isBefore(VersionResolver.ServerVersion.v1_12_R1)) {
+		if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_12_R1)) {
 			MessageUtils.thisVersionIsNotSupported();
-			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Your server version is not supported by One in the Chamber!");
-			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Sadly, we must shut off. Maybe you consider changing your server version?");
+			Debugger.sendConsoleMessage("&cYour server version is not supported by One in the Chamber!");
+			Debugger.sendConsoleMessage("&cSadly, we must shut off. Maybe you consider changing your server version?");
 			forceDisable = true;
 			getServer().getPluginManager().disablePlugin(this);
 			return false;
@@ -101,8 +94,8 @@ public class Main extends JavaPlugin {
 			Class.forName("org.spigotmc.SpigotConfig");
 		} catch (Exception e) {
 			MessageUtils.thisVersionIsNotSupported();
-			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Your server software is not supported by One in the Chamber!");
-			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "We support only Spigot and Spigot forks only! Shutting off...");
+			Debugger.sendConsoleMessage("&cYour server software is not supported by One in the Chamber!");
+			Debugger.sendConsoleMessage("&cWe support only Spigot and Spigot forks only! Shutting off...");
 			forceDisable = true;
 			getServer().getPluginManager().disablePlugin(this);
 			return false;
@@ -129,19 +122,18 @@ public class Main extends JavaPlugin {
 
 		for (Arena arena : ArenaRegistry.getArenas()) {
 			arena.getScoreboardManager().stopAllScoreboards();
+
 			for (Player player : arena.getPlayers()) {
 				arena.doBarAction(Arena.BarAction.REMOVE, player);
 				arena.teleportToEndLocation(player);
 				player.setFlySpeed(0.1f);
+
 				if (configPreferences.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 					InventorySerializer.loadInventory(this, player);
 				} else {
 					player.getInventory().clear();
 					player.getInventory().setArmorContents(null);
-					for (PotionEffect pe : player.getActivePotionEffects()) {
-						player.removePotionEffect(pe.getType());
-					}
-
+					player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 					player.setWalkSpeed(0.2f);
 				}
 			}
@@ -167,7 +159,6 @@ public class Main extends JavaPlugin {
 
 		userManager = new UserManager(this);
 		Utils.init(this);
-		ArenaSign.init(this);
 		SpecialItem.loadAll();
 		PermissionsManager.init();
 		new SpectatorEvents(this);
@@ -227,46 +218,29 @@ public class Main extends JavaPlugin {
 			}
 			if (result.getNewestVersion().contains("b")) {
 				if (getConfig().getBoolean("Update-Notifier.Notify-Beta-Versions", true)) {
-					Bukkit.getConsoleSender().sendMessage("[OITC] Found a new beta version available: v" + result.getNewestVersion());
-					Bukkit.getConsoleSender().sendMessage("[OITC] Download it on SpigotMC:");
-					Bukkit.getConsoleSender().sendMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-3.81185/");
+					Debugger.sendConsoleMessage("[OITC] Found a new beta version available: v" + result.getNewestVersion());
+					Debugger.sendConsoleMessage("[OITC] Download it on SpigotMC:");
+					Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-3.81185/");
 				}
+
 				return;
 			}
+
 			MessageUtils.updateIsHere();
-			Bukkit.getConsoleSender().sendMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
-			Bukkit.getConsoleSender().sendMessage("[OITC] Download it SpigotMC:");
-			Bukkit.getConsoleSender().sendMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-3.81185/");
+			Debugger.sendConsoleMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
+			Debugger.sendConsoleMessage("[OITC] Download it SpigotMC:");
+			Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-3.81185/");
 		});
 	}
-	
+
 	private void setupFiles() {
 		for (String fileName : Arrays.asList("arenas", "bungee", "rewards", "stats", "lobbyitems", "mysql", "messages")) {
 			File file = new File(getDataFolder() + File.separator + fileName + ".yml");
+
 			if (!file.exists()) {
 				saveResource(fileName + ".yml", false);
 			}
 		}
-	}
-
-	public boolean is1_12_R1() {
-		return version == VersionResolver.ServerVersion.v1_12_R1;
-	}
-
-	public boolean is1_14_R1() {
-		return version == VersionResolver.ServerVersion.v1_14_R1;
-	}
-
-	public boolean is1_15_R1() {
-		return version == VersionResolver.ServerVersion.v1_15_R1;
-	}
-
-	public boolean is1_16_R1() {
-		return version == VersionResolver.ServerVersion.v1_16_R1;
-	}
-
-	public boolean is1_16_R2() {
-		return version == VersionResolver.ServerVersion.v1_16_R2;
 	}
 	
 	public RewardsFactory getRewardsFactory() {

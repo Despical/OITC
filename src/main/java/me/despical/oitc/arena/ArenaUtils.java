@@ -15,18 +15,14 @@ import org.bukkit.scoreboard.Team;
  */
 public class ArenaUtils {
 
-	private static Main plugin = JavaPlugin.getPlugin(Main.class);
+	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	public static void hidePlayer(Player p, Arena arena) {
-		for (Player player : arena.getPlayers()) {
-			player.hidePlayer(plugin, p);
-		}
+		arena.getPlayers().forEach(player -> player.hidePlayer(plugin, p));
 	}
 
 	public static void showPlayer(Player p, Arena arena) {
-		for (Player player : arena.getPlayers()) {
-			player.showPlayer(plugin, p);
-		}
+		arena.getPlayers().forEach(player -> player.showPlayer(plugin, p));
 	}
 
 	public static void hidePlayersOutsideTheGame(Player player, Arena arena) {
@@ -34,6 +30,7 @@ public class ArenaUtils {
 			if (arena.getPlayers().contains(players)) {
 				continue;
 			}
+
 			player.hidePlayer(plugin, players);
 			players.hidePlayer(plugin, player);
 		}
@@ -43,20 +40,28 @@ public class ArenaUtils {
 		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.NAMETAGS_HIDDEN)) {
 			return;
 		}
+
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
 			Arena arena = ArenaRegistry.getArena(players);
+
 			if (arena == null) {
 				continue;
 			}
+
 			Scoreboard scoreboard = players.getScoreboard();
+
 			if (scoreboard == Bukkit.getScoreboardManager().getMainScoreboard()) {
 				scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 			}
+
 			Team team = scoreboard.getTeam("OITCHide");
+
 			if (team == null) {
 				team = scoreboard.registerNewTeam("OITCHide");
 			}
+
 			team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
+
 			if (arena.getArenaState() == ArenaState.IN_GAME) {
 				team.addEntry(p.getName());
 			} else if (arena.getArenaState() == ArenaState.STARTING || arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS) {
@@ -64,6 +69,7 @@ public class ArenaUtils {
 			} else if (arena.getArenaState() == ArenaState.ENDING || arena.getArenaState() == ArenaState.RESTARTING) {
 				team.removeEntry(p.getName());
 			}
+
 			players.setScoreboard(scoreboard);
 		}
 	}

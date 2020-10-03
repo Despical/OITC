@@ -13,7 +13,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -44,7 +43,7 @@ public class BowTrailsHandler implements Listener {
 			return;
 		}
 
-		if (!ArenaRegistry.isInArena((Player) e.getEntity()) || e.getProjectile() == null || e.getProjectile().isDead() || e.getProjectile().isOnGround()) {
+		if (!ArenaRegistry.isInArena((Player) e.getEntity()) || e.getProjectile().isDead() || e.getProjectile().isOnGround()) {
 			return;
 		}
 
@@ -54,7 +53,7 @@ public class BowTrailsHandler implements Listener {
 					
 					@Override
 					public void run() {
-						if (e.getProjectile() == null || e.getProjectile().isDead() || e.getProjectile().isOnGround()) {
+						if (e.getProjectile().isDead() || e.getProjectile().isOnGround()) {
 							this.cancel();
 						}
 

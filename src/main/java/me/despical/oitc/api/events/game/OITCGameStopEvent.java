@@ -22,6 +22,7 @@ public class OITCGameStopEvent extends OITCEvent {
 		return HANDLERS;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return HANDLERS;
 	}

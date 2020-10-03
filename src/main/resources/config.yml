@@ -77,12 +77,12 @@ Nametags-Hidden: true
 
 # Should blocks behind game signs change their color based on game state?
 # They will change color to:
-# - white (waiting for players) stained glass
-# - yellow (starting) stained glass
-# - orange (in game) stained glass
-# - gray (ending) stained glass
-# - black (restarting) stained glass
-# - red (inactive) stained glass
+#   - white (waiting for players) stained glass
+#   - yellow (starting) stained glass
+#   - orange (in game) stained glass
+#   - gray (ending) stained glass
+#   - black (restarting) stained glass
+#   - red (inactive) stained glass
 Signs-Block-States-Enabled: true
 
 Update-Notifier:
@@ -91,5 +91,8 @@ Update-Notifier:
   # Should we inform you when beta version is out?
   # Also note that BETA IS NOT ALWAYS AS STABLE AS NORMAL RELEASE!
   Notify-Beta-Versions: true
+
+# Don't edit it. But who's stopping you? It's your server!
+File-Version: 0
 
 # No way! You've reached the end! But... where's the dragon!?

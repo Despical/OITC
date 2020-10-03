@@ -1,11 +1,12 @@
 package me.despical.oitc.handlers;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.despical.commonsbox.compat.VersionResolver;
 import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.commonsbox.string.StringFormatUtils;
+import me.despical.commonsbox.string.StringMatcher;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
-import me.despical.oitc.utils.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -32,10 +33,14 @@ public class ChatManager {
 	public String getPrefix() {
 		return prefix;
 	}
-	
+
 	public String colorRawMessage(String message) {
-		if (message.contains("#") && plugin.is1_16_R1() || plugin.is1_16_R2()) {
-			message = Utils.matchColorRegex(message);
+		if (message == null) {
+			return "";
+		}
+
+		if (message.contains("#") && VersionResolver.isCurrentEqualOrHigher(VersionResolver.ServerVersion.v1_16_R1)) {
+			message = StringMatcher.matchColorRegex(message);
 		}
 
 		return ChatColor.translateAlternateColorCodes('&', message);
@@ -52,7 +57,7 @@ public class ChatManager {
 			returnString = PlaceholderAPI.setPlaceholders(player, returnString);
 		}
 
-		return ChatColor.translateAlternateColorCodes('&', returnString);
+		return colorRawMessage(returnString);
 	}
 
 	public String formatMessage(Arena arena, String message, Player player) {

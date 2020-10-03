@@ -44,13 +44,14 @@ public class CommandHandler implements CommandExecutor {
 		registerSubCommand(new JoinCommand());
 		registerSubCommand(new RandomJoinCommand());
 		registerSubCommand(new LeaveCommand());
+		registerSubCommand(new ArenaSelectorCommand());
 		registerSubCommand(new StatsCommand());
 		registerSubCommand(new LeaderBoardCommand());
 
 		plugin.getCommand("oitc").setExecutor(this);
 		plugin.getCommand("oitc").setTabCompleter(new TabCompletion(this));
 	}
-	
+
 	public void registerSubCommand(SubCommand subCommand) {
 		subCommands.add(subCommand);
 	}
@@ -63,27 +64,33 @@ public class CommandHandler implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 0) {
 			sender.sendMessage(ChatColor.DARK_AQUA + "This server is running " + ChatColor.AQUA + "One in the Chamber " + ChatColor.DARK_AQUA + "v" + this.plugin.getDescription().getVersion() + " by " + ChatColor.AQUA + "Despical");
+
 			if (sender.hasPermission("oitc.admin")) {
 				sender.sendMessage(ChatColor.DARK_AQUA + "Commands: " + ChatColor.AQUA + "/" + label + " help");
 			}
+
 			return true;
 		}
+		
 		for (SubCommand subCommand : subCommands) {
 			if (subCommand.isValidTrigger(args[0])) {
 				if (!subCommand.hasPermission(sender)) {
 					sender.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.No-Permission"));
 					return true;
 				}
+
 				if (subCommand.getSenderType() == SenderType.PLAYER && !(sender instanceof Player)) {
 					sender.sendMessage(plugin.getChatManager().colorMessage("Commands.Only-By-Player"));
 					return false;
 				}
+
 				if (args.length - 1 >= subCommand.getMinimumArguments()) {
 					try {
 						subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
 					} catch (CommandException e) {
 						sender.sendMessage(ChatColor.RED + e.getMessage());
 					}
+
 				} else {
 					if (subCommand.getType() == SubCommand.CommandType.GENERIC) {
 						sender.sendMessage(ChatColor.RED + "Usage: /" + label + " " + subCommand.getName() + " " + (subCommand.getPossibleArguments().length() > 0 ? subCommand.getPossibleArguments() : ""));

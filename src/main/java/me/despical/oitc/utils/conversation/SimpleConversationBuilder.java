@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SimpleConversationBuilder {
 
-	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
+	private final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private final ConversationFactory conversationFactory;
 
 	public SimpleConversationBuilder() {
@@ -26,9 +26,9 @@ public class SimpleConversationBuilder {
 				return;
 			}
 
-			listener.getContext().getForWhom().sendRawMessage(plugin.getChatManager().colorMessage("Commands.Conversation.Operation-Timeout"));
+			listener.getContext().getForWhom().sendRawMessage(plugin.getChatManager().colorRawMessage("&7Operation cancelled!"));
 
-		}).thatExcludesNonPlayersWithMessage(plugin.getChatManager().colorMessage("Commands.Conversation.Only-By-Player"));
+		}).thatExcludesNonPlayersWithMessage(plugin.getChatManager().colorMessage("&4Only by players!"));
 	}
 
 	public SimpleConversationBuilder withPrompt(Prompt prompt) {

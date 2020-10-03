@@ -32,7 +32,7 @@ public class ChatEvents implements Listener {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onChatIngame(AsyncPlayerChatEvent event) {
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
 		if (arena == null) {
@@ -59,6 +59,7 @@ public class ChatEvents implements Listener {
 
 			if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT)) {
 				event.setCancelled(true);
+
 				boolean dead = !arena.getPlayersLeft().contains(event.getPlayer());
 
 				for (Player player : arena.getPlayers()) {

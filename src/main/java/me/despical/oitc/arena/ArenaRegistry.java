@@ -4,7 +4,6 @@ import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.commonsbox.serializer.LocationSerializer;
 import me.despical.oitc.Main;
 import me.despical.oitc.utils.Debugger;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -105,14 +103,14 @@ public class ArenaRegistry {
 		FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
 
 		if (!config.contains("instances")) {
-			Bukkit.getConsoleSender().sendMessage(plugin.getChatManager().colorMessage("Validator.No-Instances-Created"));
+			Debugger.sendConsoleMessage(plugin.getChatManager().colorMessage("Validator.No-Instances-Created"));
 			return;
 		}
 
 		ConfigurationSection section = config.getConfigurationSection("instances");
 
 		if (section == null) {
-			Bukkit.getConsoleSender().sendMessage(plugin.getChatManager().colorMessage("Validator.No-Instances-Created"));
+			Debugger.sendConsoleMessage(plugin.getChatManager().colorMessage("Validator.No-Instances-Created"));
 			return;
 		}
 
@@ -141,7 +139,7 @@ public class ArenaRegistry {
 			arena.setEndLocation(LocationSerializer.locationFromString(config.getString(s + "Endlocation", "world, -994.000, 4.000, 853.000, 0.000, 0.000")));
 
 			if (!config.getBoolean(s + "isdone", false)) {
-				Bukkit.getConsoleSender().sendMessage(plugin.getChatManager().colorMessage("Validator.Invalid-Arena-Configuration").replace("%arena%", id).replace("%error%", "NOT VALIDATED"));
+				Debugger.sendConsoleMessage(plugin.getChatManager().colorMessage("Validator.Invalid-Arena-Configuration").replace("%arena%", id).replace("%error%", "NOT VALIDATED"));
 				arena.setReady(false);
 				ArenaRegistry.registerArena(arena);
 				continue;
@@ -150,10 +148,10 @@ public class ArenaRegistry {
 			arena.setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 			ArenaRegistry.registerArena(arena);
 			arena.start();
-			Bukkit.getConsoleSender().sendMessage(plugin.getChatManager().colorMessage("Validator.Instance-Started").replace("%arena%", id));
+			Debugger.sendConsoleMessage(plugin.getChatManager().colorMessage("Validator.Instance-Started").replace("%arena%", id));
 		}
 
-		Debugger.debug(Level.INFO, "Arenas registration completed, took {0} ms", System.currentTimeMillis() - start);
+		Debugger.debug("Arenas registration completed, took {0} ms", System.currentTimeMillis() - start);
 	}
 
 	public static List<Arena> getArenas() {

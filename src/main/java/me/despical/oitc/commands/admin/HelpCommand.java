@@ -1,7 +1,6 @@
 package me.despical.oitc.commands.admin;
 
 import me.despical.oitc.commands.SubCommand;
-import me.despical.oitc.commands.exception.CommandException;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -37,7 +36,7 @@ public class HelpCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
+	public void execute(CommandSender sender, String label, String[] args) {
 		sender.sendMessage("");
 		sender.sendMessage(getPlugin().getChatManager().colorRawMessage("&3&l---- One in the Chamber Admin Commands ----"));
 		sender.sendMessage("");
@@ -49,6 +48,7 @@ public class HelpCommand extends SubCommand {
 				if (sender instanceof Player) {
 					List<String> help = new ArrayList<>();
 					help.add(ChatColor.DARK_AQUA + usage);
+
 					for (String tutLine : subCommand.getTutorial()) {
 						help.add(ChatColor.AQUA + tutLine);
 					}
@@ -63,6 +63,7 @@ public class HelpCommand extends SubCommand {
 				}
 			}
 		}
+
 		if (sender instanceof Player) {
 			sendHoverTip((Player) sender);
 		}

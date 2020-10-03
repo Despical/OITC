@@ -40,6 +40,7 @@ public class OITCGameJoinAttemptEvent extends OITCEvent implements Cancellable {
 		return player;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return HANDLERS;
 	}

@@ -71,8 +71,8 @@ public class ArenaRegisterComponent implements SetupComponent {
 				return;
 			}
 
-			String[] locations = new String[] {"lobbylocation", "Endlocation"};
-			String[] spawns = new String[] {"playerspawnpoints"};
+			String[] locations = {"lobbylocation", "Endlocation"};
+			String[] spawns = {"playerspawnpoints"};
 
 			for (String s : locations) {
 				if (!config.isSet("instances." + arena.getId() + "." + s) || config.getString("instances." + arena.getId() + "." + s).equals(LocationSerializer.locationToString(Bukkit.getWorlds().get(0).getSpawnLocation()))) {
@@ -100,6 +100,7 @@ public class ArenaRegisterComponent implements SetupComponent {
 					signsToUpdate.add(arenaSign.getSign());
 				}
 			}
+
 			arena.setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 			arena.setReady(true);
 

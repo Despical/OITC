@@ -22,10 +22,6 @@ public class PlaceholderManager extends PlaceholderExpansion {
 		return "oitc";
 	}
 
-	public String getPlugin() {
-		return null;
-	}
-
 	public String getAuthor() {
 		return "Despical";
 	}
@@ -40,20 +36,20 @@ public class PlaceholderManager extends PlaceholderExpansion {
 		}
 
 		switch (id.toLowerCase()) {
-		case "kills":
-			return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.KILLS));
-		case "deaths":
-			return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.DEATHS));
-		case "games_played":
-			return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.GAMES_PLAYED));
-		case "highest_score":
-			return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.HIGHEST_SCORE));
-		case "wins":
-			return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.WINS));
-		case "loses":
-			return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOSES));
-		default:
-			return handleArenaPlaceholderRequest(id);
+			case "kills":
+				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.KILLS));
+			case "deaths":
+				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.DEATHS));
+			case "games_played":
+				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.GAMES_PLAYED));
+			case "highest_score":
+				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.HIGHEST_SCORE));
+			case "wins":
+				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.WINS));
+			case "loses":
+				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOSES));
+			default:
+				return handleArenaPlaceholderRequest(id);
 		}
 	}
 

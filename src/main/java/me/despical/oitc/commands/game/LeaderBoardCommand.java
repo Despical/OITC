@@ -3,7 +3,6 @@ package me.despical.oitc.commands.game;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.commands.SubCommand;
-import me.despical.oitc.commands.exception.CommandException;
 import me.despical.oitc.user.data.MysqlManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -39,7 +38,7 @@ public class LeaderBoardCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
+	public void execute(CommandSender sender, String label, String[] args) {
 		if (args.length == 0) {
 			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Statistics.Type-Name"));
 			return;
@@ -73,6 +72,7 @@ public class LeaderBoardCommand extends SubCommand {
 				sender.sendMessage(formatMessage(statistic, "Empty", i + 1, 0));
 			} catch (NullPointerException ex) {
 				UUID current = (UUID) stats.keySet().toArray()[stats.keySet().toArray().length - 1];
+
 				if (getPlugin().getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
 					try (Connection connection = getPlugin().getMysqlDatabase().getConnection()) {
 						Statement statement = connection.createStatement();
@@ -81,9 +81,9 @@ public class LeaderBoardCommand extends SubCommand {
 							sender.sendMessage(formatMessage(statistic, set.getString(1), i + 1, stats.get(current)));
 							continue;
 						}
-					} catch (SQLException ignored) {
-					}
+					} catch (SQLException ignored) {}
 				}
+
 				sender.sendMessage(formatMessage(statistic, "Unknown Player", i + 1, stats.get(current)));
 			}
 		}
@@ -91,6 +91,7 @@ public class LeaderBoardCommand extends SubCommand {
 
 	private String formatMessage(String statisticName, String playerName, int position, int value) {
 		String message = getPlugin().getChatManager().colorMessage("Commands.Statistics.Format");
+
 		message = StringUtils.replace(message, "%position%", String.valueOf(position));
 		message = StringUtils.replace(message, "%name%", playerName);
 		message = StringUtils.replace(message, "%value%", String.valueOf(value));

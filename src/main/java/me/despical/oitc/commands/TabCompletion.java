@@ -6,12 +6,10 @@ import me.despical.oitc.arena.ArenaRegistry;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Despical
@@ -20,51 +18,39 @@ import java.util.List;
  */
 public class TabCompletion implements TabCompleter {
 
-	public List<String> commands = new ArrayList<>();;
+	public CommandHandler commandHandler;
 	
 	public TabCompletion(CommandHandler commandHandler) {
-		for (SubCommand command : commandHandler.getSubCommands()) {
-			this.commands.add(command.getName().toLowerCase());
-		}
+		this.commandHandler = commandHandler;
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		List<String> completions = new ArrayList<>();
-		if (!(sender instanceof Player)) {
-			return Collections.emptyList();
-		}
-		Player player = (Player) sender;
-		if (!(player.hasPermission("oitc.admin"))) {
-			return Collections.emptyList();
-		}
+		List<String> commands = commandHandler.getSubCommands().stream().map(command -> command.getName().toLowerCase()).collect(Collectors.toList());
+
 		if (args.length == 1) {
 			StringUtil.copyPartialMatches(args[0], commands, completions);
 		} 
+
 		if (args.length == 2) {
 			if (args[0].equalsIgnoreCase("create") || args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("list") ||
 				args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("randomjoin") || args[0].equalsIgnoreCase("stop") ||
-				args[0].equalsIgnoreCase("forcestart") || args[0].equalsIgnoreCase("stats")) {
-				return Collections.emptyList();
+				args[0].equalsIgnoreCase("forcestart") || args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("arenas")) {
+				return null;
 			}
+
 			if (args[0].equalsIgnoreCase("top")) {
-				List<String> possibilities = new ArrayList<>();
-				for (StatsStorage.StatisticType statistic : StatsStorage.StatisticType.values()) {
-					if (!statistic.isPersistent()) {
-						continue;
-					}
-					possibilities.add(statistic.name().toLowerCase(java.util.Locale.ENGLISH));
-				}
-				return possibilities;
+				return Arrays.stream(StatsStorage.StatisticType.values()).filter(StatsStorage.StatisticType::isPersistent).map(statistic -> statistic.name().toLowerCase(Locale.ENGLISH)).collect(Collectors.toList());
 			}
-			List<String> arenas = new ArrayList<>();
-			for (Arena arena : ArenaRegistry.getArenas()) {
-				arenas.add(arena.getId());
-			}
+
+			List<String> arenas = ArenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());
+
 			StringUtil.copyPartialMatches(args[1], arenas, completions);
 			Collections.sort(arenas);
 			return arenas;
 		}
+
 		Collections.sort(completions);
 		return completions;
 	}

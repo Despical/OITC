@@ -32,6 +32,7 @@ public class JoinEvent implements Listener {
 		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED) && !plugin.getServer().hasWhitelist() || e.getResult() != PlayerLoginEvent.Result.KICK_WHITELIST) {
 			return;
 		}
+
 		if (e.getPlayer().hasPermission(PermissionsManager.getJoinFullGames())) {
 			e.setResult(PlayerLoginEvent.Result.ALLOWED);
 		}
@@ -54,6 +55,7 @@ public class JoinEvent implements Listener {
 			player.hidePlayer(plugin, event.getPlayer());
 			event.getPlayer().hidePlayer(plugin, player);
 		}
+
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.loadInventory(plugin, event.getPlayer());
 		}
@@ -64,6 +66,7 @@ public class JoinEvent implements Listener {
 		if (!plugin.getConfig().getBoolean("Update-Notifier.Enabled", true) || !event.getPlayer().hasPermission("oitc.updatenotify")) {
 			return;
 		}
+
 		Bukkit.getScheduler().runTaskLater(plugin, () -> UpdateChecker.init(plugin, 81185).requestUpdateCheck().whenComplete((result, exception) -> {
 			if (!result.requiresUpdate()) {
 				return;

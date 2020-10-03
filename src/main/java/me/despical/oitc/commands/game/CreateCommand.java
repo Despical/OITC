@@ -5,12 +5,7 @@ import me.despical.commonsbox.serializer.LocationSerializer;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.commands.SubCommand;
-import me.despical.oitc.commands.exception.CommandException;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -44,13 +39,14 @@ public class CreateCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
+	public void execute(CommandSender sender, String label, String[] args) {
 		if (args.length == 0) {
 			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Type-Arena-Name"));
 			return;
 		}
 		
 		Player player = (Player) sender;
+
 		for (Arena arena : ArenaRegistry.getArenas()) {
 			if (arena.getId().equalsIgnoreCase(args[0])) {
 				player.sendMessage(getPlugin().getChatManager().getPrefix() + ChatColor.RED + "Arena with that ID already exists!");
@@ -58,6 +54,7 @@ public class CreateCommand extends SubCommand {
 				return;
 			}
 		}
+
 		if (ConfigUtils.getConfig(getPlugin(), "arenas").contains("instances." + args[0])) {
 			player.sendMessage(getPlugin().getChatManager().getPrefix() + ChatColor.RED + "Instance/Arena already exists! Use another ID or delete it first!");
 		} else {
@@ -65,9 +62,7 @@ public class CreateCommand extends SubCommand {
 			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
 			player.sendMessage(ChatColor.YELLOW + "      Instance " + args[0] + " created!");
 			player.sendMessage("");
-			player.spigot().sendMessage(new ComponentBuilder(ChatColor.GREEN + "Edit this arena via ").color(ChatColor.GREEN)
-				.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/oitc edit " + args[0])).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-				TextComponent.fromLegacyText(String.join("\n", ChatColor.AQUA + "Click to edit this arena")))).append(ChatColor.GREEN + "/" + label + " edit " + args[0]+ "!").create());
+			player.sendMessage(ChatColor.GREEN + "Edit this arena via " + ChatColor.GOLD + "/" + label + " edit "  + args[0] + ChatColor.GREEN + "!");
 			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
 		}
 	}
@@ -75,6 +70,7 @@ public class CreateCommand extends SubCommand {
 	private void createInstanceInConfig(String id) {
 		String path = "instances." + id + ".";
 		FileConfiguration config = ConfigUtils.getConfig(getPlugin(), "arenas");
+
 		config.set(path + "lobbylocation", LocationSerializer.locationToString(Bukkit.getServer().getWorlds().get(0).getSpawnLocation()));
 		config.set(path + "Endlocation", LocationSerializer.locationToString(Bukkit.getServer().getWorlds().get(0).getSpawnLocation()));
 		config.set(path + "playerspawnpoints", new ArrayList<>());
@@ -83,17 +79,22 @@ public class CreateCommand extends SubCommand {
 		config.set(path + "mapname", id);
 		config.set(path + "signs", new ArrayList<>());
 		config.set(path + "isdone", false);
+
 		ConfigUtils.saveConfig(getPlugin(), config, "arenas");
+
 		Arena arena = new Arena(id);
 		List<Location> playerSpawnPoints = new ArrayList<>();
+
 		for (String loc : config.getStringList(path + "playerspawnpoints")) {
 			playerSpawnPoints.add(LocationSerializer.locationFromString(loc));
 		}
+
 		arena.setPlayerSpawnPoints(playerSpawnPoints);
 		arena.setMapName(config.getString(path + "mapname"));
 		arena.setLobbyLocation(LocationSerializer.locationFromString(config.getString(path + "lobbylocation")));
 		arena.setEndLocation(LocationSerializer.locationFromString(config.getString(path + "Endlocation")));
 		arena.setReady(false);
+
 		ArenaRegistry.registerArena(arena);
 	}
 

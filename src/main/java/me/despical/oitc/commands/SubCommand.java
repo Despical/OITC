@@ -14,10 +14,10 @@ import java.util.List;
  */
 public abstract class SubCommand {
 	
-	private Main plugin = JavaPlugin.getPlugin(Main.class);
-	private String name;
+	private final Main plugin = JavaPlugin.getPlugin(Main.class);
+	private final String name;
 	private String permission;
-	private String[] aliases;
+	private final String[] aliases;
 
 	public SubCommand(String name) {
 		this(name, new String[0]);
@@ -66,7 +66,7 @@ public abstract class SubCommand {
 	}
 	
 	public enum SenderType {
-		PLAYER, BOTH;
+		PLAYER, BOTH
 	}
 	
 	public final boolean isValidTrigger(String name) {

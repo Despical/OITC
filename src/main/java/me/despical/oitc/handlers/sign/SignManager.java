@@ -230,39 +230,44 @@ public class SignManager implements Listener {
 						switch (arenaSign.getArena().getArenaState()) {
 						case WAITING_FOR_PLAYERS:
 							behind.setType(XMaterial.WHITE_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isBefore(VersionResolver.ServerVersion.v1_13_R1)) {
+							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
 								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 0);
 							}
 							break;
 						case STARTING:
 							behind.setType(XMaterial.YELLOW_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isBefore(VersionResolver.ServerVersion.v1_13_R1)) {
+							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
 								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 4);
 							}
+
 							break;
 						case IN_GAME:
 							behind.setType(XMaterial.ORANGE_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isBefore(VersionResolver.ServerVersion.v1_13_R1)) {
+							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
 								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 1);
 							}
+
 							break;
 						case ENDING:
 							behind.setType(XMaterial.GRAY_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isBefore(VersionResolver.ServerVersion.v1_13_R1)) {
+							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
 								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 7);
 							}
+
 							break;
 						case RESTARTING:
 							behind.setType(XMaterial.BLACK_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isBefore(VersionResolver.ServerVersion.v1_13_R1)) {
+							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
 								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 15);
 							}
+
 							break;
 						case INACTIVE:
 							behind.setType(XMaterial.RED_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isBefore(VersionResolver.ServerVersion.v1_13_R1)) {
+							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
 								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 14);
 							}
+
 							break;
 						default:
 							break;
@@ -279,5 +284,9 @@ public class SignManager implements Listener {
 
 	public List<ArenaSign> getArenaSigns() {
 		return arenaSigns;
+	}
+
+	public Map<ArenaState, String> getGameStateToString() {
+		return gameStateToString;
 	}
 }

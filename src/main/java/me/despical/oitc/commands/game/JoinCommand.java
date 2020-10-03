@@ -4,7 +4,6 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.commands.SubCommand;
-import me.despical.oitc.commands.exception.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -32,17 +31,19 @@ public class JoinCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
+	public void execute(CommandSender sender, String label, String[] args) {
 		if (args.length == 0) {
 			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Type-Arena-Name"));
 			return;
 		}
+
 		for (Arena arena : ArenaRegistry.getArenas()) {
 			if (args[0].equalsIgnoreCase(arena.getId())) {
 				ArenaManager.joinAttempt((Player) sender, arena);
 				return;
 			}
 		}
+
 		sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.No-Arena-Like-That"));
 	}
 

@@ -6,7 +6,6 @@ import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.commands.SubCommand;
-import me.despical.oitc.commands.exception.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,7 +36,7 @@ public class RandomJoinCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
+	public void execute(CommandSender sender, String label, String[] args) {
 		if (getPlugin().getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			return;
 		}
@@ -59,6 +58,7 @@ public class RandomJoinCommand extends SubCommand {
 				return;
 			}
 		}
+
 		for (Arena arena : ArenaRegistry.getArenas()) {
 			if ((arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS || arena.getArenaState() == ArenaState.STARTING) && arena.getPlayers().size() < arena.getMaximumPlayers()) {
 				ArenaManager.joinAttempt((Player) sender, arena);

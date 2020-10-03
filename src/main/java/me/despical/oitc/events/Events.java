@@ -12,7 +12,6 @@ import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.utils.ItemPosition;
-import me.despical.oitc.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -59,32 +58,40 @@ public class Events implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onDrop(PlayerDropItemEvent event) {
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
+
 		if (arena == null) {
 			return;
 		}
+
 		event.setCancelled(true);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onCommandExecute(PlayerCommandPreprocessEvent event) {
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
+
 		if (arena == null) {
 			return;
 		}
+
 		if (!plugin.getConfig().getBoolean("Block-Commands-In-Game", true)) {
 			return;
 		}
+
 		for (String msg : plugin.getConfig().getStringList("Whitelisted-Commands")) {
 			if (event.getMessage().contains(msg)) {
 				return;
 			}
 		}
+
 		if (event.getPlayer().isOp() || event.getPlayer().hasPermission("oitc.admin") || event.getPlayer().hasPermission("oitc.command.bypass")) {
 			return;
 		}
+
 		if (event.getMessage().startsWith("/oneinthechamber") || event.getMessage().startsWith("/oitc") || event.getMessage().contains("leave") || event.getMessage().contains("stats")) {
 			return;
 		}
+
 		event.setCancelled(true);
 		event.getPlayer().sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Only-Command-Ingame-Is-Leave"));
 	}
@@ -92,9 +99,11 @@ public class Events implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onInGameInteract(PlayerInteractEvent event) {
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
+
 		if (arena == null || event.getClickedBlock() == null) {
 			return;
 		}
+
 		if (event.getClickedBlock().getType() == XMaterial.PAINTING.parseMaterial() || event.getClickedBlock().getType() == XMaterial.FLOWER_POT.parseMaterial()) {
 			event.setCancelled(true);
 		}
@@ -103,9 +112,11 @@ public class Events implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onInGameBedEnter(PlayerBedEnterEvent event) {
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
+
 		if (arena == null) {
 			return;
 		}
+
 		event.setCancelled(true);
 	}
 
@@ -113,18 +124,25 @@ public class Events implements Listener {
 	public void onLeave(PlayerInteractEvent event) {
 		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.PHYSICAL) {
 			return;
+
 		}
+
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
 		ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
+
 		if (arena == null || !ItemUtils.isNamed(itemStack)) {
 			return;
 		}
+
 		String key = SpecialItemManager.getRelatedSpecialItem(itemStack);
+
 		if (key == null) {
 			return;
 		}
+
 		if (SpecialItemManager.getRelatedSpecialItem(itemStack).equalsIgnoreCase("Leave")) {
 			event.setCancelled(true);
+
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				plugin.getBungeeManager().connectToHub(event.getPlayer());
 			} else {
@@ -146,6 +164,7 @@ public class Events implements Listener {
 		if (!ArenaRegistry.isInArena(event.getPlayer())) {
 			return;
 		}
+
 		event.setCancelled(true);
 	}
 
@@ -154,6 +173,7 @@ public class Events implements Listener {
 		if (!ArenaRegistry.isInArena(event.getPlayer())) {
 			return;
 		}
+
 		event.setCancelled(true);
 	}
 
@@ -164,10 +184,13 @@ public class Events implements Listener {
 				event.setCancelled(true);
 				return;
 			}
+
 			if (!(event.getRemover() instanceof Arrow)) {
 				return;
 			}
+
 			Arrow arrow = (Arrow) event.getRemover();
+
 			if (arrow.getShooter() instanceof Player && ArenaRegistry.isInArena((Player) arrow.getShooter())) {
 				event.setCancelled(true);
 			}
@@ -179,11 +202,14 @@ public class Events implements Listener {
 		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Arrow)) {
 			return;
 		}
+
 		Arrow arrow = (Arrow) e.getDamager();
+
 		if (arrow.getShooter() instanceof Player) {
 			if (ArenaRegistry.isInArena((Player) e.getEntity()) && ArenaRegistry.isInArena((Player) arrow.getShooter())) {
 				if (!e.getEntity().getName().equals(((Player) arrow.getShooter()).getName())) {
 					e.setDamage(100.0);
+					plugin.getRewardsFactory().performReward((Player) e.getEntity(), Reward.RewardType.DEATH);
 				}
 			}
 		}
@@ -193,30 +219,37 @@ public class Events implements Listener {
 	public void onDeath(PlayerDeathEvent e) {
 		Player victim = e.getEntity();
 		Arena arena = ArenaRegistry.getArena(e.getEntity());
+
 		if (arena == null) {
 			return;
 		}
+
 		e.setDeathMessage("");
 		e.getDrops().clear();
 		e.setDroppedExp(0);
 		e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 		e.getEntity().playEffect(org.bukkit.EntityEffect.HURT);
+
 		victim.getKiller().sendTitle("", plugin.getChatManager().colorMessage("In-Game.Messages.Score-Subtitle"), 5, 30, 5);
+
 		plugin.getUserManager().getUser(victim).setStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 0);
 		plugin.getUserManager().getUser(victim).addStat(StatsStorage.StatisticType.LOCAL_DEATHS, 1);
 		plugin.getUserManager().getUser(victim).addStat(StatsStorage.StatisticType.DEATHS, 1);
 		plugin.getUserManager().getUser(victim.getKiller()).addStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 1);
 		plugin.getUserManager().getUser(victim.getKiller()).addStat(StatsStorage.StatisticType.LOCAL_KILLS, 1);
 		plugin.getUserManager().getUser(victim.getKiller()).addStat(StatsStorage.StatisticType.KILLS, 1);
+
 		if (plugin.getUserManager().getUser(victim.getKiller()).getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK) == 1){
 			plugin.getChatManager().broadcast(arena, plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Death").replace("%killer%", victim.getKiller().getName()), victim));
 		} else {
 			plugin.getChatManager().broadcast(arena, plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Kill-Streak").replace("%kill_streak%", String.valueOf(plugin.getUserManager().getUser(victim.getKiller()).getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
 		}
+
 		ItemPosition.addItem(victim.getKiller(), ItemPosition.ARROW, new ItemStack(Material.ARROW, 1));
 		Bukkit.getScheduler().runTaskLater(plugin, () -> victim.spigot().respawn(), 5);
 
 		plugin.getRewardsFactory().performReward(victim.getKiller(), Reward.RewardType.KILL);
+
 		if (StatsStorage.getUserStats(victim.getKiller(), StatsStorage.StatisticType.LOCAL_KILLS) == plugin.getConfig().getInt("Winning-Score", 25)) {
 			ArenaManager.stopGame(false, arena);
 		}
@@ -225,11 +258,14 @@ public class Events implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
+
 		if (!ArenaRegistry.isInArena(player)) {
 			return;
 		}
+
 		event.getPlayer().sendTitle(null, plugin.getChatManager().colorMessage("In-Game.Messages.Death-Subtitle"), 5, 30, 5);
 		event.setRespawnLocation(ArenaRegistry.getArena(player).getRandomSpawnPoint());
+
 		ItemPosition.setItem(event.getPlayer(), ItemPosition.SWORD, new ItemBuilder(XMaterial.WOODEN_SWORD.parseItem()).unbreakable(true).amount(1).build());
 		ItemPosition.setItem(event.getPlayer(), ItemPosition.BOW, new ItemBuilder(XMaterial.BOW.parseItem()).enchantment(Enchantment.LUCK).flag(ItemFlag.HIDE_ENCHANTS).unbreakable(true).amount(1).build());
 		ItemPosition.setItem(event.getPlayer(), ItemPosition.ARROW, new ItemStack(Material.ARROW, 1));
@@ -240,18 +276,23 @@ public class Events implements Listener {
 		if (!(e.getEntity() instanceof LivingEntity)) {
 			return;
 		}
+
 		LivingEntity livingEntity = (LivingEntity) e.getEntity();
+
 		if (!livingEntity.getType().equals(EntityType.ARMOR_STAND)) {
 			return;
 		}
+
 		if (e.getDamager() instanceof Player && ArenaRegistry.isInArena((Player) e.getDamager())) {
 			e.setCancelled(true);
 		} else if (e.getDamager() instanceof Arrow) {
 			Arrow arrow = (Arrow) e.getDamager();
+
 			if (arrow.getShooter() instanceof Player && ArenaRegistry.isInArena((Player) arrow.getShooter())) {
 				e.setCancelled(true);
 				return;
 			}
+
 			e.setCancelled(true);
 		}
 	}
@@ -276,11 +317,13 @@ public class Events implements Listener {
 	public void playerCommandExecution(PlayerCommandPreprocessEvent e) {
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.ENABLE_SHORT_COMMANDS)) {
 			Player player = e.getPlayer();
+
 			if (e.getMessage().equalsIgnoreCase("/start")) {
 				player.performCommand("oitc forcestart");
 				e.setCancelled(true);
 				return;
 			}
+
 			if (e.getMessage().equalsIgnoreCase("/leave")) {
 				player.performCommand("oitc leave");
 				e.setCancelled(true);
@@ -293,15 +336,19 @@ public class Events implements Listener {
 		if (!(e.getEntity() instanceof Player)) {
 			return;
 		}
+
 		Player victim = (Player) e.getEntity();
 		Arena arena = ArenaRegistry.getArena(victim);
+
 		if (arena == null) {
 			return;
 		}
+
 		if (e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
 			if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_FALL_DAMAGE)) {
 				return;
 			}
+
 			e.setCancelled(true);
 		}
 	}
@@ -317,9 +364,11 @@ public class Events implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPickupItem(PlayerPickupItemEvent event) {
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
+
 		if (arena == null) {
 			return;
 		}
+
 		event.setCancelled(true);
 		event.getItem().remove();
 	}
@@ -329,6 +378,7 @@ public class Events implements Listener {
 		if (!ArenaRegistry.isInArena(event.getPlayer())) {
 			return;
 		}
+
 		if (event.getPlayer().getTargetBlock(null, 7).getType() == XMaterial.CRAFTING_TABLE.parseMaterial()) {
 			event.setCancelled(true);
 		}

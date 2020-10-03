@@ -32,7 +32,7 @@ public class ScoreboardManager {
 	private final List<Scoreboard> scoreboards = new ArrayList<>();
 	private final Arena arena;
 	private final FileConfiguration config = ConfigUtils.getConfig(plugin, "messages");
-	
+
 	public ScoreboardManager(Arena arena) {
 		this.arena = arena;
 	}
@@ -81,9 +81,7 @@ public class ScoreboardManager {
 	 * Forces all scoreboards to deactivate.
 	 */
 	public void stopAllScoreboards() {
-		for (Scoreboard board : scoreboards) {
-			board.deactivate();
-		}
+		scoreboards.forEach(Scoreboard::deactivate);
 		scoreboards.clear();
 	}
 
@@ -112,8 +110,9 @@ public class ScoreboardManager {
 
 	private String formatScoreboardLine(String line, User user) {
 		String formattedLine = line;
+
 		formattedLine = StringUtils.replace(formattedLine, "%time%", String.valueOf(arena.getTimer()));
-		formattedLine = StringUtils.replace(formattedLine, "%formatted_time%",StringFormatUtils.formatIntoMMSS(arena.getTimer()));
+		formattedLine = StringUtils.replace(formattedLine, "%formatted_time%", StringFormatUtils.formatIntoMMSS(arena.getTimer()));
 		formattedLine = StringUtils.replace(formattedLine, "%mapname%", arena.getMapName());
 		formattedLine = StringUtils.replace(formattedLine, "%players%", String.valueOf(arena.getPlayers().size()));
 		formattedLine = StringUtils.replace(formattedLine, "%max_players%", String.valueOf(arena.getMaximumPlayers()));
@@ -133,25 +132,25 @@ public class ScoreboardManager {
 		}
 		return formattedLine;
 	}
-	
-	private Map<Player, Integer> getSortedLeaderboard(){
+
+	private Map<Player, Integer> getSortedLeaderboard() {
 		Map<Player, Integer> statistics = new HashMap<>();
 
 		for (Player player : arena.getPlayersLeft()) {
 			statistics.put(player, StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS));
 		}
 
-		return statistics.entrySet().stream().sorted(Map.Entry.<Player, Integer>comparingByValue().reversed()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));	
+		return statistics.entrySet().stream().sorted(Map.Entry.<Player, Integer>comparingByValue().reversed()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
-	
+
 	public String getTopPlayerName(int rank) {
 		List<String> names = new ArrayList<>();
 
-		for(Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
+		for (Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
 			names.add(entry.getKey().getName());
 		}
 
-		if(rank < getSortedLeaderboard().size()) {
+		if (rank < getSortedLeaderboard().size()) {
 			return names.get(rank);
 		}
 
@@ -161,35 +160,36 @@ public class ScoreboardManager {
 	public int getTopPlayerScore(int rank) {
 		List<Integer> scores = new ArrayList<>();
 
-		for(Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
+		for (Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
 			scores.add(entry.getValue());
 		}
 
-		if(rank < getSortedLeaderboard().size()) {
+		if (rank < getSortedLeaderboard().size()) {
 			return scores.get(rank);
 		}
 
 		return 0;
 	}
-	
+
 	public int getRank(Player player) {
 		List<Player> ranks = new ArrayList<>();
 
-		for(Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
+		for (Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
 			ranks.add(entry.getKey());
 		}
 
-		for(int i = 0; i <= ranks.size(); i++) {
-			if(ranks.get(i) == player) {
+		for (int i = 0; i <= ranks.size(); i++) {
+			if (ranks.get(i) == player) {
 				return i + 1;
 			}
 		}
 
 		return 0;
 	}
-	
+
 	private String formatTopPlayer(String player, int rank) {
 		String formatted = plugin.getChatManager().colorMessage("Scoreboard.Top-Player-Format");
+
 		formatted = StringUtils.replace(formatted, "%player%", player);
 		formatted = StringUtils.replace(formatted, "%score%", String.valueOf(getTopPlayerScore(rank)));
 		return formatted;

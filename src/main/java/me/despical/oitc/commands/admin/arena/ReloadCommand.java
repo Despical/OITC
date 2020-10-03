@@ -6,18 +6,15 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.commands.SubCommand;
-import me.despical.oitc.commands.exception.CommandException;
 import me.despical.oitc.utils.Debugger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -44,7 +41,7 @@ public class ReloadCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
+	public void execute(CommandSender sender, String label, String[] args) {
 		if (!confirmations.contains(sender)) {
 			confirmations.add(sender);
 			Bukkit.getScheduler().runTaskLater(getPlugin(), () -> confirmations.remove(sender), 20 * 10);
@@ -62,6 +59,7 @@ public class ReloadCommand extends SubCommand {
 		for (Arena arena : ArenaRegistry.getArenas()) {
 			Debugger.debug("[Reloader] Stopping {0} instance.");
 			long stopTime = System.currentTimeMillis();
+
 			for (Player player : arena.getPlayers()) {
 				arena.doBarAction(Arena.BarAction.REMOVE, player);
 				if (getPlugin().getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
@@ -69,16 +67,17 @@ public class ReloadCommand extends SubCommand {
 				} else {
 					player.getInventory().clear();
 					player.getInventory().setArmorContents(null);
-					for (PotionEffect pe : player.getActivePotionEffects()) {
-						player.removePotionEffect(pe.getType());
-					}
+					player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 					player.setWalkSpeed(0.2f);
 				}
 			}
+
 			ArenaManager.stopGame(true, arena);
 			Debugger.debug("[Reloader] Instance {0} stopped took {1} ms", arena.getId(), System.currentTimeMillis() - stopTime);
 		}
+
 		ArenaRegistry.registerArenas();
+
 		sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Admin-Commands.Success-Reload"));
 		Debugger.debug("[Reloader] Finished reloading took {0} ms", System.currentTimeMillis() - start);
 	}
