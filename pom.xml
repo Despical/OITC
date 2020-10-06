@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>1.0.6</version>
+	<version>1.0.7</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -44,10 +44,6 @@
 			<id>codemc-repo</id>
 			<url>https://repo.codemc.org/repository/maven-public/</url>
 		</repository>
-		<repository>
-			<id>spigot-repo</id>
-			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
@@ -60,7 +56,7 @@
 		<dependency>
 			<groupId>com.github.Despical</groupId>
 			<artifactId>commons-box</artifactId>
-			<version>1.1.4</version>
+			<version>1.1.5</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -95,6 +91,7 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -139,7 +136,7 @@
 						<configuration>
 							<relocations>
 								<relocation>
-									<pattern>com.github.stefvanschie.inventoryframework</pattern>
+									<pattern>com.github.despical.inventoryframework</pattern>
 									<shadedPattern>me.despical.oitc.utils.inventoryframework</shadedPattern>
 								</relocation>
 								<relocation>

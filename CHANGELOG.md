@@ -1,4 +1,14 @@
-### 1.0.6 Release (29.09.2020)
+### 1.0.7 Hotfix Release (06.10.2020)
+* Added more in-game tips.
+* Added license header.
+* Fixed pom.xml issues.
+* Fixed signs.
+* Fixed sending prefix twice.
+* Fixed bStats metrics.
+* Removed static handler list getter from events. 
+* Improved GUI performances.
+
+### 1.0.6 Release (29.09.2020 - 03.10.2020)
 * Added more in-game tips.
 * Added missing 1.14, 1.15 and 1.16 items.
 * Added arena selector.

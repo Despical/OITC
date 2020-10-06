@@ -1,3 +1,21 @@
+/*
+ * OITC - Reach 25 points to win!
+ * Copyright (C) 2020 Despical
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package me.despical.oitc.handlers.sign;
 
 import me.despical.commonsbox.compat.VersionResolver;
@@ -91,6 +109,7 @@ public class SignManager implements Listener {
 			ConfigUtils.saveConfig(plugin, config, "arenas");
 			return;
 		}
+
 		e.getPlayer().sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Signs.Arena-Doesnt-Exists"));
 	}
 
@@ -169,7 +188,7 @@ public class SignManager implements Listener {
 
 		for (ArenaSign sign : arenaSigns) {
 			if (sign.getSign().getLocation().equals(block.getLocation())) {
-				return null;
+				return sign;
 			}
 		}
 
@@ -233,6 +252,7 @@ public class SignManager implements Listener {
 							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
 								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 0);
 							}
+
 							break;
 						case STARTING:
 							behind.setType(XMaterial.YELLOW_STAINED_GLASS.parseMaterial());

@@ -127,7 +127,7 @@ In-Game:
     Lobby-Messages:
       Start-In: "&7The game starts in &b%time%&7 seconds!"
       Waiting-For-Players: "&7Waiting for players... We need at least &b%minplayers%&7 players to start."
-      Enough-Players-To-Start: "&7We now have enough players. The game is starting soon!"
+      Enough-Players-To-Start: "&7Now we have enough players. The game is starting soon!"
       Game-Started: "&7Game started! First player to get 25 kills wins!"
       Kicked-For-Premium-Slot: "&c%player% got removed from the game to make a place for premium players!"
       You-Were-Kicked-For-Premium-Slot: "&cYou got kicked out of the game to make a place for a premium player!"

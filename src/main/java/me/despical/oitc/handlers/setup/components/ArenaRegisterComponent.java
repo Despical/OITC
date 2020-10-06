@@ -1,3 +1,21 @@
+/*
+ * OITC - Reach 25 points to win!
+ * Copyright (C) 2020 Despical
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package me.despical.oitc.handlers.setup.components;
 
 import com.github.despical.inventoryframework.GuiItem;
@@ -13,7 +31,6 @@ import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.setup.SetupInventory;
 import me.despical.oitc.handlers.sign.ArenaSign;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -48,16 +65,16 @@ public class ArenaRegisterComponent implements SetupComponent {
 
 		if (!setupInventory.getArena().isReady()) {
 			registeredItem = new ItemBuilder(XMaterial.FIREWORK_ROCKET.parseItem())
-				.name(plugin.getChatManager().colorRawMessage("&e&lRegister Arena - Finish Setup"))
-				.lore(ChatColor.GRAY + "Click this when you're done with configuration.")
-				.lore(ChatColor.GRAY + "It will validate and register arena.")
+				.name("&e&lRegister Arena - Finish Setup")
+				.lore("&7Click this when you're done with configuration.")
+				.lore("&7It will validate and register arena.")
 				.build();
 		} else {
 			registeredItem = new ItemBuilder(Material.BARRIER)
-				.name(plugin.getChatManager().colorRawMessage("&a&lArena Registered - Congratulations"))
-				.lore(ChatColor.GRAY + "This arena is already registered!")
-				.lore(ChatColor.GRAY + "Good job, you went through whole setup!")
-				.lore(ChatColor.GRAY + "You can play on this arena now!")
+				.name("&a&lArena Registered - Congratulations")
+				.lore("&7This arena is already registered!")
+				.lore("&7Good job, you went through whole setup!")
+				.lore("&7You can play on this arena now!")
 				.enchantment(Enchantment.DURABILITY)
 				.flag(ItemFlag.HIDE_ENCHANTS)
 				.build();
