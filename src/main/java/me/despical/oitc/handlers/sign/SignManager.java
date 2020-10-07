@@ -36,6 +36,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -167,12 +168,13 @@ public class SignManager implements Listener {
 		e.getPlayer().sendMessage(plugin.getChatManager().getPrefix() + ChatColor.RED + "Couldn't remove sign from configuration! Please do this manually!");
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onJoinAttempt(PlayerInteractEvent e) {
 		ArenaSign arenaSign = getArenaSignByBlock(e.getClickedBlock());
 
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock().getState() instanceof Sign && arenaSign != null) {
 			Arena arena = arenaSign.getArena();
+
 			if (arena == null) {
 				return;
 			}
@@ -195,20 +197,6 @@ public class SignManager implements Listener {
 		return null;
 	}
 
-	public ArenaSign getArenaSignByArena(Arena arena) {
-		if (arena == null) {
-			return null;
-		}
-
-		for (ArenaSign sign : arenaSigns) {
-			if (sign.getArena() == arena) {
-				return sign;
-			}
-		}
-
-		return null;
-	}
-	
 	public void loadSigns() {
 		Debugger.debug("Signs load event started");
 		long start = System.currentTimeMillis();
@@ -247,50 +235,50 @@ public class SignManager implements Listener {
 
 					try {
 						switch (arenaSign.getArena().getArenaState()) {
-						case WAITING_FOR_PLAYERS:
-							behind.setType(XMaterial.WHITE_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
-								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 0);
-							}
+							case WAITING_FOR_PLAYERS:
+								behind.setType(XMaterial.WHITE_STAINED_GLASS.parseMaterial());
+								if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
+									Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 0);
+								}
 
-							break;
-						case STARTING:
-							behind.setType(XMaterial.YELLOW_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
-								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 4);
-							}
+								break;
+							case STARTING:
+								behind.setType(XMaterial.YELLOW_STAINED_GLASS.parseMaterial());
+								if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
+									Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 4);
+								}
 
-							break;
-						case IN_GAME:
-							behind.setType(XMaterial.ORANGE_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
-								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 1);
-							}
+								break;
+							case IN_GAME:
+								behind.setType(XMaterial.ORANGE_STAINED_GLASS.parseMaterial());
+								if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
+									Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 1);
+								}
 
-							break;
-						case ENDING:
-							behind.setType(XMaterial.GRAY_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
-								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 7);
-							}
+								break;
+							case ENDING:
+								behind.setType(XMaterial.GRAY_STAINED_GLASS.parseMaterial());
+								if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
+									Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 7);
+								}
 
-							break;
-						case RESTARTING:
-							behind.setType(XMaterial.BLACK_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
-								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 15);
-							}
+								break;
+							case RESTARTING:
+								behind.setType(XMaterial.BLACK_STAINED_GLASS.parseMaterial());
+								if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
+									Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 15);
+								}
 
-							break;
-						case INACTIVE:
-							behind.setType(XMaterial.RED_STAINED_GLASS.parseMaterial());
-							if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
-								Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 14);
-							}
+								break;
+							case INACTIVE:
+								behind.setType(XMaterial.RED_STAINED_GLASS.parseMaterial());
+								if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_13_R1)) {
+									Block.class.getMethod("setData", byte.class).invoke(behind, (byte) 14);
+								}
 
-							break;
-						default:
-							break;
+								break;
+							default:
+								break;
 						}
 					} catch (Exception ignored) {}
 				}

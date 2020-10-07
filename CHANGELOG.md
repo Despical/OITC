@@ -1,3 +1,7 @@
+### 1.0.8 Addition Hotfix Release (07.10.2020)
+* Fixed all of the sign problems.
+* Removed unnecessary colorize method for lores.
+
 ### 1.0.7 Hotfix Release (06.10.2020)
 * Added more in-game tips.
 * Added license header.
