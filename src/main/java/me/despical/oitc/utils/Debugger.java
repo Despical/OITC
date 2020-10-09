@@ -83,7 +83,7 @@ public class Debugger {
 	 * @param params to debug
 	 */
 	public static void debug(String msg, Object... params) {
-		debug(Level.INFO, "[OITCDBG] " + msg, params);
+		debug(Level.INFO, msg, params);
 	}
 
 	/**

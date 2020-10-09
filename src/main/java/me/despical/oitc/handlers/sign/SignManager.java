@@ -207,10 +207,10 @@ public class SignManager implements Listener {
 		for (String path : config.getConfigurationSection("instances").getKeys(false)) {
 			for (String sign : config.getStringList("instances." + path + ".signs")) {
 				Location loc = LocationSerializer.locationFromString(sign);
+				
 				if (loc.getBlock().getState() instanceof Sign) {
 					arenaSigns.add(new ArenaSign((Sign) loc.getBlock().getState(), ArenaRegistry.getArena(path)));
 				} else {
-					arenaSigns.remove(getArenaSignByBlock(loc.getBlock()));
 					Debugger.debug(Level.WARNING, "Block at location {0} for arena {1} not a sign", loc, path);
 				}
 			}

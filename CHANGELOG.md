@@ -1,3 +1,8 @@
+### 1.0.9 Release (09.10.2020)
+* Fixed debugger sends prefix twice.
+* Fixed item lores for Minecraft 1.13 and higher versions.
+* Improved GUI performances.
+
 ### 1.0.8 Addition Hotfix Release (07.10.2020)
 * Fixed all of the sign problems.
 * Removed unnecessary colorize method for lores.
