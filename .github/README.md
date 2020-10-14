@@ -32,7 +32,7 @@ Then add the dependency
         <dependency>
             <groupId>com.github.Despical</groupId>
             <artifactId>OITC</artifactId>
-            <version>1.0.8</version>
+            <version>1.0.9</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
