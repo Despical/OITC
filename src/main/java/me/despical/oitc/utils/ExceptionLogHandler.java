@@ -21,7 +21,6 @@ package me.despical.oitc.utils;
 import me.despical.oitc.Main;
 import org.bukkit.Bukkit;
 
-import java.util.Arrays;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -97,7 +96,7 @@ public class ExceptionLogHandler extends Handler {
 
 	private boolean containsBlacklistedClass(Throwable throwable) {
 		for (StackTraceElement element : throwable.getStackTrace()) {
-			for (String blacklist : Arrays.asList("me.despical.oitc.user.data.MysqlManager", "me.despical.oitc.commonsbox.database.MysqlDatabase")) {
+			for (String blacklist : new String[] {"me.despical.oitc.user.data.MysqlManager", "me.despical.oitc.commonsbox.database.MysqlDatabase"}) {
 				if (element.getClassName().contains(blacklist)) {
 					return true;
 				}

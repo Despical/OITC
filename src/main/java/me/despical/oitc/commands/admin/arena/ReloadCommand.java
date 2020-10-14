@@ -45,6 +45,7 @@ public class ReloadCommand extends SubCommand {
 	
 	public ReloadCommand() {
 		super("reload");
+
 		setPermission("oitc.admin.reload");
 	}
 
@@ -59,11 +60,11 @@ public class ReloadCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) {
+	public void execute(CommandSender sender, String[] args) {
 		if (!confirmations.contains(sender)) {
 			confirmations.add(sender);
-			Bukkit.getScheduler().runTaskLater(getPlugin(), () -> confirmations.remove(sender), 20 * 10);
-			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Are-You-Sure"));
+			Bukkit.getScheduler().runTaskLater(plugin, () -> confirmations.remove(sender), 20 * 10);
+			sender.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.Are-You-Sure"));
 			return;
 		}
 
@@ -71,8 +72,8 @@ public class ReloadCommand extends SubCommand {
 		Debugger.debug("Initiated plugin reload by {0}", sender.getName());
 		long start = System.currentTimeMillis();
 
-		getPlugin().reloadConfig();
-		getPlugin().getChatManager().reloadConfig();
+		plugin.reloadConfig();
+		plugin.getChatManager().reloadConfig();
 
 		for (Arena arena : ArenaRegistry.getArenas()) {
 			Debugger.debug("[Reloader] Stopping {0} instance.");
@@ -80,8 +81,8 @@ public class ReloadCommand extends SubCommand {
 
 			for (Player player : arena.getPlayers()) {
 				arena.doBarAction(Arena.BarAction.REMOVE, player);
-				if (getPlugin().getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
-					InventorySerializer.loadInventory(getPlugin(), player);
+				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
+					InventorySerializer.loadInventory(plugin, player);
 				} else {
 					player.getInventory().clear();
 					player.getInventory().setArmorContents(null);
@@ -96,7 +97,7 @@ public class ReloadCommand extends SubCommand {
 
 		ArenaRegistry.registerArenas();
 
-		sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Admin-Commands.Success-Reload"));
+		sender.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.Admin-Commands.Success-Reload"));
 		Debugger.debug("[Reloader] Finished reloading took {0} ms", System.currentTimeMillis() - start);
 	}
 

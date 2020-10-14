@@ -19,11 +19,11 @@
 package me.despical.oitc.events.spectator;
 
 import me.despical.commonsbox.compat.XMaterial;
+import me.despical.commonsbox.item.ItemUtils;
 import me.despical.commonsbox.number.NumberUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
-import me.despical.oitc.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.SkullType;
 import org.bukkit.World;
@@ -89,7 +89,7 @@ public class SpectatorItemEvents implements Listener {
 			if (players.contains(player) && !plugin.getUserManager().getUser(player).isSpectator()) {
 				ItemStack skull = XMaterial.PLAYER_HEAD.parseItem();
 				SkullMeta meta = (SkullMeta) skull.getItemMeta();
-				meta = Utils.setPlayerHead(player, meta);
+				meta = ItemUtils.setPlayerHead(player, meta);
 				meta.setDisplayName(player.getName());
 
 				String score = plugin.getChatManager().colorMessage("In-Game.Spectator.Target-Player-Score", p).replace("%score%", String.valueOf(ArenaRegistry.getArena(p).getScoreboardManager().getRank(p)));

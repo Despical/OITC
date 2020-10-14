@@ -22,7 +22,6 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.commands.SubCommand;
-import me.despical.oitc.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -38,6 +37,7 @@ public class ForceStartCommand extends SubCommand {
 
 	public ForceStartCommand() {
 		super("forcestart");
+
 		setPermission("oitc.admin.forcestart");
 	}
 
@@ -52,15 +52,15 @@ public class ForceStartCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) {
-		if (!Utils.checkIsInGameInstance((Player) sender)) {
+	public void execute(CommandSender sender, String[] args) {
+		if (!checkIsInGameInstance((Player) sender)) {
 			return;
 		}
 
 		Arena arena = ArenaRegistry.getArena((Player) sender);
 
 		if (arena.getPlayers().size() < 2) {
-			getPlugin().getChatManager().broadcast(arena, getPlugin().getChatManager().formatMessage(arena, getPlugin().getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Waiting-For-Players"), arena.getMinimumPlayers()));
+			plugin.getChatManager().broadcast(arena, plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Waiting-For-Players"), arena.getMinimumPlayers()));
 			return;
 		}
 		
@@ -68,7 +68,7 @@ public class ForceStartCommand extends SubCommand {
 			arena.setArenaState(ArenaState.STARTING);
 			arena.setForceStart(true);
 			arena.setTimer(0);
-			ArenaRegistry.getArena((Player) sender).getPlayers().forEach(p -> p.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("In-Game.Messages.Admin-Messages.Set-Starting-In-To-0")));
+			ArenaRegistry.getArena((Player) sender).getPlayers().forEach(p -> p.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Messages.Admin-Messages.Set-Starting-In-To-0")));
 		}
 	}
 

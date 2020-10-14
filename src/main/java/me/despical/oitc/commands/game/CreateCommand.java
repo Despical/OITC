@@ -43,6 +43,7 @@ public class CreateCommand extends SubCommand {
 
 	public CreateCommand() {
 		super("create");
+
 		setPermission("oitc.admin.create");
 	}
 
@@ -57,9 +58,9 @@ public class CreateCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) {
+	public void execute(CommandSender sender, String[] args) {
 		if (args.length == 0) {
-			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Type-Arena-Name"));
+			sender.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.Type-Arena-Name"));
 			return;
 		}
 		
@@ -67,27 +68,27 @@ public class CreateCommand extends SubCommand {
 
 		for (Arena arena : ArenaRegistry.getArenas()) {
 			if (arena.getId().equalsIgnoreCase(args[0])) {
-				player.sendMessage(getPlugin().getChatManager().getPrefix() + ChatColor.RED + "Arena with that ID already exists!");
-				player.sendMessage(getPlugin().getChatManager().getPrefix() + ChatColor.RED + "Usage: /oitc create <ID>");
+				player.sendMessage(plugin.getChatManager().getPrefix() + ChatColor.RED + "Arena with that ID already exists!");
+				player.sendMessage(plugin.getChatManager().getPrefix() + ChatColor.RED + "Usage: /oitc create <ID>");
 				return;
 			}
 		}
 
-		if (ConfigUtils.getConfig(getPlugin(), "arenas").contains("instances." + args[0])) {
-			player.sendMessage(getPlugin().getChatManager().getPrefix() + ChatColor.RED + "Instance/Arena already exists! Use another ID or delete it first!");
+		if (ConfigUtils.getConfig(plugin, "arenas").contains("instances." + args[0])) {
+			player.sendMessage(plugin.getChatManager().getPrefix() + ChatColor.RED + "Instance/Arena already exists! Use another ID or delete it first!");
 		} else {
 			createInstanceInConfig(args[0]);
 			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
 			player.sendMessage(ChatColor.YELLOW + "      Instance " + args[0] + " created!");
 			player.sendMessage("");
-			player.sendMessage(ChatColor.GREEN + "Edit this arena via " + ChatColor.GOLD + "/" + label + " edit "  + args[0] + ChatColor.GREEN + "!");
+			player.sendMessage(ChatColor.GREEN + "Edit this arena via " + ChatColor.GOLD + "/oitc edit "  + args[0] + ChatColor.GREEN + "!");
 			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
 		}
 	}
 	
 	private void createInstanceInConfig(String id) {
 		String path = "instances." + id + ".";
-		FileConfiguration config = ConfigUtils.getConfig(getPlugin(), "arenas");
+		FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
 
 		config.set(path + "lobbylocation", LocationSerializer.locationToString(Bukkit.getServer().getWorlds().get(0).getSpawnLocation()));
 		config.set(path + "Endlocation", LocationSerializer.locationToString(Bukkit.getServer().getWorlds().get(0).getSpawnLocation()));
@@ -98,7 +99,7 @@ public class CreateCommand extends SubCommand {
 		config.set(path + "signs", new ArrayList<>());
 		config.set(path + "isdone", false);
 
-		ConfigUtils.saveConfig(getPlugin(), config, "arenas");
+		ConfigUtils.saveConfig(plugin, config, "arenas");
 
 		Arena arena = new Arena(id);
 		List<Location> playerSpawnPoints = new ArrayList<>();

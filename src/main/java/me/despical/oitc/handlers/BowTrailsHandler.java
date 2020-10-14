@@ -49,6 +49,8 @@ public class BowTrailsHandler implements Listener {
 		registerBowTrail("oitc.trails.flame", Particle.FLAME);
 		registerBowTrail("oitc.trails.critical", Particle.CRIT);
 		registerBowTrail("oitc.trails.cloud", Particle.CLOUD);
+		registerBowTrail("oitc.trails.lava", Particle.DRIP_LAVA);
+		registerBowTrail("oitc.trails.water", Particle.WATER_DROP);
 	}
 
 	public void registerBowTrail(String permission, Particle particle) {

@@ -176,7 +176,6 @@ public class Main extends JavaPlugin {
 		}
 
 		userManager = new UserManager(this);
-		Utils.init(this);
 		SpecialItem.loadAll();
 		PermissionsManager.init();
 		new SpectatorEvents(this);
@@ -314,9 +313,7 @@ public class Main extends JavaPlugin {
 				continue;
 			}
 
-			for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
-				userManager.getDatabase().saveStatistic(user, stat);
-			}
+			Arrays.stream(StatsStorage.StatisticType.values()).forEach(stat -> userManager.getDatabase().saveStatistic(user, stat));
 		}
 	}
 }

@@ -40,6 +40,7 @@ public class HelpCommand extends SubCommand {
 	
 	public HelpCommand() {
 		super("help");
+
 		setPermission("oitc.admin");
 	}
 
@@ -54,14 +55,14 @@ public class HelpCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) {
+	public void execute(CommandSender sender, String[] args) {
 		sender.sendMessage("");
-		sender.sendMessage(getPlugin().getChatManager().colorRawMessage("&3&l---- One in the Chamber Admin Commands ----"));
+		sender.sendMessage(plugin.getChatManager().colorRawMessage("&3&l---- One in the Chamber Admin Commands ----"));
 		sender.sendMessage("");
 
-		for (SubCommand subCommand : getPlugin().getCommandHandler().getSubCommands()) {
+		for (SubCommand subCommand : plugin.getCommandHandler().getSubCommands()) {
 			if (subCommand.getType() == SubCommand.CommandType.GENERIC) {
-				String usage = "/" + label + " " + subCommand.getName() + (subCommand.getPossibleArguments() != null ? " " + subCommand.getPossibleArguments() : "");
+				String usage = "/oitc " + subCommand.getName() + (subCommand.getPossibleArguments() != null ? " " + subCommand.getPossibleArguments() : "");
 
 				if (sender instanceof Player) {
 					List<String> help = new ArrayList<>();

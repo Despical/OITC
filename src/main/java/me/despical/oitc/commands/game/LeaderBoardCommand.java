@@ -56,9 +56,9 @@ public class LeaderBoardCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) {
+	public void execute(CommandSender sender, String[] args) {
 		if (args.length == 0) {
-			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Statistics.Type-Name"));
+			sender.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.Statistics.Type-Name"));
 			return;
 		}
 
@@ -66,19 +66,19 @@ public class LeaderBoardCommand extends SubCommand {
 			StatsStorage.StatisticType statisticType = StatsStorage.StatisticType.valueOf(args[0].toUpperCase(java.util.Locale.ENGLISH));
 
 			if (!statisticType.isPersistent()) {
-				sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Statistics.Invalid-Name"));
+				sender.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.Statistics.Invalid-Name"));
 				return;
 			}
 
 			printLeaderboard(sender, statisticType);
 		} catch (IllegalArgumentException e) {
-			sender.sendMessage(getPlugin().getChatManager().getPrefix() + getPlugin().getChatManager().colorMessage("Commands.Statistics.Invalid-Name"));
+			sender.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.Statistics.Invalid-Name"));
 		}
 	}
 
 	private void printLeaderboard(CommandSender sender, StatsStorage.StatisticType statisticType) {
 		LinkedHashMap<UUID, Integer> stats = (LinkedHashMap<UUID, Integer>) StatsStorage.getStats(statisticType);
-		sender.sendMessage(getPlugin().getChatManager().colorMessage("Commands.Statistics.Header"));
+		sender.sendMessage(plugin.getChatManager().colorMessage("Commands.Statistics.Header"));
 		String statistic = StringUtils.capitalize(statisticType.toString().toLowerCase(java.util.Locale.ENGLISH).replace("_", " "));
 
 		for (int i = 0; i < 10; i++) {
@@ -91,10 +91,10 @@ public class LeaderBoardCommand extends SubCommand {
 			} catch (NullPointerException ex) {
 				UUID current = (UUID) stats.keySet().toArray()[stats.keySet().toArray().length - 1];
 
-				if (getPlugin().getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
-					try (Connection connection = getPlugin().getMysqlDatabase().getConnection()) {
+				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
+					try (Connection connection = plugin.getMysqlDatabase().getConnection()) {
 						Statement statement = connection.createStatement();
-						ResultSet set = statement.executeQuery("SELECT name FROM " + ((MysqlManager) getPlugin().getUserManager().getDatabase()).getTableName() + " WHERE UUID='" + current.toString() + "'");
+						ResultSet set = statement.executeQuery("SELECT name FROM " + ((MysqlManager) plugin.getUserManager().getDatabase()).getTableName() + " WHERE UUID='" + current.toString() + "'");
 						if (set.next()) {
 							sender.sendMessage(formatMessage(statistic, set.getString(1), i + 1, stats.get(current)));
 							continue;
@@ -108,7 +108,7 @@ public class LeaderBoardCommand extends SubCommand {
 	}
 
 	private String formatMessage(String statisticName, String playerName, int position, int value) {
-		String message = getPlugin().getChatManager().colorMessage("Commands.Statistics.Format");
+		String message = plugin.getChatManager().colorMessage("Commands.Statistics.Format");
 
 		message = StringUtils.replace(message, "%position%", String.valueOf(position));
 		message = StringUtils.replace(message, "%name%", playerName);

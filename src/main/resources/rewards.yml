@@ -7,7 +7,7 @@
 #             %arena-id% - Arena Identifier
 #             %players% - Number of players in game
 #
-#  Commands are executed by default by CONSOLE, use "p:" to preform command by player
+#      Commands are executed by default by CONSOLE, use "p:" to preform command by player
 #  You can use chance to execute command adding "chance(NUMBER):" (ex chance(10):) at the beginning of command
 #
 #  Commands examples:
@@ -26,7 +26,7 @@
 #
 #                               All script provided objects:
 #            player - Player object (API methods https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html)
-#   arena - OITC arena object (API methods https://javadoc.jitpack.io/com/github/Despical/OITC/1.0.6/javadoc/me/despical/oitc/arena/Arena.html)
+#   arena - OITC arena object (API methods https://javadoc.jitpack.io/com/github/Despical/OITC/1.0.9/javadoc/me/despical/oitc/arena/Arena.html)
 #            server - Bukkit server object (API methods https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Server.html)
 
 # Rewards must be enabled via config.yml first!
