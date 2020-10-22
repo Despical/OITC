@@ -118,14 +118,14 @@ public class ChatManager {
 		String message;
 
 		switch (action) {
-		case JOIN:
-			message = formatMessage(a, colorMessage("In-Game.Messages.Join"), p);
-			break;
-		case LEAVE:
-			message = formatMessage(a, colorMessage("In-Game.Messages.Leave"), p);
-			break;
-		default:
-			return;
+			case JOIN:
+				message = formatMessage(a, colorMessage("In-Game.Messages.Join"), p);
+				break;
+			case LEAVE:
+				message = formatMessage(a, colorMessage("In-Game.Messages.Leave"), p);
+				break;
+			default:
+				return;
 		}
 
 		broadcast(a, message);

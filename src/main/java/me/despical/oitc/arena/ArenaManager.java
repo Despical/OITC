@@ -39,16 +39,15 @@ import me.despical.oitc.utils.Debugger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -144,9 +143,11 @@ public class ArenaManager {
 		player.setExp(1);
 		player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 		player.setFoodLevel(20);
-		player.getInventory().setArmorContents(new ItemStack[] { new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR) });
+		player.getInventory().setArmorContents(null);
 		player.getInventory().clear();
 		player.setGameMode(GameMode.ADVENTURE);
+
+		Arrays.stream(StatsStorage.StatisticType.values()).filter(stat -> !stat.isPersistent()).forEach(stat -> user.setStat(stat, 0));
 
 		if (arena.getArenaState() == ArenaState.IN_GAME || arena.getArenaState() == ArenaState.ENDING) {
 			arena.teleportToStartLocation(player);
@@ -162,12 +163,6 @@ public class ArenaManager {
 			player.setCollidable(false);
 			player.setAllowFlight(true);
 			player.setFlying(true);
-
-			for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
-				if (!stat.isPersistent()) {
-					user.setStat(stat, 0);
-				}
-			}
 
 			for (Player spectator : arena.getPlayers()) {
 				if (plugin.getUserManager().getUser(spectator).isSpectator()) {
@@ -294,20 +289,24 @@ public class ArenaManager {
 		Debugger.debug("[{0}] Stop game event initialized with quickStop {1}", arena.getId(), quickStop);
 		FileConfiguration config = ConfigUtils.getConfig(plugin, "messages");
 		long start = System.currentTimeMillis();
-
 		OITCGameStopEvent gameStopEvent = new OITCGameStopEvent(arena);
+
 		Bukkit.getPluginManager().callEvent(gameStopEvent);
 		arena.setArenaState(ArenaState.ENDING);
+
 		if (quickStop) {
 			arena.setTimer(2);
 			plugin.getChatManager().broadcast(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Admin-Messages.Stopped-Game"));
 		} else {
 			arena.setTimer(10);
 		}
+
 		List<String> summaryMessages = config.getStringList("In-Game.Messages.Game-End-Messages.Summary-Message");
 		arena.getScoreboardManager().stopAllScoreboards();
-		for (final Player player : arena.getPlayers()) {
+
+		for (Player player : arena.getPlayers()) {
 			User user = plugin.getUserManager().getUser(player);
+
 			if (arena.getScoreboardManager().getTopPlayerName(0).equals(player.getName())) {
 				user.addStat(StatsStorage.StatisticType.WINS, 1);
 				player.sendTitle(plugin.getChatManager().colorMessage("In-Game.Messages.Game-End-Messages.Titles.Win"),
@@ -319,6 +318,7 @@ public class ArenaManager {
 					plugin.getChatManager().colorMessage("In-Game.Messages.Game-End-Messages.Subtitles.Lose").replace("%winner%", arena.getScoreboardManager().getTopPlayerName(0)), 5, 40, 5);
 				plugin.getRewardsFactory().performReward(player, Reward.RewardType.LOSE);
 			}
+
 			player.getInventory().clear();
 			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Leave").getSlot(), SpecialItemManager.getSpecialItem("Leave").getItemStack());
 

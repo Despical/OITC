@@ -1,3 +1,6 @@
+### 1.1.0 Release (22.10.2020)
+* Fixed statistics are not resetting after game finishes.
+
 ### 1.0.9 Release (09.10.2020 - 14.10.2020)
 * Fixed debugger sends prefix twice.
 * Fixed NPE with conversation builder.
