@@ -44,7 +44,9 @@ public class BowTrailsHandler implements Listener {
 
 	public BowTrailsHandler(Main plugin) {
 		this.plugin = plugin;
+
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+
 		registerBowTrail("oitc.trails.heart", Particle.HEART);
 		registerBowTrail("oitc.trails.flame", Particle.FLAME);
 		registerBowTrail("oitc.trails.critical", Particle.CRIT);

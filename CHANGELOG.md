@@ -1,5 +1,11 @@
-### 1.1.0 Release (22.10.2020)
+### 1.1.0 Release (22.10.2020 - 31.10.2020)
+* Added new placeholder to get amount of players in arena without spectator amount:
+  * `%oitc_{arena_id}:players_left%`
+* Added enable option for spectator settings.
+* Fixed scoreboard friendly fire caused players visible.
+* Fixed NPE when signs aren't located in default world.
 * Fixed statistics are not resetting after game finishes.
+* Optimized events.
 
 ### 1.0.9 Release (09.10.2020 - 14.10.2020)
 * Fixed debugger sends prefix twice.

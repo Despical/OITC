@@ -40,7 +40,6 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -287,7 +286,6 @@ public class ArenaManager {
 	 */
 	public static void stopGame(boolean quickStop, Arena arena) {
 		Debugger.debug("[{0}] Stop game event initialized with quickStop {1}", arena.getId(), quickStop);
-		FileConfiguration config = ConfigUtils.getConfig(plugin, "messages");
 		long start = System.currentTimeMillis();
 		OITCGameStopEvent gameStopEvent = new OITCGameStopEvent(arena);
 
@@ -301,7 +299,7 @@ public class ArenaManager {
 			arena.setTimer(10);
 		}
 
-		List<String> summaryMessages = config.getStringList("In-Game.Messages.Game-End-Messages.Summary-Message");
+		List<String> summaryMessages = plugin.getChatManager().getStringList("In-Game.Messages.Game-End-Messages.Summary-Message");
 		arena.getScoreboardManager().stopAllScoreboards();
 
 		for (Player player : arena.getPlayers()) {

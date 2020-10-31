@@ -84,20 +84,22 @@ public class PlaceholderManager extends PlaceholderExpansion {
 		}
 
 		switch (data[1].toLowerCase()) {
-		case "players":
-			return String.valueOf(arena.getPlayers().size());
-		case "max_players":
-			return String.valueOf(arena.getMaximumPlayers());
-		case "min_players":
-			return String.valueOf(arena.getMinimumPlayers());
-		case "state":
-			return String.valueOf(arena.getArenaState());
-		case "state_pretty":
-			return arena.getArenaState().getFormattedName();
-		case "mapname":
-			return arena.getMapName();
-		default:
-			return null;
+			case "players":
+				return String.valueOf(arena.getPlayers().size());
+			case "players_left":
+				return String.valueOf(arena.getPlayersLeft().size());
+			case "max_players":
+				return String.valueOf(arena.getMaximumPlayers());
+			case "min_players":
+				return String.valueOf(arena.getMinimumPlayers());
+			case "state":
+				return String.valueOf(arena.getArenaState());
+			case "state_pretty":
+				return arena.getArenaState().getFormattedName();
+			case "mapname":
+				return arena.getMapName();
+			default:
+				return null;
 		}
 	}
 }

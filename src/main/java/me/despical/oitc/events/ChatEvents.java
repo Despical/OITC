@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 public class ChatEvents implements Listener {
 
 	private final Main plugin;
-	private final String[] regexChars = new String[] { "$", "\\" };
+	private final String[] regexChars = {"$", "\\"};
 
 	public ChatEvents(Main plugin) {
 		this.plugin = plugin;
@@ -53,6 +53,7 @@ public class ChatEvents implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onChatIngame(AsyncPlayerChatEvent event) {
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
+
 		if (arena == null) {
 			if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT)) {
 				for (Arena loopArena : ArenaRegistry.getArenas()) {
@@ -67,6 +68,7 @@ public class ChatEvents implements Listener {
 
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.CHAT_FORMAT_ENABLED)) {
 			String eventMessage = event.getMessage();
+
 			for (String regexChar : regexChars) {
 				if (eventMessage.contains(regexChar)) {
 					eventMessage = eventMessage.replaceAll(Pattern.quote(regexChar), "");
@@ -102,6 +104,7 @@ public class ChatEvents implements Listener {
 
 	private String formatChatPlaceholders(String message, User user, String saidMessage) {
 		String formatted = message;
+
 		formatted = plugin.getChatManager().colorRawMessage(formatted);
 		formatted = StringUtils.replace(formatted, "%player%", user.getPlayer().getName());
 		formatted = StringUtils.replace(formatted, "%message%", ChatColor.stripColor(saidMessage));

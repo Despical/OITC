@@ -81,9 +81,7 @@ public class Main extends JavaPlugin {
 		if (getConfig().getBoolean("Developer-Mode", false)) {
 			Debugger.deepDebug(true);
 			Debugger.debug("Deep debug enabled");
-			for (String listenable : getConfig().getStringList("Listenable-Performances")) {
-				Debugger.monitorPerformance(listenable);
-			}
+			getConfig().getStringList("Listenable-Performances").forEach(Debugger::monitorPerformance);
 		}
 
 		long start = System.currentTimeMillis();
@@ -166,7 +164,7 @@ public class Main extends JavaPlugin {
 		ScoreboardLib.setPluginInstance(this);
 		chatManager = new ChatManager(this);
 
-		if (getConfig().getBoolean("BungeeActivated", false)) {
+		if (getConfig().getBoolean("BungeeActivated")) {
 			bungeeManager = new BungeeManager(this);
 		}
 
@@ -182,12 +180,14 @@ public class Main extends JavaPlugin {
 		new QuitEvent(this);
 		new JoinEvent(this);
 		new ChatEvents(this);
+		signManager = new SignManager(this);
 		ArenaRegistry.registerArenas();
+		signManager.loadSigns();
+		signManager.updateSigns();
 		new Events(this);
 		new LobbyEvent(this);
 		new SpectatorItemEvents(this);
 		rewardsFactory = new RewardsFactory(this);
-		signManager = new SignManager(this);
 		registerSoftDependenciesAndServices();
 		commandHandler = new CommandHandler(this);
 		new BowTrailsHandler(this);
@@ -302,10 +302,10 @@ public class Main extends JavaPlugin {
 				for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 					if (!stat.isPersistent()) continue;
 					if (update.toString().equalsIgnoreCase(" SET ")) {
-						update.append(stat.getName()).append("=").append(user.getStat(stat));
+						update.append(stat.getName()).append("'='").append(user.getStat(stat));
 					}
 
-					update.append(", ").append(stat.getName()).append("=").append(user.getStat(stat));
+					update.append(", ").append(stat.getName()).append("'='").append(user.getStat(stat));
 				}
 
 				String finalUpdate = update.toString();

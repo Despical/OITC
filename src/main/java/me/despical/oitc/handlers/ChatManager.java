@@ -30,6 +30,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 /**
  * @author Despical
  * <p>
@@ -108,6 +110,10 @@ public class ChatManager {
 		returnString = StringUtils.replace(returnString, "%number%", Integer.toString(integer));
 		returnString = colorRawMessage(formatPlaceholders(returnString, arena));
 		return returnString;
+	}
+
+	public List<String> getStringList(String path) {
+		return config.getStringList(path);
 	}
 
 	public void broadcast(Arena a, String msg) {

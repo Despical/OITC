@@ -63,7 +63,6 @@ public class SignManager implements Listener {
 
 	public SignManager(Main plugin) {
 		this.plugin = plugin;
-		FileConfiguration config = ConfigUtils.getConfig(plugin, "messages");
 
 		gameStateToString.put(ArenaState.WAITING_FOR_PLAYERS, plugin.getChatManager().colorMessage("Signs.Game-States.Waiting"));
 		gameStateToString.put(ArenaState.STARTING, plugin.getChatManager().colorMessage("Signs.Game-States.Starting"));
@@ -71,11 +70,9 @@ public class SignManager implements Listener {
 		gameStateToString.put(ArenaState.ENDING, plugin.getChatManager().colorMessage("Signs.Game-States.Ending"));
 		gameStateToString.put(ArenaState.RESTARTING, plugin.getChatManager().colorMessage("Signs.Game-States.Restarting"));
 		gameStateToString.put(ArenaState.INACTIVE, plugin.getChatManager().colorMessage("Signs.Game-States.Inactive"));
-		signLines = config.getStringList("Signs.Lines");
+		signLines = plugin.getChatManager().getStringList("Signs.Lines");
 
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		loadSigns();
-		updateSignScheduler();
 	}
 
 	@EventHandler
@@ -168,7 +165,7 @@ public class SignManager implements Listener {
 		e.getPlayer().sendMessage(plugin.getChatManager().getPrefix() + ChatColor.RED + "Couldn't remove sign from configuration! Please do this manually!");
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onJoinAttempt(PlayerInteractEvent e) {
 		ArenaSign arenaSign = getArenaSignByBlock(e.getClickedBlock());
 
@@ -219,13 +216,14 @@ public class SignManager implements Listener {
 		Debugger.debug("Sign load event finished took {0} ms", System.currentTimeMillis() - start);
 	}
 
-	private void updateSignScheduler() {
+	public void updateSigns() {
 		Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 			Debugger.performance("SignUpdate", "[PerformanceMonitor] [SignUpdate] Updating signs");
 			long start = System.currentTimeMillis();
 
 			for (ArenaSign arenaSign : arenaSigns) {
 				Sign sign = arenaSign.getSign();
+
 				for (int i = 0; i < signLines.size(); i++) {
 					sign.setLine(i, formatSign(signLines.get(i), arenaSign.getArena()));
 				}

@@ -78,6 +78,7 @@ public class ArenaUtils {
 				team = scoreboard.registerNewTeam("OITCHide");
 			}
 
+			team.setCanSeeFriendlyInvisibles(false);
 			team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
 
 			if (arena.getArenaState() == ArenaState.IN_GAME) {
