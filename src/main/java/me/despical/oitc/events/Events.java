@@ -258,8 +258,8 @@ public class Events implements Listener {
 		}
 	}
 	
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-	public void onRespawn(PlayerRespawnEvent event) {
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onRespawn(final PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
 
 		if (!ArenaRegistry.isInArena(player)) {
