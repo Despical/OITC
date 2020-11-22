@@ -3,7 +3,7 @@ main: me.despical.oitc.Main
 author: Despical
 version: ${project.version}
 api-version: 1.13
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, Multiverse-Core]
 
 commands:
   OneInTheChamber:
