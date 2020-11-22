@@ -18,9 +18,9 @@
 
 package me.despical.oitc.handlers.setup;
 
-import com.github.despical.inventoryframework.Gui;
-import com.github.despical.inventoryframework.pane.StaticPane;
 import me.despical.commonsbox.configuration.ConfigUtils;
+import me.despical.inventoryframework.Gui;
+import me.despical.inventoryframework.pane.StaticPane;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.handlers.ChatManager;

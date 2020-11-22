@@ -18,12 +18,12 @@
 
 package me.despical.oitc.handlers.setup.components;
 
-import com.github.despical.inventoryframework.GuiItem;
-import com.github.despical.inventoryframework.pane.StaticPane;
 import me.despical.commonsbox.compat.XMaterial;
 import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.commonsbox.item.ItemBuilder;
 import me.despical.commonsbox.serializer.LocationSerializer;
+import me.despical.inventoryframework.GuiItem;
+import me.despical.inventoryframework.pane.StaticPane;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;

@@ -18,7 +18,8 @@
 
 package me.despical.oitc.handlers.setup.components;
 
-import com.github.despical.inventoryframework.pane.StaticPane;
+
+import me.despical.inventoryframework.pane.StaticPane;
 import me.despical.oitc.handlers.setup.SetupInventory;
 
 /**

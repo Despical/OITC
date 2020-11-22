@@ -3,6 +3,7 @@
   * `%oitc_{arena_id}:players_left%`
 * Added enable option for spectator settings.
 * Fixed possible NPE when registering commands.
+* Fixed broken imports in InventoryFramework library.
 * Fixed getting NPE when place signs another world.
 * Fixed scoreboard friendly fire caused players visible.
 * Fixed NPE when signs aren't located in default world.
