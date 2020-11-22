@@ -18,10 +18,10 @@
 
 package me.despical.oitc.events.spectator.components;
 
-import com.github.despical.inventoryframework.GuiItem;
-import com.github.despical.inventoryframework.pane.StaticPane;
 import me.despical.commonsbox.compat.XMaterial;
 import me.despical.commonsbox.item.ItemBuilder;
+import me.despical.inventoryframework.GuiItem;
+import me.despical.inventoryframework.pane.StaticPane;
 import me.despical.oitc.Main;
 import me.despical.oitc.events.spectator.SpectatorSettingsMenu;
 import org.bukkit.Material;

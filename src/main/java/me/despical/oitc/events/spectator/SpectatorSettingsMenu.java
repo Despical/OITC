@@ -18,8 +18,8 @@
 
 package me.despical.oitc.events.spectator;
 
-import com.github.despical.inventoryframework.Gui;
-import com.github.despical.inventoryframework.pane.StaticPane;
+import me.despical.inventoryframework.Gui;
+import me.despical.inventoryframework.pane.StaticPane;
 import me.despical.oitc.Main;
 import me.despical.oitc.events.spectator.components.MiscComponents;
 import me.despical.oitc.events.spectator.components.SpeedComponents;
