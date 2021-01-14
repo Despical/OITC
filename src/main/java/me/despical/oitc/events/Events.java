@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.events;
@@ -243,9 +243,9 @@ public class Events implements Listener {
 		plugin.getUserManager().getUser(victim.getKiller()).addStat(StatsStorage.StatisticType.KILLS, 1);
 
 		if (plugin.getUserManager().getUser(victim.getKiller()).getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK) == 1){
-			plugin.getChatManager().broadcast(arena, plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Death").replace("%killer%", victim.getKiller().getName()), victim));
+			arena.broadcastMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Death").replace("%killer%", victim.getKiller().getName()), victim));
 		} else {
-			plugin.getChatManager().broadcast(arena, plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Kill-Streak").replace("%kill_streak%", String.valueOf(plugin.getUserManager().getUser(victim.getKiller()).getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
+			arena.broadcastMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Kill-Streak").replace("%kill_streak%", String.valueOf(plugin.getUserManager().getUser(victim.getKiller()).getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
 		}
 
 		ItemPosition.addItem(victim.getKiller(), ItemPosition.ARROW, new ItemStack(Material.ARROW, 1));
@@ -371,16 +371,5 @@ public class Events implements Listener {
 
 		event.setCancelled(true);
 		event.getItem().remove();
-	}
-
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onCraft(PlayerInteractEvent event) {
-		if (!ArenaRegistry.isInArena(event.getPlayer())) {
-			return;
-		}
-
-		if (event.getPlayer().getTargetBlock(null, 7).getType() == XMaterial.CRAFTING_TABLE.parseMaterial()) {
-			event.setCancelled(true);
-		}
 	}
 }

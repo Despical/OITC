@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.arena;
@@ -112,11 +112,7 @@ public class ArenaRegistry {
 		Debugger.debug("Initial arenas registration");
 		long start = System.currentTimeMillis();
 
-		if (ArenaRegistry.getArenas().size() > 0) {
-			for (Arena arena : new ArrayList<>(ArenaRegistry.getArenas())) {
-				unregisterArena(arena);
-			}
-		}
+		arenas.clear();
 
 		FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
 
@@ -153,10 +149,10 @@ public class ArenaRegistry {
 			}
 
 			arena.setPlayerSpawnPoints(playerSpawnPoints);
-			arena.setLobbyLocation(LocationSerializer.locationFromString(config.getString(s + "lobbylocation", "world, -994.000, 4.000, 853.000, 0.000, 0.000")));
-			arena.setEndLocation(LocationSerializer.locationFromString(config.getString(s + "Endlocation", "world, -994.000, 4.000, 853.000, 0.000, 0.000")));
+			arena.setLobbyLocation(LocationSerializer.locationFromString(config.getString(s + "lobbylocation")));
+			arena.setEndLocation(LocationSerializer.locationFromString(config.getString(s + "Endlocation")));
 
-			if (!config.getBoolean(s + "isdone", false)) {
+			if (!config.getBoolean(s + "isdone")) {
 				Debugger.sendConsoleMessage(plugin.getChatManager().colorMessage("Validator.Invalid-Arena-Configuration").replace("%arena%", id).replace("%error%", "NOT VALIDATED"));
 				arena.setReady(false);
 				ArenaRegistry.registerArena(arena);

@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.arena;
@@ -114,7 +114,7 @@ public class Arena extends BukkitRunnable {
 			if (getPlayers().size() < getMinimumPlayers()) {
 				if (getTimer() <= 0) {
 					setTimer(45);
-					plugin.getChatManager().broadcast(this, plugin.getChatManager().formatMessage(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Waiting-For-Players"), getMinimumPlayers()));
+					broadcastMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().formatMessage(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Waiting-For-Players"), getMinimumPlayers()));
 					break;
 				}
 			} else {
@@ -122,7 +122,7 @@ public class Arena extends BukkitRunnable {
 					gameBar.setTitle(plugin.getChatManager().colorMessage("Bossbar.Waiting-For-Players"));
 				}
 
-				plugin.getChatManager().broadcast(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Enough-Players-To-Start"));
+				broadcastMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Enough-Players-To-Start"));
 				setArenaState(ArenaState.STARTING);
 				setTimer(plugin.getConfig().getInt("Starting-Waiting-Time", 60));
 				showPlayers();
@@ -133,7 +133,7 @@ public class Arena extends BukkitRunnable {
 		case STARTING:
 			if (getPlayers().size() == getMaximumPlayers() && getTimer() >= plugin.getConfig().getInt("Start-Time-On-Full-Lobby", 15) && !forceStart) {
 				setTimer(plugin.getConfig().getInt("Start-Time-On-Full-Lobby", 15));
-				plugin.getChatManager().broadcast(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Start-In").replace("%time%", String.valueOf(getTimer())));
+				broadcastMessage(plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Start-In").replace("%time%", String.valueOf(getTimer())));
 			}
 
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
@@ -152,7 +152,7 @@ public class Arena extends BukkitRunnable {
 					gameBar.setProgress(1.0);
 				}
 
-				plugin.getChatManager().broadcast(this, plugin.getChatManager().formatMessage(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Waiting-For-Players"), getMinimumPlayers()));
+				broadcastMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().formatMessage(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Waiting-For-Players"), getMinimumPlayers()));
 				setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 				Bukkit.getPluginManager().callEvent(new OITCGameStartEvent(this));
 				setTimer(15);
@@ -280,7 +280,7 @@ public class Arena extends BukkitRunnable {
 					}
 				}
 
-				plugin.getChatManager().broadcast(this, plugin.getChatManager().colorMessage("Commands.Teleported-To-The-Lobby"));
+				broadcastMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.Teleported-To-The-Lobby"));
 
 				for (User user : plugin.getUserManager().getUsers(this)) {
 					user.setSpectator(false);
@@ -542,6 +542,12 @@ public class Arena extends BukkitRunnable {
 			for (Player player : getPlayers()) {
 				player.teleport(location);
 			}
+		}
+	}
+
+	public void broadcastMessage(String message) {
+		for (Player player : players) {
+			player.sendMessage(message);
 		}
 	}
 

@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,16 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.events.spectator;
 
 import me.despical.oitc.Main;
-import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
-import me.despical.oitc.arena.ArenaState;
-import me.despical.oitc.user.User;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -141,12 +138,12 @@ public class SpectatorEvents implements Listener {
 
 		Player player = (Player) event.getEntity();
 
-		if (!plugin.getUserManager().getUser(player).isSpectator() || ArenaRegistry.getArena(player) == null) {
+		if (!plugin.getUserManager().getUser(player).isSpectator() || !ArenaRegistry.isInArena(player)) {
 			return;
 		}
 
 		if (player.getLocation().getY() < 1) {
-			player.teleport(ArenaRegistry.getArena(player).getPlayerSpawnPoints().get(0));
+			player.teleport(ArenaRegistry.getArena(player).getRandomSpawnPoint());
 		}
 
 		event.setCancelled(true);
@@ -179,44 +176,15 @@ public class SpectatorEvents implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onPickup(PlayerPickupItemEvent event) {
+	public void onPickupItem(PlayerPickupItemEvent event) {
 		if (plugin.getUserManager().getUser(event.getPlayer()).isSpectator()) {
 			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onSpectate(PlayerPickupItemEvent event) {
+	public void onInteract(PlayerInteractEvent event) {
 		if (plugin.getUserManager().getUser(event.getPlayer()).isSpectator()) {
-			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onSpectate(PlayerDropItemEvent event) {
-		Arena arena = ArenaRegistry.getArena(event.getPlayer());
-
-		if (arena == null) {
-			return;
-		}
-
-		if (arena.getArenaState() != ArenaState.IN_GAME || plugin.getUserManager().getUser(event.getPlayer()).isSpectator()) {
-			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onInteractEntityInteract(PlayerInteractEntityEvent event) {
-		User user = plugin.getUserManager().getUser(event.getPlayer());
-
-		if (user.isSpectator()) {
-			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onRightClick(PlayerInteractEvent event) {
-		if (ArenaRegistry.isInArena(event.getPlayer()) && plugin.getUserManager().getUser(event.getPlayer()).isSpectator()) {
 			event.setCancelled(true);
 		}
 	}

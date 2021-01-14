@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc;
@@ -69,16 +69,18 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		if (!validateIfPluginShouldStart()) {
+			forceDisable = true;
+			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
 
 		exceptionLogHandler = new ExceptionLogHandler(this);
 		saveDefaultConfig();
 
-		Debugger.setEnabled(getDescription().getVersion().contains("d") || getConfig().getBoolean("Debug-Messages", false));
+		Debugger.setEnabled(getDescription().getVersion().contains("debug") || getConfig().getBoolean("Debug-Messages"));
 
 		Debugger.debug("Initialization start");
-		if (getConfig().getBoolean("Developer-Mode", false)) {
+		if (getConfig().getBoolean("Developer-Mode")) {
 			Debugger.deepDebug(true);
 			Debugger.debug("Deep debug enabled");
 			getConfig().getStringList("Listenable-Performances").forEach(Debugger::monitorPerformance);
@@ -103,8 +105,6 @@ public class Main extends JavaPlugin {
 			MessageUtils.thisVersionIsNotSupported();
 			Debugger.sendConsoleMessage("&cYour server version is not supported by One in the Chamber!");
 			Debugger.sendConsoleMessage("&cSadly, we must shut off. Maybe you consider changing your server version?");
-			forceDisable = true;
-			getServer().getPluginManager().disablePlugin(this);
 			return false;
 		} try {
 			Class.forName("org.spigotmc.SpigotConfig");
@@ -112,8 +112,6 @@ public class Main extends JavaPlugin {
 			MessageUtils.thisVersionIsNotSupported();
 			Debugger.sendConsoleMessage("&cYour server software is not supported by One in the Chamber!");
 			Debugger.sendConsoleMessage("&cWe support only Spigot and Spigot forks only! Shutting off...");
-			forceDisable = true;
-			getServer().getPluginManager().disablePlugin(this);
 			return false;
 		}
 
@@ -164,7 +162,7 @@ public class Main extends JavaPlugin {
 		ScoreboardLib.setPluginInstance(this);
 		chatManager = new ChatManager(this);
 
-		if (getConfig().getBoolean("BungeeActivated")) {
+		if (configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			bungeeManager = new BungeeManager(this);
 		}
 
@@ -233,11 +231,12 @@ public class Main extends JavaPlugin {
 			if (!result.requiresUpdate()) {
 				return;
 			}
+
 			if (result.getNewestVersion().contains("b")) {
 				if (getConfig().getBoolean("Update-Notifier.Notify-Beta-Versions", true)) {
 					Debugger.sendConsoleMessage("[OITC] Found a new beta version available: v" + result.getNewestVersion());
 					Debugger.sendConsoleMessage("[OITC] Download it on SpigotMC:");
-					Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-3.81185/");
+					Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-4.81185/");
 				}
 
 				return;
@@ -246,7 +245,7 @@ public class Main extends JavaPlugin {
 			MessageUtils.updateIsHere();
 			Debugger.sendConsoleMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
 			Debugger.sendConsoleMessage("[OITC] Download it SpigotMC:");
-			Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-3.81185/");
+			Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-4.81185/");
 		});
 	}
 
@@ -313,7 +312,9 @@ public class Main extends JavaPlugin {
 				continue;
 			}
 
-			Arrays.stream(StatsStorage.StatisticType.values()).forEach(stat -> userManager.getDatabase().saveStatistic(user, stat));
+			for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+				userManager.getDatabase().saveStatistic(user, stat);
+			}
 		}
 	}
 }

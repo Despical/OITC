@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,16 +13,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * @author Despical
@@ -30,6 +32,8 @@ import org.bukkit.entity.Player;
  * Created at 02.07.2020
  */
 public class PlaceholderManager extends PlaceholderExpansion {
+
+	private final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	@Override
 	public boolean persist() {
@@ -45,7 +49,7 @@ public class PlaceholderManager extends PlaceholderExpansion {
 	}
 
 	public String getVersion() {
-		return "1.1.0";
+		return plugin.getDescription().getVersion();
 	}
 
 	public String onPlaceholderRequest(Player player, String id) {

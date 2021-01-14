@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers;
@@ -47,7 +47,7 @@ public class ChatManager {
 	public ChatManager(Main plugin) {
 		this.plugin = plugin;
 		this.config = ConfigUtils.getConfig(plugin, "messages");
-		this.prefix = colorRawMessage(config.getString("In-Game.Plugin-Prefix"));
+		this.prefix = colorMessage("In-Game.Plugin-Prefix");
 	}
 	
 	public String getPrefix() {
@@ -59,7 +59,7 @@ public class ChatManager {
 			return "";
 		}
 
-		if (message.contains("#") && VersionResolver.isCurrentEqualOrHigher(VersionResolver.ServerVersion.v1_16_R1)) {
+		if (VersionResolver.isCurrentEqualOrHigher(VersionResolver.ServerVersion.v1_16_R1) && message.contains("#")) {
 			message = StringMatcher.matchColorRegex(message);
 		}
 
@@ -82,6 +82,7 @@ public class ChatManager {
 
 	public String formatMessage(Arena arena, String message, Player player) {
 		String returnString = message;
+
 		returnString = StringUtils.replace(returnString, "%player%", player.getName());
 		returnString = colorRawMessage(formatPlaceholders(returnString, arena));
 
@@ -116,30 +117,26 @@ public class ChatManager {
 		return config.getStringList(path);
 	}
 
-	public void broadcast(Arena a, String msg) {
-		a.getPlayers().forEach(p -> p.sendMessage(prefix + msg));
-	}
-
-	public void broadcastAction(Arena a, Player p, ActionType action) {
+	public void broadcastAction(Arena arena, Player player, ActionType action) {
 		String message;
 
 		switch (action) {
 			case JOIN:
-				message = formatMessage(a, colorMessage("In-Game.Messages.Join"), p);
+				message = formatMessage(arena, colorMessage("In-Game.Messages.Join"), player);
 				break;
 			case LEAVE:
-				message = formatMessage(a, colorMessage("In-Game.Messages.Leave"), p);
+				message = formatMessage(arena, colorMessage("In-Game.Messages.Leave"), player);
 				break;
 			default:
 				return;
 		}
 
-		broadcast(a, message);
+		arena.broadcastMessage(prefix + message);
 	}
 	
 	public void reloadConfig() {
 		config = ConfigUtils.getConfig(plugin, "messages");
-		prefix = colorRawMessage(config.getString("In-Game.Plugin-Prefix"));
+		prefix = colorMessage("In-Game.Plugin-Prefix");
 	}
 
 	public enum ActionType {

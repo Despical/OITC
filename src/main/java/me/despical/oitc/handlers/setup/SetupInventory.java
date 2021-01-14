@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers.setup;
@@ -58,30 +58,27 @@ public class SetupInventory {
 	}
 
 	private void prepareGui() {
-		this.gui = new Gui(plugin, 3, "OITC Arena Editor");
-		this.gui.setOnGlobalClick(e -> e.setCancelled(true));
+		gui = new Gui(plugin, 3, "OITC Arena Editor");
+		gui.setOnGlobalClick(e -> e.setCancelled(true));
+
 		StaticPane pane = new StaticPane(9, 3);
-		this.gui.addPane(pane);
+		gui.addPane(pane);
 
 		prepareComponents(pane);
 	}
 
 	private void prepareComponents(StaticPane pane) {
 		SpawnComponents spawnComponents = new SpawnComponents();
-		spawnComponents.prepare(this);
-		spawnComponents.injectComponents(pane);
+		spawnComponents.registerComponent(this, pane);
 
 		PlayerAmountComponents playerAmountComponents = new PlayerAmountComponents();
-		playerAmountComponents.prepare(this);
-		playerAmountComponents.injectComponents(pane);
+		playerAmountComponents.registerComponent(this, pane);
 
 		MiscComponents miscComponents = new MiscComponents();
-		miscComponents.prepare(this);
-		miscComponents.injectComponents(pane);
+		miscComponents.registerComponent(this, pane);
 
 		ArenaRegisterComponent arenaRegisterComponent = new ArenaRegisterComponent();
-		arenaRegisterComponent.prepare(this);
-		arenaRegisterComponent.injectComponents(pane);
+		arenaRegisterComponent.registerComponent(this, pane);
 	}
 
 	private void sendProTip(Player p) {

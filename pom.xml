@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -50,19 +50,19 @@
 		<dependency>
 			<groupId>com.destroystokyo.paper</groupId>
 			<artifactId>paper-api</artifactId>
-			<version>1.16.1-R0.1-SNAPSHOT</version>
+			<version>1.16.4-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Despical</groupId>
 			<artifactId>commons-box</artifactId>
-			<version>1.1.6</version>
+			<version>1.2.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Despical</groupId>
 			<artifactId>InventoryFramework</artifactId>
-			<version>1.0.4</version>
+			<version>1.0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>me.clip</groupId>
@@ -136,7 +136,7 @@
 						<configuration>
 							<relocations>
 								<relocation>
-									<pattern>com.github.despical.inventoryframework</pattern>
+									<pattern>me.despical.inventoryframework</pattern>
 									<shadedPattern>me.despical.oitc.utils.inventoryframework</shadedPattern>
 								</relocation>
 								<relocation>

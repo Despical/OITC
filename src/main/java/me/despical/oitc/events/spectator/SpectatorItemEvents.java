@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.events.spectator;
@@ -60,13 +60,13 @@ public class SpectatorItemEvents implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onSpectatorItemClick(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() != Action.PHYSICAL) {
-			if (ArenaRegistry.getArena(e.getPlayer()) == null) {
+			if (!ArenaRegistry.isInArena(e.getPlayer())) {
 				return;
 			}
 
 			ItemStack stack = e.getPlayer().getInventory().getItemInMainHand();
 
-			if (!stack.hasItemMeta() || !stack.getItemMeta().hasDisplayName()) {
+			if (!ItemUtils.isNamed(stack)) {
 				return;
 			}
 
@@ -108,13 +108,13 @@ public class SpectatorItemEvents implements Listener {
 	public void onSpectatorInventoryClick(InventoryClickEvent e) {
 		Player p = (Player) e.getWhoClicked();
 
-		if (ArenaRegistry.getArena(p) == null) {
+		if (!ArenaRegistry.isInArena(p)) {
 			return;
 		}
 
 		Arena arena = ArenaRegistry.getArena(p);
 
-		if (e.getCurrentItem() == null || !e.getCurrentItem().hasItemMeta() || !e.getCurrentItem().getItemMeta().hasDisplayName() || !e.getCurrentItem().getItemMeta().hasLore()) {
+		if (!ItemUtils.isNamed(e.getCurrentItem())) {
 			return;
 		}
 

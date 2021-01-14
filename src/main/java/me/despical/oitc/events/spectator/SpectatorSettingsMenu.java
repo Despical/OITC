@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.events.spectator;
@@ -45,23 +45,21 @@ public class SpectatorSettingsMenu implements Listener {
 	}
 
 	private void prepareGui() {
-		this.gui = new Gui(plugin, 4, plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Inventory-Name"));
-		this.gui.setOnGlobalClick(e -> e.setCancelled(true));
+		gui = new Gui(plugin, 4, plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Inventory-Name"));
+		gui.setOnGlobalClick(e -> e.setCancelled(true));
 
 		StaticPane pane = new StaticPane(9, 4);
-		this.gui.addPane(pane);
+		gui.addPane(pane);
 
 		prepareComponents(pane);
 	}
 
 	private void prepareComponents(StaticPane pane) {
 		SpeedComponents speedComponents = new SpeedComponents();
-		speedComponents.prepare(this);
-		speedComponents.injectComponents(pane);
+		speedComponents.registerComponent(this, pane);
 
 		MiscComponents miscComponents = new MiscComponents();
-		miscComponents.prepare(this);
-		miscComponents.injectComponents(pane);
+		miscComponents.registerComponent(this, pane);
 	}
 
 	public void openInventory() {

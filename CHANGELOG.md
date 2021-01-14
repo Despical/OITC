@@ -1,3 +1,19 @@
+### 1.1.1 Release (13.01.2020)
+* Added support for Minecraft 1.16 and higher versions.
+* Added 144 character support for scoreboard entries.
+* `Arena#broadcastMessage` method and removed `ChatManager#broadcastMessage`.
+* Fixed colorizing for scoreboard entries in Minecraft 1.14 and higher versions.
+* Fixed Hex colors in debugger and normal in-game messages.
+* Fixed slot for lobby items.
+* Fixed and updated license header.
+* Remove duplicates spectator events.
+* Removed default false booleans.
+* Deleted unnecessary default false booleans.
+* Changed PAPI's version with Bukkit's.
+* Changed some debugger keys.
+* Now list command replaces values faster.
+* Too many performance improvements.
+
 ### 1.1.0 Release (22.10.2020 - 31.10.2020)
 * Added new placeholder to get amount of players in arena without spectator amount:
   * `%oitc_{arena_id}:players_left%`

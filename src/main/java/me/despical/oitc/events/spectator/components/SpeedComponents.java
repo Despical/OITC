@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.events.spectator.components;
@@ -36,15 +36,8 @@ import org.bukkit.potion.PotionEffectType;
  */
 public class SpeedComponents implements SpectatorSettingComponent {
 
-	private SpectatorSettingsMenu spectatorSettingsMenu;
-
 	@Override
-	public void prepare(SpectatorSettingsMenu spectatorSettingsMenu) {
-		this.spectatorSettingsMenu = spectatorSettingsMenu;
-	}
-
-	@Override
-	public void injectComponents(StaticPane pane) {
+	public void registerComponent(SpectatorSettingsMenu spectatorSettingsMenu, StaticPane pane) {
 		Main plugin = spectatorSettingsMenu.getPlugin();
 		Player player = spectatorSettingsMenu.getPlayer();
 		String speedPrefix = plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Speed-Name");

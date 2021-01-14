@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,15 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.arena;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.despical.commonsbox.compat.XMaterial;
-import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.commonsbox.item.ItemBuilder;
+import me.despical.commonsbox.miscellaneous.AttributeUtils;
 import me.despical.commonsbox.miscellaneous.MiscUtils;
 import me.despical.commonsbox.serializer.InventorySerializer;
 import me.despical.oitc.ConfigPreferences;
@@ -39,7 +39,6 @@ import me.despical.oitc.utils.Debugger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -58,7 +57,8 @@ public class ArenaManager {
 
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
-	private ArenaManager() {}
+	private ArenaManager() {
+	}
 
 	/**
 	 * Attempts player to join arena.
@@ -116,7 +116,7 @@ public class ArenaManager {
 
 				ArenaManager.leaveAttempt(loopPlayer, arena);
 				loopPlayer.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.You-Were-Kicked-For-Premium-Slot"));
-				plugin.getChatManager().broadcast(arena, plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Kicked-For-Premium-Slot"), loopPlayer));
+				arena.broadcastMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Kicked-For-Premium-Slot"), loopPlayer));
 				foundSlot = true;
 				break;
 			}
@@ -140,7 +140,7 @@ public class ArenaManager {
 
 		player.setLevel(0);
 		player.setExp(1);
-		player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+		AttributeUtils.healPlayer(player);
 		player.setFoodLevel(20);
 		player.getInventory().setArmorContents(null);
 		player.getInventory().clear();
@@ -154,7 +154,7 @@ public class ArenaManager {
 			player.getInventory().clear();
 			player.getInventory().setItem(0, new ItemBuilder(XMaterial.COMPASS.parseItem()).name(plugin.getChatManager().colorMessage("In-Game.Spectator.Spectator-Item-Name")).build());
 			player.getInventory().setItem(4, new ItemBuilder(XMaterial.COMPARATOR.parseItem()).name(plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Item-Name")).build());
-			player.getInventory().setItem(8, SpecialItemManager.getSpecialItem("Leave").getItemStack());
+			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Leave").getSlot(), SpecialItemManager.getSpecialItem("Leave").getItemStack());
 			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
 			ArenaUtils.hidePlayer(player, arena);
@@ -241,7 +241,7 @@ public class ArenaManager {
 		player.setCollidable(true);
 		user.removeScoreboard();
 		arena.doBarAction(Arena.BarAction.REMOVE, player);
-		player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+		AttributeUtils.healPlayer(player);
 		player.setFoodLevel(20);
 		player.setLevel(0);
 		player.setExp(0);
@@ -294,7 +294,7 @@ public class ArenaManager {
 
 		if (quickStop) {
 			arena.setTimer(2);
-			plugin.getChatManager().broadcast(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Admin-Messages.Stopped-Game"));
+			arena.broadcastMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Messages.Admin-Messages.Stopped-Game"));
 		} else {
 			arena.setTimer(10);
 		}

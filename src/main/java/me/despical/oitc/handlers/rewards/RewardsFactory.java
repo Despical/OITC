@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers.rewards;
@@ -58,7 +58,9 @@ public class RewardsFactory {
 			return;
 		}
 
-		arena.getPlayers().forEach(p -> performReward(p, type));
+		for (Player player : arena.getPlayers()) {
+			performReward(player, type);
+		}
 	}
 
 	public void performReward(Player player, Reward.RewardType type) {
@@ -126,7 +128,10 @@ public class RewardsFactory {
 			}
 		}
 
-		registeredRewards.keySet().forEach(rewardType -> Debugger.debug("[RewardsFactory] Registered {0} {1} rewards!", registeredRewards.get(rewardType), rewardType.name()));
+		for (Reward.RewardType rewardType : registeredRewards.keySet()) {
+			Debugger.debug("[RewardsFactory] Registered {0} {1} rewards!", registeredRewards.get(rewardType), rewardType.name());
+		}
+
 		Debugger.debug("[RewardsFactory] Registered all rewards took {0} ms", System.currentTimeMillis() - start);
 	}
 }

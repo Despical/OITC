@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.arena;
@@ -36,11 +36,15 @@ public class ArenaUtils {
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	public static void hidePlayer(Player p, Arena arena) {
-		arena.getPlayers().forEach(player -> player.hidePlayer(plugin, p));
+		for (Player player : arena.getPlayers()) {
+			player.hidePlayer(plugin, p);
+		}
 	}
 
 	public static void showPlayer(Player p, Arena arena) {
-		arena.getPlayers().forEach(player -> player.showPlayer(plugin, p));
+		for (Player player : arena.getPlayers()) {
+			player.showPlayer(plugin, p);
+		}
 	}
 
 	public static void hidePlayersOutsideTheGame(Player player, Arena arena) {
@@ -83,7 +87,7 @@ public class ArenaUtils {
 
 			if (arena.getArenaState() == ArenaState.IN_GAME) {
 				team.addEntry(p.getName());
-			} else if (arena.getArenaState() == ArenaState.STARTING || arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS) {
+			} else if (arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS || arena.getArenaState() == ArenaState.STARTING) {
 				team.removeEntry(p.getName());
 			} else if (arena.getArenaState() == ArenaState.ENDING || arena.getArenaState() == ArenaState.RESTARTING) {
 				team.removeEntry(p.getName());

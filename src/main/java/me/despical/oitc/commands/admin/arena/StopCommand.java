@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,11 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.commands.admin.arena;
 
+import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
@@ -38,7 +39,7 @@ public class StopCommand extends SubCommand {
 	public StopCommand() {
 		super("stop");
 
-		setPermission("oitc.admin.stop");
+		setPermission("admin.stop");
 	}
 
 	@Override
@@ -53,12 +54,14 @@ public class StopCommand extends SubCommand {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
+		Arena arena = ArenaRegistry.getArena((Player) sender);
+
 		if (!checkIsInGameInstance((Player) sender)) {
 			return;
 		}
 		
-		if (ArenaRegistry.getArena((Player) sender).getArenaState() != ArenaState.ENDING) {
-			ArenaManager.stopGame(true, ArenaRegistry.getArena((Player) sender));
+		if (arena.getArenaState() != ArenaState.ENDING) {
+			ArenaManager.stopGame(true, arena);
 		}
 	}
 

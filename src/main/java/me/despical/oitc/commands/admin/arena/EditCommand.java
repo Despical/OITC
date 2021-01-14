@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,11 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.commands.admin.arena;
 
+import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.commands.SubCommand;
 import me.despical.oitc.handlers.setup.SetupInventory;
@@ -37,7 +38,7 @@ public class EditCommand extends SubCommand {
 	public EditCommand() {
 		super("edit");
 
-		setPermission("oitc.admin.setup");
+		setPermission("admin.setup");
 	}
 
 	@Override
@@ -52,12 +53,14 @@ public class EditCommand extends SubCommand {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if (ArenaRegistry.getArena(args[0]) == null) {
+		Arena arena = ArenaRegistry.getArena(args[0]);
+
+		if (arena == null) {
 			sender.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.No-Arena-Like-That"));
 			return;
 		}
 		
-		new SetupInventory(ArenaRegistry.getArena(args[0]), (Player) sender).openInventory();	
+		new SetupInventory(arena, (Player) sender).openInventory();
 	}
 
 	@Override
