@@ -1,7 +1,12 @@
 ### 1.1.1 Release (13.01.2020)
+* Added online player completion to tab complete for stats command.
+* Added more option to customize for spectator and lobby items.
+* Added play again item.
 * Added support for Minecraft 1.16 and higher versions.
 * Added 144 character support for scoreboard entries.
-* `Arena#broadcastMessage` method and removed `ChatManager#broadcastMessage`.
+* Added `Arena#broadcastMessage` method and removed `ChatManager#broadcastMessage`.
+* Fixed default script engine commands in rewards file.
+* Fixed joining through a sign while player is holding leave item.
 * Fixed colorizing for scoreboard entries in Minecraft 1.14 and higher versions.
 * Fixed Hex colors in debugger and normal in-game messages.
 * Fixed slot for lobby items.
@@ -9,9 +14,13 @@
 * Remove duplicates spectator events.
 * Removed default false booleans.
 * Deleted unnecessary default false booleans.
+* Changed some events in efficient way.
+* Changed default leave item to red bed from white bed.
 * Changed PAPI's version with Bukkit's.
 * Changed some debugger keys.
 * Now list command replaces values faster.
+* Now system saves and loads player data faster.
+* Improved tab completion.
 * Too many performance improvements.
 
 ### 1.1.0 Release (22.10.2020 - 31.10.2020)

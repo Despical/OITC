@@ -9,7 +9,7 @@
 #     Some messages support their own placeholders
 #                 like %player%
 
-# One in the Chamber command messages
+# One in the Chamber Command Messages
 Commands:
   Did-You-Mean: "&3Did you mean &b/%command%&3?"
   Are-You-Sure: "&cAre you sure you want to do this action? Type the command again &6within 10 seconds &cto confirm!"
@@ -107,9 +107,8 @@ In-Game:
   Join-Cancelled-Via-API: "&cYou can't join this game!"
   Arena-Not-Configured: "&cArena is not configured yet! Contact staff!"
   Game-Chat-Format: "&7%player%: &f%message%"
-  Game-Death-Format: "&7[&4☠&7] &r"
+  Game-Death-Format: "&7[&4DEAD CHAT&7] &r"
   Spectator:
-    Spectator-Item-Name: "&b&lTeleporter &7(Right Click)"
     Spectator-Menu-Name: "&8Teleporter"
     Target-Player-Score: "&7Score: %score%"
     Settings-Menu:
@@ -158,11 +157,11 @@ In-Game:
         - "&a&m----------------------------------------------------"
         - "&e&lOne in the Chamber"
         - ""
-        - "&f&lWINNER: &f&l%winner% (%winner_score%)"
+        - "&f&l%winner% &e&lWINNER! (%winner_score%)"
         - ""
-        - "&8&lYOUR RANK: &7&l%rank%"
-        - "&8&lYOUR SCORE: &7&l%score%"
-        - "&8&lYOUR DEATHS: &7&l%deaths%"
+        - "&8&lRank: &7&l%rank%"
+        - "&8&lScore: &7&l%score%"
+        - "&8&lDeaths: &7&l%deaths%"
         - ""
         - "&a&m----------------------------------------------------"
     Admin-Messages:
@@ -192,6 +191,7 @@ Signs:
 Arena-Selector:
   Inventory-Title: "Arena selector"
   Item:
+    Name: "&f%mapname%"
     Lore:
       - "&7OITC &f- &e%mapname%"
       - " "

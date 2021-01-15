@@ -26,7 +26,6 @@ import me.despical.oitc.user.User;
 import me.despical.oitc.utils.Debugger;
 import me.despical.oitc.utils.MessageUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -62,8 +61,8 @@ public class MysqlManager implements UserDatabase {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				MessageUtils.errorOccurred();
-				Bukkit.getConsoleSender().sendMessage("Cannot save contents to MySQL database!");
-				Bukkit.getConsoleSender().sendMessage("Check configuration of mysql.yml file or disable mysql option in config.yml");
+				Bukkit.getConsoleSender().sendMessage("&cCannot save contents to MySQL database!");
+				Bukkit.getConsoleSender().sendMessage("&cCheck configuration of mysql.yml file or disable mysql option in config.yml");
 			}
 		});
 	}
@@ -90,7 +89,6 @@ public class MysqlManager implements UserDatabase {
 		}
 
 		String finalUpdate = update.toString();
-
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> database.executeUpdate("UPDATE " + getTableName() + finalUpdate + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';"));
 	}
 
@@ -101,6 +99,7 @@ public class MysqlManager implements UserDatabase {
 
 			try (Connection connection = database.getConnection()) {
 				Statement statement = connection.createStatement();
+
 				ResultSet rs = statement.executeQuery("SELECT * from " + getTableName() + " WHERE UUID='" + uuid + "';");
 				if (rs.next()) {
 					Debugger.debug("MySQL Stats | Player {0} already exist. Getting Stats...", user.getPlayer().getName());
@@ -115,8 +114,7 @@ public class MysqlManager implements UserDatabase {
 					statement.executeUpdate("INSERT INTO " + getTableName() + " (UUID,name) VALUES ('" + uuid + "','" + user.getPlayer().getName() + "');");
 
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
-						if (!stat.isPersistent())
-							continue;
+						if (!stat.isPersistent()) continue;
 						user.setStat(stat, 0);
 					}
 				}
@@ -127,8 +125,7 @@ public class MysqlManager implements UserDatabase {
 	}
 
 	public String getTableName() {
-		FileConfiguration config = ConfigUtils.getConfig(plugin, "mysql");
-		return config.getString("table", "playerstats");
+		return ConfigUtils.getConfig(plugin, "mysql").getString("table", "playerstats");
 	}
 
 	public MysqlDatabase getDatabase() {

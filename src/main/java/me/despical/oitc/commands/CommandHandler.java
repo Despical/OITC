@@ -84,7 +84,7 @@ public class CommandHandler implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 0) {
-			sender.sendMessage(ChatColor.DARK_AQUA + "This server is running " + ChatColor.AQUA + "One in the Chamber " + ChatColor.DARK_AQUA + "v" + this.plugin.getDescription().getVersion() + " by " + ChatColor.AQUA + "Despical");
+			sender.sendMessage(ChatColor.DARK_AQUA + "This server is running " + ChatColor.AQUA + "One in the Chamber " + ChatColor.DARK_AQUA + "v" + plugin.getDescription().getVersion() + " by " + ChatColor.AQUA + "Despical");
 
 			if (sender.hasPermission("oitc.admin")) {
 				sender.sendMessage(ChatColor.DARK_AQUA + "Commands: " + ChatColor.AQUA + "/" + label + " help");

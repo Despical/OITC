@@ -21,7 +21,6 @@ package me.despical.oitc.handlers.items;
 import me.despical.commonsbox.compat.XMaterial;
 import me.despical.commonsbox.configuration.ConfigUtils;
 import me.despical.oitc.Main;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -49,13 +48,14 @@ public class SpecialItem {
 	}
 
 	public static void loadAll() {
-		new SpecialItem("Leave").load(ChatColor.RED + "Leave", new String[] { 
-			ChatColor.GRAY + "Click to teleport to hub" 
-		}, XMaterial.WHITE_BED.parseMaterial(), 8);
+		new SpecialItem("Leave").load("&c&lReturn to Lobby &7(Right Click)", new String[] {"&7Right-click to leave to the lobby!"}, XMaterial.RED_BED.parseMaterial(), 8);
+		new SpecialItem("Teleporter").load("&a&lTeleporter &7(Right Click) ", new String[] {"&7Right-click to spectate players!"}, XMaterial.COMPASS.parseMaterial(), 0);
+		new SpecialItem("Spectator-Settings").load("&b&lSpectator Settings &7(Right Click)", new String[] {"&7Right-click to change your spectator settings!"}, XMaterial.REPEATER.parseMaterial(), 4);
+		new SpecialItem("Play-Again").load("&b&lPlay Again &7(Right Click)", new String[] {"&7Right-click to play another game!"}, XMaterial.PAPER.parseMaterial(), 7);
 	}
 
 	public void load(String displayName, String[] lore, Material material, int slot) {
-		FileConfiguration config = ConfigUtils.getConfig(plugin, "lobbyitems");
+		FileConfiguration config = ConfigUtils.getConfig(plugin, "items");
 
 		if (!config.contains(name)) {
 			config.set(name + ".displayname", displayName);
@@ -64,12 +64,12 @@ public class SpecialItem {
 			config.set(name + ".slot", slot);
 		}
 
-		ConfigUtils.saveConfig(JavaPlugin.getPlugin(Main.class), config, "lobbyitems");
+		ConfigUtils.saveConfig(plugin, config, "items");
 		ItemStack stack = XMaterial.matchXMaterial(config.getString(name + ".material-name", "STONE").toUpperCase()).orElse(XMaterial.STONE).parseItem();
 		ItemMeta meta = stack.getItemMeta();
 		meta.setDisplayName(plugin.getChatManager().colorRawMessage(config.getString(name + ".displayname")));
 
-		List<String> colorizedLore = config.getStringList(name + ".lore").stream().map(str -> plugin.getChatManager().colorRawMessage(str)).collect(Collectors.toList());
+		List<String> colorizedLore = config.getStringList(name + ".lore").stream().map(plugin.getChatManager()::colorRawMessage).collect(Collectors.toList());
 
 		meta.setLore(colorizedLore);
 		stack.setItemMeta(meta);

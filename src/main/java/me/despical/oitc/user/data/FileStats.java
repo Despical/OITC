@@ -24,8 +24,6 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.Arrays;
-
 /**
  * @author Despical
  * <p>
@@ -38,7 +36,7 @@ public class FileStats implements UserDatabase {
 
 	public FileStats(Main plugin) {
 		this.plugin = plugin;
-		config = ConfigUtils.getConfig(plugin, "stats");
+		this.config = ConfigUtils.getConfig(plugin, "stats");
 	}
 
 	@Override
@@ -50,13 +48,19 @@ public class FileStats implements UserDatabase {
 
 	@Override
 	public void saveAllStatistic(User user) {
-		Arrays.stream(StatsStorage.StatisticType.values()).filter(StatsStorage.StatisticType::isPersistent).forEach(stat -> config.set(user.getPlayer().getUniqueId().toString() + "." + stat.getName(), user.getStat(stat)));
+		for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+			if (stat.isPersistent()) {
+				config.set(user.getPlayer().getUniqueId().toString() + "." + stat.getName(), user.getStat(stat));
+			}
+		}
 
 		ConfigUtils.saveConfig(plugin, config, "stats");
 	}
 
 	@Override
 	public void loadStatistics(User user) {
-		Arrays.stream(StatsStorage.StatisticType.values()).forEach(stat -> user.setStat(stat, config.getInt(user.getPlayer().getUniqueId().toString() + "." + stat.getName(), 0)));
+		for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+			user.setStat(stat, config.getInt(user.getPlayer().getUniqueId().toString() + "." + stat.getName(), 0));
+		}
 	}
 }

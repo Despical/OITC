@@ -19,8 +19,6 @@
 package me.despical.oitc.arena;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.despical.commonsbox.compat.XMaterial;
-import me.despical.commonsbox.item.ItemBuilder;
 import me.despical.commonsbox.miscellaneous.AttributeUtils;
 import me.despical.commonsbox.miscellaneous.MiscUtils;
 import me.despical.commonsbox.serializer.InventorySerializer;
@@ -46,7 +44,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Despical
@@ -114,7 +111,7 @@ public class ArenaManager {
 					continue;
 				}
 
-				ArenaManager.leaveAttempt(loopPlayer, arena);
+				leaveAttempt(loopPlayer, arena);
 				loopPlayer.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.You-Were-Kicked-For-Premium-Slot"));
 				arena.broadcastMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().formatMessage(arena, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Kicked-For-Premium-Slot"), loopPlayer));
 				foundSlot = true;
@@ -152,9 +149,10 @@ public class ArenaManager {
 			arena.teleportToStartLocation(player);
 			player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.You-Are-Spectator"));
 			player.getInventory().clear();
-			player.getInventory().setItem(0, new ItemBuilder(XMaterial.COMPASS.parseItem()).name(plugin.getChatManager().colorMessage("In-Game.Spectator.Spectator-Item-Name")).build());
-			player.getInventory().setItem(4, new ItemBuilder(XMaterial.COMPARATOR.parseItem()).name(plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Item-Name")).build());
+			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Teleporter").getSlot(), SpecialItemManager.getSpecialItem("Teleporter").getItemStack());
+			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Spectator-Settings").getSlot(), SpecialItemManager.getSpecialItem("Spectator-Settings").getItemStack());
 			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Leave").getSlot(), SpecialItemManager.getSpecialItem("Leave").getItemStack());
+			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Play-Again").getSlot(), SpecialItemManager.getSpecialItem("Play-Again").getItemStack());
 			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
 			ArenaUtils.hidePlayer(player, arena);
@@ -181,11 +179,11 @@ public class ArenaManager {
 		player.setAllowFlight(false);
 		arena.doBarAction(Arena.BarAction.ADD, player);
 
-		if (!plugin.getUserManager().getUser(player).isSpectator()) {
+		if (!user.isSpectator()) {
 			plugin.getChatManager().broadcastAction(arena, player, ActionType.JOIN);
 		}
 
-		if (arena.getArenaState() == ArenaState.STARTING || arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS) {
+		if (arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS || arena.getArenaState() == ArenaState.STARTING) {
 			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Leave").getSlot(), SpecialItemManager.getSpecialItem("Leave").getItemStack());
 		}
 
@@ -221,7 +219,7 @@ public class ArenaManager {
 
 		if (arena.getArenaState() == ArenaState.IN_GAME && !user.isSpectator()) {
 			if (arena.getPlayersLeft().size() - 1 == 1) {
-				ArenaManager.stopGame(false, arena);
+				stopGame(false, arena);
 				return;
 			}
 		}
@@ -238,7 +236,7 @@ public class ArenaManager {
 
 		player.setGlowing(false);
 		user.setSpectator(false);
-		player.setCollidable(true);
+		player.setCollidable(false);
 		user.removeScoreboard();
 		arena.doBarAction(Arena.BarAction.REMOVE, player);
 		AttributeUtils.healPlayer(player);
@@ -259,7 +257,7 @@ public class ArenaManager {
 		player.setGameMode(GameMode.SURVIVAL);
 
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
-			if (ArenaRegistry.getArena(players) == null) {
+			if (!ArenaRegistry.isInArena(players)) {
 				players.showPlayer(plugin, player);
 			}
 
@@ -299,7 +297,6 @@ public class ArenaManager {
 			arena.setTimer(10);
 		}
 
-		List<String> summaryMessages = plugin.getChatManager().getStringList("In-Game.Messages.Game-End-Messages.Summary-Message");
 		arena.getScoreboardManager().stopAllScoreboards();
 
 		for (Player player : arena.getPlayers()) {
@@ -318,10 +315,13 @@ public class ArenaManager {
 			}
 
 			player.getInventory().clear();
+			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Teleporter").getSlot(), SpecialItemManager.getSpecialItem("Teleporter").getItemStack());
+			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Spectator-Settings").getSlot(), SpecialItemManager.getSpecialItem("Spectator-Settings").getItemStack());
 			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Leave").getSlot(), SpecialItemManager.getSpecialItem("Leave").getItemStack());
+			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Play-Again").getSlot(), SpecialItemManager.getSpecialItem("Play-Again").getItemStack());
 
 			if (!quickStop) {
-				for (String msg : summaryMessages) {
+				for (String msg : plugin.getChatManager().getStringList("In-Game.Messages.Game-End-Messages.Summary-Message")) {
 					MiscUtils.sendCenteredMessage(player, formatSummaryPlaceholders(msg, arena, player));
 				}
 			}
@@ -334,7 +334,7 @@ public class ArenaManager {
 
 					public void run() {
 						if (i == 4 || !arena.getPlayers().contains(player)) {
-							this.cancel();
+							cancel();
 						}
 
 						MiscUtils.spawnRandomFirework(player.getLocation());
@@ -349,6 +349,7 @@ public class ArenaManager {
 
 	private static String formatSummaryPlaceholders(String msg, Arena arena, Player player) {
 		String formatted = msg;
+
 		formatted = StringUtils.replace(formatted, "%score%", String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS)));
 		formatted = StringUtils.replace(formatted, "%deaths%", String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_DEATHS)));
 		formatted = StringUtils.replace(formatted, "%rank%", String.valueOf(arena.getScoreboardManager().getRank(player)));

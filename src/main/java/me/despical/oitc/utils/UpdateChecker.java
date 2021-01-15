@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
  * are inconsistent with what is published on SpigotMC, it may be due to SpiGet's cache.
  * Results will be updated in due time.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Despical and 2008Choco
  */
 public final class UpdateChecker {
 
@@ -69,8 +69,9 @@ public final class UpdateChecker {
 			}
 		}
 
-		return (secondSplit.length > firstSplit.length) ? second : first;
+		return secondSplit.length > firstSplit.length ? second : first;
 	};
+
 	private static UpdateChecker instance;
 	private final JavaPlugin plugin;
 	private final int pluginID;
@@ -85,6 +86,7 @@ public final class UpdateChecker {
 
 	private static String[] splitVersionInfo(String version) {
 		Matcher matcher = DECIMAL_SCHEME_PATTERN.matcher(version);
+
 		if (!matcher.find()) {
 			return null;
 		}
@@ -109,7 +111,7 @@ public final class UpdateChecker {
 		Preconditions.checkArgument(pluginID > 0, "Plugin ID must be greater than 0");
 		Preconditions.checkArgument(versionScheme != null, "null version schemes are unsupported");
 
-		return (instance == null) ? instance = new UpdateChecker(plugin, pluginID, versionScheme) : instance;
+		return instance == null ? instance = new UpdateChecker(plugin, pluginID, versionScheme) : instance;
 	}
 
 	/**
@@ -156,7 +158,8 @@ public final class UpdateChecker {
 	 */
 	public CompletableFuture<UpdateResult> requestUpdateCheck() {
 		return CompletableFuture.supplyAsync(() -> {
-			int responseCode = -1;
+			int responseCode;
+
 			try {
 				URL url = new URL(String.format(UPDATE_URL, pluginID));
 				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -166,6 +169,7 @@ public final class UpdateChecker {
 				responseCode = connection.getResponseCode();
 
 				JsonElement element = new JsonParser().parse(reader);
+
 				if (!element.isJsonArray()) {
 					return new UpdateResult(UpdateReason.INVALID_JSON);
 				}
@@ -202,7 +206,6 @@ public final class UpdateChecker {
 	public UpdateResult getLastResult() {
 		return lastResult;
 	}
-
 
 	/**
 	 * A constant reason for the result of {@link UpdateResult}.
@@ -250,7 +253,6 @@ public final class UpdateChecker {
 		 * The plugin is up to date with the version released on SpigotMC's resources section.
 		 */
 		UP_TO_DATE
-
 	}
 
 	/**
@@ -279,7 +281,7 @@ public final class UpdateChecker {
 		private final UpdateReason reason;
 		private final String newestVersion;
 
-		{ // An actual use for initializer blocks. This is madness!
+		{
 			UpdateChecker.this.lastResult = this;
 		}
 
@@ -289,7 +291,7 @@ public final class UpdateChecker {
 		}
 
 		private UpdateResult(UpdateReason reason) {
-			Preconditions.checkArgument(reason != UpdateReason.NEW_UPDATE, "Reasons that require updates must also provide the latest version String");
+			Preconditions.checkArgument(reason != UpdateReason.NEW_UPDATE, "Reasons that require updates must also provide the latest version string");
 			this.reason = reason;
 			this.newestVersion = plugin.getDescription().getVersion();
 		}

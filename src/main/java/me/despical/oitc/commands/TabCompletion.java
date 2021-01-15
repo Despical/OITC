@@ -21,9 +21,11 @@ package me.despical.oitc.commands;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import java.util.*;
@@ -45,8 +47,7 @@ public class TabCompletion implements TabCompleter {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		List<String> completions = new ArrayList<>();
-		List<String> commands = commandHandler.getSubCommands().stream().map(command -> command.getName().toLowerCase()).collect(Collectors.toList());
+		List<String> completions = new ArrayList<>(), commands = commandHandler.getSubCommands().stream().map(command -> command.getName().toLowerCase()).collect(Collectors.toList());
 
 		if (args.length == 1) {
 			StringUtil.copyPartialMatches(args[0], commands, completions);
@@ -59,6 +60,10 @@ public class TabCompletion implements TabCompleter {
 
 			if (args[0].equalsIgnoreCase("top")) {
 				return Arrays.stream(StatsStorage.StatisticType.values()).filter(StatsStorage.StatisticType::isPersistent).map(statistic -> statistic.name().toLowerCase(Locale.ENGLISH)).collect(Collectors.toList());
+			}
+
+			if (args[0].equalsIgnoreCase("stats")) {
+				return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
 			}
 
 			List<String> arenas = ArenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());

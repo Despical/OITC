@@ -27,6 +27,7 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
+import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.utils.ItemPosition;
@@ -51,6 +52,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * @author Despical
@@ -127,11 +132,10 @@ public class Events implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onLeave(PlayerInteractEvent event) {
 		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.PHYSICAL) {
 			return;
-
 		}
 
 		Arena arena = ArenaRegistry.getArena(event.getPlayer());
@@ -155,6 +159,53 @@ public class Events implements Listener {
 			} else {
 				ArenaManager.leaveAttempt(event.getPlayer(), arena);
 			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onPlayAgain(PlayerInteractEvent event) {
+		if (event.getAction() == Action.PHYSICAL) {
+			return;
+		}
+
+		ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
+		Player player = event.getPlayer();
+		Arena currentArena = ArenaRegistry.getArena(player);
+
+		if (currentArena == null || !ItemUtils.isNamed(itemStack)) {
+			return;
+		}
+
+		String key = SpecialItemManager.getRelatedSpecialItem(itemStack);
+
+		if (key == null) {
+			return;
+		}
+
+		if (SpecialItemManager.getRelatedSpecialItem(itemStack).equalsIgnoreCase("Play-Again")) {
+			event.setCancelled(true);
+
+			ArenaManager.leaveAttempt(player, currentArena);
+
+			Map<Arena, Integer> arenas = new HashMap<>();
+
+			for (Arena arena : ArenaRegistry.getArenas()) {
+				if ((arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS || arena.getArenaState() == ArenaState.STARTING) && arena.getPlayers().size() < 2) {
+					arenas.put(arena, arena.getPlayers().size());
+				}
+			}
+
+			if (!arenas.isEmpty()) {
+				Stream<Map.Entry<Arena, Integer>> sorted = arenas.entrySet().stream().sorted(Map.Entry.comparingByValue());
+				Arena arena = sorted.findFirst().get().getKey();
+
+				if (arena != null) {
+					ArenaManager.joinAttempt(player, arena);
+					return;
+				}
+			}
+
+			player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.No-Free-Arenas"));
 		}
 	}
 
@@ -261,17 +312,20 @@ public class Events implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onRespawn(final PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
+		Arena arena = ArenaRegistry.getArena(player);
 
-		if (!ArenaRegistry.isInArena(player)) {
+		if (arena == null) {
 			return;
 		}
 
-		event.getPlayer().sendTitle(null, plugin.getChatManager().colorMessage("In-Game.Messages.Death-Subtitle"), 5, 30, 5);
 		event.setRespawnLocation(ArenaRegistry.getArena(player).getRandomSpawnPoint());
+		event.getPlayer().sendTitle(null, plugin.getChatManager().colorMessage("In-Game.Messages.Death-Subtitle"), 5, 30, 5);
 
 		ItemPosition.setItem(event.getPlayer(), ItemPosition.SWORD, new ItemBuilder(XMaterial.WOODEN_SWORD.parseItem()).unbreakable(true).amount(1).build());
 		ItemPosition.setItem(event.getPlayer(), ItemPosition.BOW, new ItemBuilder(XMaterial.BOW.parseItem()).enchantment(Enchantment.LUCK).flag(ItemFlag.HIDE_ENCHANTS).unbreakable(true).amount(1).build());
 		ItemPosition.setItem(event.getPlayer(), ItemPosition.ARROW, new ItemStack(Material.ARROW, 1));
+
+
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)

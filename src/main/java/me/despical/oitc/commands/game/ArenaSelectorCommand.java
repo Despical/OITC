@@ -20,7 +20,6 @@ package me.despical.oitc.commands.game;
 
 import me.despical.commonsbox.compat.XMaterial;
 import me.despical.commonsbox.number.NumberUtils;
-import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
@@ -38,18 +37,21 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ArenaSelectorCommand extends SubCommand implements Listener {
+public class ArenaSelectorCommand extends SubCommand {
 
 	private final ChatManager chatManager;
+	private final Map<Integer, Arena> mappings = new HashMap<>();
 
 	public ArenaSelectorCommand() {
 		super("arenas");
 		this.chatManager = plugin.getChatManager();
 
 		setPermission("arenas");
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		registerInventoryClickEvent();
 	}
 
 	@Override
@@ -72,8 +74,12 @@ public class ArenaSelectorCommand extends SubCommand implements Listener {
 		}
 
 		Inventory inventory = Bukkit.createInventory(player, NumberUtils.serializeInt(ArenaRegistry.getArenas().size()), chatManager.colorMessage("Arena-Selector.Inventory-Title"));
+		int slot = 0;
+
+		mappings.clear();
 
 		for (Arena arena : ArenaRegistry.getArenas()) {
+			mappings.put(slot, arena);
 			ItemStack itemStack;
 
 			switch (arena.getArenaState()) {
@@ -89,24 +95,26 @@ public class ArenaSelectorCommand extends SubCommand implements Listener {
 			}
 
 			ItemMeta itemMeta = itemStack.getItemMeta();
-			itemMeta.setDisplayName(arena.getId());
+			itemMeta.setDisplayName(formatItem(plugin.getChatManager().colorMessage("Arena-Selector.Item.Name"), arena));
 
 			ArrayList<String> lore = new ArrayList<>();
 
 			for (String string : plugin.getChatManager().getStringList("Arena-Selector.Item.Lore")) {
-				lore.add(formatItem(string, arena, plugin));
+				lore.add(formatItem(string, arena));
 			}
 
 			itemMeta.setLore(lore);
 			itemStack.setItemMeta(itemMeta);
 			inventory.addItem(itemStack);
+			slot++;
 		}
 
 		player.openInventory(inventory);
 	}
 
-	private String formatItem(String string, Arena arena, Main plugin) {
+	private String formatItem(String string, Arena arena) {
 		String formatted = string;
+
 		formatted = StringUtils.replace(formatted, "%mapname%", arena.getMapName());
 
 		if (arena.getPlayers().size() >= arena.getMaximumPlayers()) {
@@ -121,26 +129,31 @@ public class ArenaSelectorCommand extends SubCommand implements Listener {
 		return formatted;
 	}
 
-	@EventHandler
-	public void onArenaSelectorMenuClick(InventoryClickEvent e) {
-		if (!e.getView().getTitle().equals(chatManager.colorMessage("Arena-Selector.Inventory-Title"))) {
-			return;
-		}
+	private void registerInventoryClickEvent() {
+		Bukkit.getPluginManager().registerEvents(new Listener() {
 
-		if (e.getCurrentItem() == null || !e.getCurrentItem().hasItemMeta()) {
-			return;
-		}
+			@EventHandler
+			public void onArenaSelectorMenuClick(InventoryClickEvent e) {
+				if (!e.getView().getTitle().equals(chatManager.colorMessage("Arena-Selector.Inventory-Title"))) {
+					return;
+				}
 
-		Player player = (Player) e.getWhoClicked();
-		player.closeInventory();
+				if (e.getCurrentItem() == null || !e.getCurrentItem().hasItemMeta()) {
+					return;
+				}
 
-		Arena arena = ArenaRegistry.getArena(e.getCurrentItem().getItemMeta().getDisplayName());
+				Player player = (Player) e.getWhoClicked();
+				player.closeInventory();
 
-		if (arena != null) {
-			ArenaManager.joinAttempt(player, arena);
-		} else {
-			player.sendMessage(chatManager.getPrefix() + chatManager.colorMessage("Commands.No-Arena-Like-That"));
-		}
+				Arena arena = mappings.get(e.getRawSlot());
+
+				if (arena != null) {
+					ArenaManager.joinAttempt(player, arena);
+				} else {
+					player.sendMessage(chatManager.getPrefix() + chatManager.colorMessage("Commands.No-Arena-Like-That"));
+				}
+			}
+		}, plugin);
 	}
 
 	@Override

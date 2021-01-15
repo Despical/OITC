@@ -250,7 +250,7 @@ public class Main extends JavaPlugin {
 	}
 
 	private void setupFiles() {
-		for (String fileName : Arrays.asList("arenas", "bungee", "rewards", "stats", "lobbyitems", "mysql", "messages")) {
+		for (String fileName : Arrays.asList("arenas", "bungee", "rewards", "stats", "items", "mysql", "messages")) {
 			File file = new File(getDataFolder() + File.separator + fileName + ".yml");
 
 			if (!file.exists()) {
