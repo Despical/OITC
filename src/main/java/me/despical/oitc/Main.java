@@ -140,6 +140,7 @@ public class Main extends JavaPlugin {
 			for (Player player : arena.getPlayers()) {
 				arena.doBarAction(Arena.BarAction.REMOVE, player);
 				arena.teleportToEndLocation(player);
+				player.setWalkSpeed(0.2f);
 				player.setFlySpeed(0.1f);
 
 				if (configPreferences.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
@@ -148,7 +149,6 @@ public class Main extends JavaPlugin {
 					player.getInventory().clear();
 					player.getInventory().setArmorContents(null);
 					player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-					player.setWalkSpeed(0.2f);
 				}
 			}
 
@@ -171,24 +171,24 @@ public class Main extends JavaPlugin {
 			database = new MysqlDatabase(config.getString("user"), config.getString("password"), config.getString("address"));
 		}
 
-		userManager = new UserManager(this);
 		SpecialItem.loadAll();
 		PermissionsManager.init();
-		new SpectatorEvents(this);
-		new QuitEvent(this);
-		new JoinEvent(this);
-		new ChatEvents(this);
+		userManager = new UserManager(this);
 		signManager = new SignManager(this);
 		ArenaRegistry.registerArenas();
 		signManager.loadSigns();
 		signManager.updateSigns();
+		rewardsFactory = new RewardsFactory(this);
+		commandHandler = new CommandHandler(this);
+		new SpectatorEvents(this);
+		new QuitEvent(this);
+		new JoinEvent(this);
+		new ChatEvents(this);
 		new Events(this);
 		new LobbyEvent(this);
 		new SpectatorItemEvents(this);
-		rewardsFactory = new RewardsFactory(this);
-		registerSoftDependenciesAndServices();
-		commandHandler = new CommandHandler(this);
 		new BowTrailsHandler(this);
+		registerSoftDependenciesAndServices();
 	}
 	
 	private void registerSoftDependenciesAndServices() {
@@ -236,7 +236,7 @@ public class Main extends JavaPlugin {
 				if (getConfig().getBoolean("Update-Notifier.Notify-Beta-Versions", true)) {
 					Debugger.sendConsoleMessage("[OITC] Found a new beta version available: v" + result.getNewestVersion());
 					Debugger.sendConsoleMessage("[OITC] Download it on SpigotMC:");
-					Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-4.81185/");
+					Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/");
 				}
 
 				return;
@@ -245,7 +245,7 @@ public class Main extends JavaPlugin {
 			MessageUtils.updateIsHere();
 			Debugger.sendConsoleMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
 			Debugger.sendConsoleMessage("[OITC] Download it SpigotMC:");
-			Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-4.81185/");
+			Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/");
 		});
 	}
 

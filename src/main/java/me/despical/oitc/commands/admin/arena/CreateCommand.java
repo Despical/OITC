@@ -16,9 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.despical.oitc.commands.game;
+package me.despical.oitc.commands.admin.arena;
 
 import me.despical.commonsbox.configuration.ConfigUtils;
+import me.despical.commonsbox.miscellaneous.MiscUtils;
 import me.despical.commonsbox.serializer.LocationSerializer;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
@@ -79,9 +80,9 @@ public class CreateCommand extends SubCommand {
 		} else {
 			createInstanceInConfig(args[0]);
 			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
-			player.sendMessage(ChatColor.YELLOW + "      Instance " + args[0] + " created!");
+			MiscUtils.sendCenteredMessage(player, ChatColor.YELLOW + "      Instance " + args[0] + " created!");
 			player.sendMessage("");
-			player.sendMessage(ChatColor.GREEN + "Edit this arena via " + ChatColor.GOLD + "/oitc edit "  + args[0] + ChatColor.GREEN + "!");
+			MiscUtils.sendCenteredMessage(player, ChatColor.GREEN + "Edit this arena via " + ChatColor.GOLD + "/oitc edit "  + args[0] + ChatColor.GREEN + "!");
 			player.sendMessage(ChatColor.BOLD + "----------------------------------------");
 		}
 	}

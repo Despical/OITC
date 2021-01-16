@@ -97,7 +97,7 @@ public class JoinEvent implements Listener {
 				event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3[OITC] &bFound an update: v" + result.getNewestVersion() + " Download:"));
 			}
 
-			event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-4.81185/"));
+			event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/"));
 		}), 25);
 	}
 }

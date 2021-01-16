@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class User {
 
-	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
+	private final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private final ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
 	private final Player player;
 	private boolean spectator = false;

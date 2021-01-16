@@ -1,23 +1,30 @@
 ### 1.1.1 Release (13.01.2020)
+* Added missing prefix to some setup messages.
 * Added online player completion to tab complete for stats command.
 * Added more option to customize for spectator and lobby items.
 * Added play again item.
 * Added support for Minecraft 1.16 and higher versions.
 * Added 144 character support for scoreboard entries.
 * Added `Arena#broadcastMessage` method and removed `ChatManager#broadcastMessage`.
+* Fixed adding arena signs manually break arena configuration.
+* Fixed spectators aren't teleporting to hub when bungee option is enabled.
+* Fixed when arena list is empty upon bungee join or quit.
 * Fixed default script engine commands in rewards file.
 * Fixed joining through a sign while player is holding leave item.
 * Fixed colorizing for scoreboard entries in Minecraft 1.14 and higher versions.
 * Fixed Hex colors in debugger and normal in-game messages.
 * Fixed slot for lobby items.
 * Fixed and updated license header.
-* Remove duplicates spectator events.
+* Removed sign updating scheduler to avoid affecting timings.
+* Removed duplicated spectator events.
 * Removed default false booleans.
 * Deleted unnecessary default false booleans.
+* Changed package of `CreateCommand.java` class.
 * Changed some events in efficient way.
 * Changed default leave item to red bed from white bed.
 * Changed PAPI's version with Bukkit's.
 * Changed some debugger keys.
+* Now arena creation message sending centered.
 * Now list command replaces values faster.
 * Now system saves and loads player data faster.
 * Improved tab completion.

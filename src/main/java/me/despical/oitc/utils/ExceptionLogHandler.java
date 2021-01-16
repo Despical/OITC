@@ -33,6 +33,7 @@ import java.util.logging.LogRecord;
 public class ExceptionLogHandler extends Handler {
 
 	private final Main plugin;
+	private final String[] blacklistedClasses = {"user.data.MysqlManager", "commonsbox.database.MysqlDatabase"};
 	
 	public ExceptionLogHandler(Main plugin) {
 		this.plugin = plugin;
@@ -98,8 +99,8 @@ public class ExceptionLogHandler extends Handler {
 
 	private boolean containsBlacklistedClass(Throwable throwable) {
 		for (StackTraceElement element : throwable.getStackTrace()) {
-			for (String blacklist : new String[] {"me.despical.oitc.user.data.MysqlManager", "me.despical.oitc.commonsbox.database.MysqlDatabase"}) {
-				if (element.getClassName().contains(blacklist)) {
+			for (String blacklist : blacklistedClasses) {
+				if (element.getClassName().contains("me.despical.oitc." + blacklist)) {
 					return true;
 				}
 			}

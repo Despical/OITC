@@ -71,8 +71,7 @@ public class Arena extends BukkitRunnable {
 	private BossBar gameBar;
 	private final ScoreboardManager scoreboardManager;
 	private String mapName = "";
-	private boolean ready;
-	private boolean forceStart = false;
+	private boolean forceStart = false, ready;
 
 	public Arena(String id) {
 		this.id = id;
@@ -98,11 +97,11 @@ public class Arena extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		if (getPlayers().isEmpty() && getArenaState() == ArenaState.WAITING_FOR_PLAYERS) {
+		if (players.isEmpty() && getArenaState() == ArenaState.WAITING_FOR_PLAYERS) {
 			return;
 		}
 
-		Debugger.performance("ArenaTask", "[PerformanceMonitor] [{0}] Running game task", getId());
+		Debugger.performance("ArenaTask", "[PerformanceMonitor] [{0}] Running game task", id);
 		long start = System.currentTimeMillis();
 
 		switch (getArenaState()) {
@@ -111,7 +110,7 @@ public class Arena extends BukkitRunnable {
 				plugin.getServer().setWhitelist(false);
 			}
 
-			if (getPlayers().size() < getMinimumPlayers()) {
+			if (players.size() < getMinimumPlayers()) {
 				if (getTimer() <= 0) {
 					setTimer(45);
 					broadcastMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().formatMessage(this, plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Waiting-For-Players"), getMinimumPlayers()));
@@ -131,7 +130,7 @@ public class Arena extends BukkitRunnable {
 			setTimer(getTimer() - 1);
 			break;
 		case STARTING:
-			if (getPlayers().size() == getMaximumPlayers() && getTimer() >= plugin.getConfig().getInt("Start-Time-On-Full-Lobby", 15) && !forceStart) {
+			if (players.size() == getMaximumPlayers() && getTimer() >= plugin.getConfig().getInt("Start-Time-On-Full-Lobby", 15) && !forceStart) {
 				setTimer(plugin.getConfig().getInt("Start-Time-On-Full-Lobby", 15));
 				broadcastMessage(plugin.getChatManager().colorMessage("In-Game.Messages.Lobby-Messages.Start-In").replace("%time%", String.valueOf(getTimer())));
 			}
@@ -141,12 +140,12 @@ public class Arena extends BukkitRunnable {
 				gameBar.setProgress(getTimer() / plugin.getConfig().getDouble("Starting-Waiting-Time", 60));
 			}
 
-			for (Player player : getPlayers()) {
+			for (Player player : players) {
 				player.setExp((float) (getTimer() / plugin.getConfig().getDouble("Starting-Waiting-Time", 60)));
 				player.setLevel(getTimer());
 			}
 
-			if (getPlayers().size() < getMinimumPlayers() && !forceStart) {
+			if (players.size() < getMinimumPlayers() && !forceStart) {
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
 					gameBar.setTitle(plugin.getChatManager().colorMessage("Bossbar.Waiting-For-Players"));
 					gameBar.setProgress(1.0);
@@ -157,7 +156,7 @@ public class Arena extends BukkitRunnable {
 				Bukkit.getPluginManager().callEvent(new OITCGameStartEvent(this));
 				setTimer(15);
 
-				for (Player player : getPlayers()) {
+				for (Player player : players) {
 					player.setExp(1);
 					player.setLevel(0);
 				}
@@ -186,7 +185,7 @@ public class Arena extends BukkitRunnable {
 
 				teleportAllToStartLocation();
 
-				for (Player player : getPlayers()) {
+				for (Player player : players) {
 					ArenaUtils.updateNameTagsVisibility(player);
 					player.getInventory().clear();
 					player.setGameMode(GameMode.ADVENTURE);
@@ -213,7 +212,7 @@ public class Arena extends BukkitRunnable {
 			break;
 		case IN_GAME:
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-				plugin.getServer().setWhitelist(getMaximumPlayers() <= getPlayers().size());
+				plugin.getServer().setWhitelist(getMaximumPlayers() <= players.size());
 			}
 
 			if (getTimer() <= 0) {
@@ -224,7 +223,7 @@ public class Arena extends BukkitRunnable {
 				String title = plugin.getChatManager().colorMessage("In-Game.Messages.Seconds-Left-Title").replace("%time%", String.valueOf(getTimer()));
 				String subtitle = plugin.getChatManager().colorMessage("In-Game.Messages.Seconds-Left-Subtitle").replace("%time%", String.valueOf(getTimer()));
 
-				for (Player p : getPlayers()) {
+				for (Player p : players) {
 					p.sendTitle(title, subtitle, 5, 40, 5);
 				}
 			}
@@ -247,7 +246,7 @@ public class Arena extends BukkitRunnable {
 					gameBar.setTitle(plugin.getChatManager().colorMessage("Bossbar.Game-Ended"));
 				}
 
-				List<Player> playersToQuit = new ArrayList<>(getPlayers());
+				List<Player> playersToQuit = new ArrayList<>(players);
 
 				for (Player player : playersToQuit) {
 					plugin.getUserManager().getUser(player).removeScoreboard();
@@ -256,7 +255,7 @@ public class Arena extends BukkitRunnable {
 					for (Player players : Bukkit.getOnlinePlayers()) {
 						player.showPlayer(plugin, players);
 
-						if (ArenaRegistry.getArena(players) == null) {
+						if (!ArenaRegistry.isInArena(players)) {
 							players.showPlayer(plugin, player);
 						}
 					}
@@ -275,7 +274,7 @@ public class Arena extends BukkitRunnable {
 				teleportAllToEndLocation();
 
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
-					for (Player player : getPlayers()) {
+					for (Player player : players) {
 						InventorySerializer.loadInventory(plugin, player);
 					}
 				}
@@ -303,7 +302,7 @@ public class Arena extends BukkitRunnable {
 			setTimer(getTimer() - 1);
 			break;
 		case RESTARTING:
-			getPlayers().clear();
+			players.clear();
 			setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
@@ -323,7 +322,7 @@ public class Arena extends BukkitRunnable {
 			break;
 		}
 
-		Debugger.performance("ArenaTask", "[PerformanceMonitor] [{0}] Game task finished took {1} ms", getId(), System.currentTimeMillis() - start);
+		Debugger.performance("ArenaTask", "[PerformanceMonitor] [{0}] Game task finished took {1} ms", id, System.currentTimeMillis() - start);
 	}
 
 	public void setForceStart(boolean forceStart) {
@@ -443,6 +442,8 @@ public class Arena extends BukkitRunnable {
 		this.arenaState = arenaState;
 		OITCGameStateChangeEvent gameStateChangeEvent = new OITCGameStateChangeEvent(this, getArenaState());
 		Bukkit.getPluginManager().callEvent(gameStateChangeEvent);
+
+		plugin.getSignManager().updateSigns();
 	}
 
 	/**
@@ -463,7 +464,7 @@ public class Arena extends BukkitRunnable {
 		Location location = getLobbyLocation();
 
 		if (location == null) {
-			System.out.print("Lobby location isn't intialized for arena " + getId());
+			System.out.print("Lobby location isn't intialized for arena " + id);
 			return;
 		}
 
@@ -527,7 +528,7 @@ public class Arena extends BukkitRunnable {
 
 	public void teleportAllToEndLocation() {
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED) && ConfigUtils.getConfig(plugin, "bungee").getBoolean("End-Location-Hub", true)) {
-			getPlayers().forEach(plugin.getBungeeManager()::connectToHub);
+			getPlayersLeft().forEach(plugin.getBungeeManager()::connectToHub);
 			return;
 		}
 
@@ -535,11 +536,11 @@ public class Arena extends BukkitRunnable {
 
 		if (location == null) {
 			location = getLobbyLocation();
-			System.out.print("End location for arena " + getId() + " isn't intialized!");
+			System.out.print("End location for arena " + id + " isn't intialized!");
 		}
 
 		if (location != null) {
-			for (Player player : getPlayers()) {
+			for (Player player : players) {
 				player.teleport(location);
 			}
 		}
@@ -561,7 +562,7 @@ public class Arena extends BukkitRunnable {
 
 		if (location == null) {
 			location = getLobbyLocation();
-			System.out.print("End location for arena " + getId() + " isn't intialized!");
+			System.out.print("End location for arena " + id + " isn't intialized!");
 		}
 
 		if (location != null) {
@@ -596,7 +597,7 @@ public class Arena extends BukkitRunnable {
 	}
 
 	public void start() {
-		Debugger.debug("[{0}] Game instance started", getId());
+		Debugger.debug("[{0}] Game instance started", id);
 		this.runTaskTimer(plugin, 20L, 20L);
 		this.setArenaState(ArenaState.RESTARTING);
 	}
@@ -613,17 +614,19 @@ public class Arena extends BukkitRunnable {
 
 	public List<Player> getPlayersLeft() {
 		List<Player> players = new ArrayList<>();
+
 		for (User user : plugin.getUserManager().getUsers(this)) {
 			if (!user.isSpectator()) {
 				players.add(user.getPlayer());
 			}
 		}
+
 		return players;
 	}
 
 	void showPlayers() {
-		for (Player player : getPlayers()) {
-			for (Player p : getPlayers()) {
+		for (Player player : players) {
+			for (Player p : players) {
 				player.showPlayer(plugin, p);
 				p.showPlayer(plugin, player);
 			}

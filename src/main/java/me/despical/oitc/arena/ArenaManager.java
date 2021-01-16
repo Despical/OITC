@@ -148,7 +148,6 @@ public class ArenaManager {
 		if (arena.getArenaState() == ArenaState.IN_GAME || arena.getArenaState() == ArenaState.ENDING) {
 			arena.teleportToStartLocation(player);
 			player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("In-Game.You-Are-Spectator"));
-			player.getInventory().clear();
 			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Teleporter").getSlot(), SpecialItemManager.getSpecialItem("Teleporter").getItemStack());
 			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Spectator-Settings").getSlot(), SpecialItemManager.getSpecialItem("Spectator-Settings").getItemStack());
 			player.getInventory().setItem(SpecialItemManager.getSpecialItem("Leave").getSlot(), SpecialItemManager.getSpecialItem("Leave").getItemStack());
@@ -191,8 +190,9 @@ public class ArenaManager {
 
 		arena.getPlayers().forEach(arenaPlayer -> ArenaUtils.showPlayer(arenaPlayer, arena));
 		arena.showPlayers();
-
 		ArenaUtils.updateNameTagsVisibility(player);
+		plugin.getSignManager().updateSigns();
+
 		Debugger.debug("[{0}] Join attempt as player for {1} took {2} ms", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 	}
 
@@ -271,6 +271,8 @@ public class ArenaManager {
 		}
 
 		plugin.getUserManager().saveAllStatistic(user);
+		plugin.getSignManager().updateSigns();
+
 		Debugger.debug("[{0}] Game leave finished for {1} took {2} ms", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 	}
 

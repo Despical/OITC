@@ -81,13 +81,15 @@ public class ReloadCommand extends SubCommand {
 
 			for (Player player : arena.getPlayers()) {
 				arena.doBarAction(Arena.BarAction.REMOVE, player);
+				player.setFlySpeed(0.1f);
+				player.setWalkSpeed(0.2f);
+
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 					InventorySerializer.loadInventory(plugin, player);
 				} else {
 					player.getInventory().clear();
 					player.getInventory().setArmorContents(null);
 					player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-					player.setWalkSpeed(0.2f);
 				}
 			}
 

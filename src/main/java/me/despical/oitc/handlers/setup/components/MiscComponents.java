@@ -83,7 +83,7 @@ public class MiscComponents implements SetupComponent {
 			Location location = player.getTargetBlock(null, 10).getLocation();
 
 			if (!(location.getBlock().getState() instanceof Sign)) {
-				player.sendMessage(plugin.getChatManager().colorMessage("Commands.Look-Sign"));
+				player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Commands.Look-Sign"));
 				return;
 			}
 
@@ -94,6 +94,7 @@ public class MiscComponents implements SetupComponent {
 			}
 
 			plugin.getSignManager().getArenaSigns().add(new ArenaSign((Sign) location.getBlock().getState(), arena));
+			plugin.getSignManager().updateSigns();
 			player.sendMessage(plugin.getChatManager().getPrefix() + plugin.getChatManager().colorMessage("Signs.Sign-Created"));
 
 			String signLoc = LocationSerializer.locationToString(location);
