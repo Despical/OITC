@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,15 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.utils;
 
-import me.despical.commonsbox.compat.VersionResolver;
-import me.despical.commonsbox.string.StringMatcher;
+import me.despical.commons.util.Strings;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -34,12 +32,12 @@ import java.util.logging.Logger;
  */
 public class Debugger {
 
-	private static final HashSet<String> listenedPerformance = new HashSet<>();
-	private static boolean enabled = false;
-	private static boolean deep = false;
+	private static boolean enabled, deep;
 	private static final Logger logger = Logger.getLogger("OITC");
+	private static final HashSet<String> listenedPerformance = new HashSet<>();
 
-	private Debugger() {}
+	private Debugger() {
+	}
 
 	public static void setEnabled(boolean enabled) {
 		Debugger.enabled = enabled;
@@ -54,11 +52,7 @@ public class Debugger {
 	}
 
 	public static void sendConsoleMessage(String message) {
-		if (message.contains("#") && VersionResolver.isCurrentEqualOrHigher(VersionResolver.ServerVersion.v1_16_R1)) {
-			message = StringMatcher.matchColorRegex(message);
-		}
-
-		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+		Bukkit.getConsoleSender().sendMessage(Strings.format(message));
 	}
 
 	/**
@@ -122,10 +116,14 @@ public class Debugger {
 	 * @param params any params to debug
 	 */
 	public static void performance(String monitorName, String msg, Object... params) {
-		if (!deep || !listenedPerformance.contains(monitorName)) {
+		if (!deep) {
 			return;
 		}
 
-		logger.log(Level.INFO, "[OITCDBG] " + msg, params);
+		if (!listenedPerformance.contains(monitorName)) {
+			return;
+		}
+
+		logger.log(Level.INFO, "[OITCDBG] [Performance Monitor] " + msg, params);
 	}
 }

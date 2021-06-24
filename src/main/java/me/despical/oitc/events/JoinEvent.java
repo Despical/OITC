@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,12 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.events;
 
-import me.despical.commonsbox.serializer.InventorySerializer;
+import me.despical.commons.miscellaneous.PlayerUtils;
+import me.despical.commons.serializer.InventorySerializer;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.ArenaRegistry;
@@ -48,7 +49,7 @@ public class JoinEvent implements Listener {
 
 	@EventHandler
 	public void onLogin(PlayerLoginEvent e) {
-		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED) && !plugin.getServer().hasWhitelist() || e.getResult() != PlayerLoginEvent.Result.KICK_WHITELIST) {
+		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED) || e.getResult() != PlayerLoginEvent.Result.KICK_WHITELIST) {
 			return;
 		}
 
@@ -59,10 +60,11 @@ public class JoinEvent implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		plugin.getUserManager().loadStatistics(plugin.getUserManager().getUser(event.getPlayer()));
+		Player eventPlayer = event.getPlayer();
+		plugin.getUserManager().loadStatistics(plugin.getUserManager().getUser(eventPlayer));
 
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-			ArenaRegistry.getArenas().get(ArenaRegistry.getBungeeArena()).teleportToLobby(event.getPlayer());
+			ArenaRegistry.getBungeeArena().teleportToLobby(eventPlayer);
 			return;
 		}
 
@@ -71,18 +73,18 @@ public class JoinEvent implements Listener {
 				continue;
 			}
 
-			player.hidePlayer(plugin, event.getPlayer());
-			event.getPlayer().hidePlayer(plugin, player);
+			PlayerUtils.hidePlayer(player, eventPlayer, plugin);
+			PlayerUtils.hidePlayer(eventPlayer, player, plugin);
 		}
 
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
-			InventorySerializer.loadInventory(plugin, event.getPlayer());
+			InventorySerializer.loadInventory(plugin, eventPlayer);
 		}
 	}
 	
 	@EventHandler
-	public void onJoinCheckVersion(final PlayerJoinEvent event) {
-		if (!plugin.getConfig().getBoolean("Update-Notifier.Enabled", true) || !event.getPlayer().hasPermission("oitc.updatenotify")) {
+	public void onJoinCheckVersion(PlayerJoinEvent event) {
+		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED) || !event.getPlayer().hasPermission("oitc.updatenotify")) {
 			return;
 		}
 
@@ -91,13 +93,16 @@ public class JoinEvent implements Listener {
 				return;
 			}
 
-			if (result.getNewestVersion().contains("b")) {
-				event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3[OITC] &bFound a beta update: v" + result.getNewestVersion() + " Download"));
+			String newestVersion = result.getNewestVersion();
+			Player player = event.getPlayer();
+
+			if (newestVersion.contains("b")) {
+				player.sendMessage(plugin.getChatManager().coloredRawMessage("&3[OITC] &bFound a beta update: v" + newestVersion + " Download:"));
 			} else {
-				event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3[OITC] &bFound an update: v" + result.getNewestVersion() + " Download:"));
+				player.sendMessage(plugin.getChatManager().coloredRawMessage("&3[OITC] &bFound an update: v" + newestVersion + " Download:"));
 			}
 
-			event.getPlayer().sendMessage(plugin.getChatManager().colorRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-3.81185/"));
+			player.sendMessage(plugin.getChatManager().coloredRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/"));
 		}), 25);
 	}
 }

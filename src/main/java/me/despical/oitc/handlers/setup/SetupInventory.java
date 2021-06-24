@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,13 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers.setup;
 
-import me.despical.commonsbox.configuration.ConfigUtils;
+import me.despical.commons.compat.XMaterial;
+import me.despical.commons.configuration.ConfigUtils;
 import me.despical.inventoryframework.Gui;
+import me.despical.inventoryframework.GuiItem;
 import me.despical.inventoryframework.pane.StaticPane;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
@@ -32,7 +34,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Despical
@@ -41,7 +43,6 @@ import java.util.Random;
  */
 public class SetupInventory {
 
-	private final Random random = new Random();
 	private final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private final FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
 	private final Arena arena;
@@ -58,51 +59,47 @@ public class SetupInventory {
 	}
 
 	private void prepareGui() {
-		this.gui = new Gui(plugin, 3, "OITC Arena Editor");
-		this.gui.setOnGlobalClick(e -> e.setCancelled(true));
-		StaticPane pane = new StaticPane(9, 3);
-		this.gui.addPane(pane);
+		gui = new Gui(plugin, 5, "OITC Arena Editor");
+		gui.setOnGlobalClick(e -> e.setCancelled(true));
+
+		StaticPane pane = new StaticPane(9, 5);
+		pane.fillProgressBorder(GuiItem.of(XMaterial.GREEN_STAINED_GLASS_PANE.parseItem()), GuiItem.of(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()), arena.isReady() ? 100 : 0);
+
+		gui.addPane(pane);
 
 		prepareComponents(pane);
 	}
 
+
 	private void prepareComponents(StaticPane pane) {
 		SpawnComponents spawnComponents = new SpawnComponents();
-		spawnComponents.prepare(this);
-		spawnComponents.injectComponents(pane);
+		spawnComponents.registerComponent(this, pane);
 
 		PlayerAmountComponents playerAmountComponents = new PlayerAmountComponents();
-		playerAmountComponents.prepare(this);
-		playerAmountComponents.injectComponents(pane);
+		playerAmountComponents.registerComponent(this, pane);
 
 		MiscComponents miscComponents = new MiscComponents();
-		miscComponents.prepare(this);
-		miscComponents.injectComponents(pane);
+		miscComponents.registerComponent(this, pane);
 
 		ArenaRegisterComponent arenaRegisterComponent = new ArenaRegisterComponent();
-		arenaRegisterComponent.prepare(this);
-		arenaRegisterComponent.injectComponents(pane);
+		arenaRegisterComponent.registerComponent(this, pane);
 	}
 
-	private void sendProTip(Player p) {
+	private void sendProTip(Player player) {
 		ChatManager chatManager = plugin.getChatManager();
-		int rand = random.nextInt(16 + 1);
 
-		switch (rand) {
+		switch (ThreadLocalRandom.current().nextInt(16 + 1)) {
 			case 0:
-				p.sendMessage(chatManager.colorRawMessage("&e&lTIP: &7We are open source! You can always help us by contributing! Check https://github.com/Despical/OITC"));
+				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7We are open source! You can always help us by contributing! Check https://github.com/Despical/OITC"));
 				break;
 			case 1:
-				p.sendMessage(chatManager.colorRawMessage("&e&lTIP: &7Need help? Join our discord server: https://discordapp.com/invite/Vhyy4HA"));
+				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7Need help? Join our discord server: https://discordapp.com/invite/Vhyy4HA"));
 				break;
 			case 2:
-				p.sendMessage(chatManager.colorRawMessage("&e&lTIP: &7Need help? Check our wiki: https://github.com/Despical/OITC/wiki"));
+				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7Need help? Check our wiki: https://github.com/Despical/OITC/wiki"));
 				break;
 			case 3:
-				p.sendMessage(chatManager.colorRawMessage("&e&lTIP: &7Want to access exclusive maps, addons and more? Check our Patreon page: https://www.patreon.com/despical"));
-				break;
-			case 4:
-				p.sendMessage(chatManager.colorRawMessage("&e&lTIP: &7Help us translating plugin to your language here: https://github.com/Despical/LocaleStorage/"));
+				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7Help us translating plugin to your language here: https://github.com/Despical/LocaleStorage"));
 				break;
 			default:
 				break;
@@ -112,10 +109,6 @@ public class SetupInventory {
 	public void openInventory() {
 		sendProTip(player);
 		gui.show(player);
-	}
-
-	public Main getPlugin() {
-		return plugin;
 	}
 
 	public FileConfiguration getConfig() {

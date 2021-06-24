@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,17 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers.setup;
 
-import me.despical.commonsbox.serializer.LocationSerializer;
-import me.despical.oitc.Main;
+import me.despical.commons.serializer.LocationSerializer;
 import me.despical.oitc.arena.Arena;
-import org.bukkit.Bukkit;
+
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * @author Despical
@@ -32,7 +30,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SetupUtilities {
 
-	private final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private final FileConfiguration config;
 	private final Arena arena;
 
@@ -42,35 +39,27 @@ public class SetupUtilities {
 	}
 
 	public String isOptionDone(String path) {
-		if (config.isSet(path)) {
-			return plugin.getChatManager().colorRawMessage("&a&l✔ Completed &7(value: &8" + config.getString(path) + "&7)");
-		}
+		path = String.format("instances.%s.%s", arena.getId(), path);
 
-		return plugin.getChatManager().colorRawMessage("&c&l✘ Not Completed");
+		return config.isSet(path) ? "&a&l✔ Completed &7(value: &8" + config.getString(path) + "&7)" : "&c&l✘ Not Completed";
 	}
 
 	public String isOptionDoneList(String path, int minimum) {
-		if (config.isSet(path)) {
-			if (config.getStringList(path).size() < minimum) {
-				return plugin.getChatManager().colorRawMessage("&c&l✘ Not Completed | &cPlease add more spawns");
-			}
+		path = String.format("instances.%s.%s", arena.getId(), path);
 
-			return plugin.getChatManager().colorRawMessage("&a&l✔ Completed &7(value: &8" + config.getStringList(path).size() + "&7)");
+		if (config.isSet(path)) {
+			int size = config.getStringList(path).size();
+
+			return size < minimum ? "&c&l✘ Not Completed &c| &c&lPlease add more spawns" : "&a&l✔ Completed &7(value: &8" + size + "&7)";
 		}
 
-		return plugin.getChatManager().colorRawMessage("&c&l✘ Not Completed");
+		return "&c&l✘ Not Completed";
 	}
 
 	public String isOptionDoneBool(String path) {
-		if (config.isSet(path)) {
-			if (Bukkit.getServer().getWorlds().get(0).getSpawnLocation().equals(LocationSerializer.locationFromString(config.getString(path)))) {
-				return plugin.getChatManager().colorRawMessage("&c&l✘ Not Completed");
-			}
+		path = String.format("instances.%s.%s", arena.getId(), path);
 
-			return plugin.getChatManager().colorRawMessage("&a&l✔ Completed");
-		}
-
-		return plugin.getChatManager().colorRawMessage("&c&l✘ Not Completed");
+		return config.isSet(path) ? LocationSerializer.isDefaultLocation(config.getString(path)) ? "&c&l✘ Not Completed" : "&a&l✔ Completed" : "&c&l✘ Not Completed";
 	}
 
 	public int getMinimumValueHigherThanZero(String path) {

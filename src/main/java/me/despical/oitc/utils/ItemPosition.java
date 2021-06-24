@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,13 +13,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.utils;
 
+import me.despical.commons.compat.XMaterial;
+import me.despical.commons.item.ItemBuilder;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -29,23 +33,26 @@ import org.bukkit.inventory.ItemStack;
  */
 public enum ItemPosition {
 
-	SWORD(0), BOW(1), ARROW(7);
+	SWORD(0, new ItemBuilder(XMaterial.WOODEN_SWORD).unbreakable(true)),
+	BOW(1, new ItemBuilder(XMaterial.BOW).enchantment(Enchantment.LUCK).flag(ItemFlag.HIDE_ENCHANTS).unbreakable(true)),
+	ARROW(7, new ItemBuilder(XMaterial.ARROW));
 	
 	private final int itemPosition;
+	private final ItemStack itemStack;
 
-	ItemPosition(int itemPosition) {
+	ItemPosition(int itemPosition, ItemBuilder itemBuilder) {
 		this.itemPosition = itemPosition;
+		this.itemStack = itemBuilder.build();
 	}
 
 	/**
-	 * Adds target item to specified hotbar position.
+	 * Adds target item to specified hot bar position.
 	 * Item will be added if there is already set or 
 	 * will be set when no item is set in the position.
 	 *
-	 * @param player       player to add item to
+	 * @param player to add item to
 	 * @param itemPosition position of item to set/add
-	 * @param itemStack    itemstack to be added at itemPostion or set at
-	 *                     itemPosition
+	 * @param itemStack to be added at item position or set at
 	 */
 	public static void addItem(Player player, ItemPosition itemPosition, ItemStack itemStack) {
 		if (player == null) {
@@ -62,24 +69,39 @@ public enum ItemPosition {
 	}
 
 	/**
-	 * Sets target item in specified hotbar position.
+	 * Sets target item in specified hot bar position.
 	 * If item there is already set it will be incremented 
 	 * by itemStack amount if possible.
 	 *
-	 * @param player       player to set item to
-	 * @param itemPosition position of item to set
-	 * @param itemStack    itemstack to set at itemPosition
+	 * @param player to set item to
+	 * @param itemPositions array of item to set
 	 */
-	public static void setItem(Player player, ItemPosition itemPosition, ItemStack itemStack) {
+	public static void setItem(Player player, ItemPosition... itemPositions) {
 		if (player == null) {
 			return;
 		}
 
-		Inventory inv = player.getInventory();
-		inv.setItem(itemPosition.getItemPosition(), itemStack);
+		for (ItemPosition itemPosition : itemPositions) {
+			player.getInventory().setItem(itemPosition.getItemPosition(), itemPosition.itemStack);
+		}
+	}
+
+	/**
+	 * Gives game kit to specified player.
+	 *
+	 * @param player to give kit
+	 */
+	public static void giveKit(Player player) {
+		player.getInventory().clear();
+		setItem(player, SWORD, BOW, ARROW);
+		player.updateInventory();
 	}
 	
 	public int getItemPosition() {
 		return itemPosition;
+	}
+
+	public ItemStack getItem() {
+		return itemStack;
 	}
 }

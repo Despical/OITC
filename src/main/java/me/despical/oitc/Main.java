@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,21 +13,26 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc;
 
-import me.despical.commonsbox.compat.VersionResolver;
-import me.despical.commonsbox.configuration.ConfigUtils;
-import me.despical.commonsbox.database.MysqlDatabase;
-import me.despical.commonsbox.scoreboard.ScoreboardLib;
-import me.despical.commonsbox.serializer.InventorySerializer;
+import me.despical.commandframework.CommandFramework;
+import me.despical.commons.compat.VersionResolver;
+import me.despical.commons.configuration.ConfigUtils;
+import me.despical.commons.database.MysqlDatabase;
+import me.despical.commons.exception.ExceptionLogHandler;
+import me.despical.commons.scoreboard.ScoreboardLib;
+import me.despical.commons.serializer.InventorySerializer;
+import me.despical.commons.util.Collections;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaUtils;
-import me.despical.oitc.commands.CommandHandler;
+import me.despical.oitc.commands.TabCompletion;
+import me.despical.oitc.commands.admin.AdminCommands;
+import me.despical.oitc.commands.player.PlayerCommands;
 import me.despical.oitc.events.*;
 import me.despical.oitc.events.spectator.SpectatorEvents;
 import me.despical.oitc.events.spectator.SpectatorItemEvents;
@@ -40,13 +45,10 @@ import me.despical.oitc.user.UserManager;
 import me.despical.oitc.user.data.MysqlManager;
 import me.despical.oitc.utils.*;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.Arrays;
 
 /**
  * @author Despical
@@ -62,23 +64,31 @@ public class Main extends JavaPlugin {
 	private MysqlDatabase database;
 	private SignManager signManager;
 	private ConfigPreferences configPreferences;
-	private CommandHandler commandHandler;
+	private CommandFramework commandFramework;
 	private ChatManager chatManager;
 	private UserManager userManager;
 	
 	@Override
 	public void onEnable() {
 		if (!validateIfPluginShouldStart()) {
+			forceDisable = true;
+			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
 
 		exceptionLogHandler = new ExceptionLogHandler(this);
+		exceptionLogHandler.setMainPackage("me.despical.oitc");
+		exceptionLogHandler.addBlacklistedClass("me.despical.kotl.user.data.MysqlManager", "me.despical.commons.database.MysqlDatabase");
+		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official Discord server (Invite link: https://discordapp.com/invite/Vhyy4HA) with the following error given above!");
+
+		getServer().getLogger().addHandler(exceptionLogHandler);
+
 		saveDefaultConfig();
+		Debugger.setEnabled(getDescription().getVersion().contains("debug") || getConfig().getBoolean("Debug-Messages"));
 
-		Debugger.setEnabled(getDescription().getVersion().contains("d") || getConfig().getBoolean("Debug-Messages", false));
+		Debugger.debug("Initialization started");
 
-		Debugger.debug("Initialization start");
-		if (getConfig().getBoolean("Developer-Mode", false)) {
+		if (getConfig().getBoolean("Developer-Mode")) {
 			Debugger.deepDebug(true);
 			Debugger.debug("Deep debug enabled");
 			getConfig().getStringList("Listenable-Performances").forEach(Debugger::monitorPerformance);
@@ -92,28 +102,23 @@ public class Main extends JavaPlugin {
 		checkUpdate();
 
 		Debugger.debug("Initialization finished took {0} ms", System.currentTimeMillis() - start);
+
 		if (configPreferences.getOption(ConfigPreferences.Option.NAMETAGS_HIDDEN)) {
-			Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, () ->
-				Bukkit.getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
+			getServer().getScheduler().scheduleSyncRepeatingTask(this, () ->
+				getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
 		}
 	}
 	
 	private boolean validateIfPluginShouldStart() {
-		if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_12_R1)) {
-			MessageUtils.thisVersionIsNotSupported();
+		if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_9_R1)) {
 			Debugger.sendConsoleMessage("&cYour server version is not supported by One in the Chamber!");
 			Debugger.sendConsoleMessage("&cSadly, we must shut off. Maybe you consider changing your server version?");
-			forceDisable = true;
-			getServer().getPluginManager().disablePlugin(this);
 			return false;
 		} try {
 			Class.forName("org.spigotmc.SpigotConfig");
 		} catch (Exception e) {
-			MessageUtils.thisVersionIsNotSupported();
 			Debugger.sendConsoleMessage("&cYour server software is not supported by One in the Chamber!");
 			Debugger.sendConsoleMessage("&cWe support only Spigot and Spigot forks only! Shutting off...");
-			forceDisable = true;
-			getServer().getPluginManager().disablePlugin(this);
 			return false;
 		}
 
@@ -129,7 +134,7 @@ public class Main extends JavaPlugin {
 		Debugger.debug("System disable initialized");
 		long start = System.currentTimeMillis();
 
-		Bukkit.getLogger().removeHandler(exceptionLogHandler);
+		getServer().getLogger().removeHandler(exceptionLogHandler);
 		saveAllUserStatistics();
 		
 		if (configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
@@ -143,6 +148,9 @@ public class Main extends JavaPlugin {
 				arena.doBarAction(Arena.BarAction.REMOVE, player);
 				arena.teleportToEndLocation(player);
 				player.setFlySpeed(0.1f);
+				player.setWalkSpeed(0.2f);
+
+				arena.getScoreboardManager().removeScoreboard(player);
 
 				if (configPreferences.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 					InventorySerializer.loadInventory(this, player);
@@ -150,7 +158,6 @@ public class Main extends JavaPlugin {
 					player.getInventory().clear();
 					player.getInventory().setArmorContents(null);
 					player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-					player.setWalkSpeed(0.2f);
 				}
 			}
 
@@ -164,33 +171,38 @@ public class Main extends JavaPlugin {
 		ScoreboardLib.setPluginInstance(this);
 		chatManager = new ChatManager(this);
 
-		if (getConfig().getBoolean("BungeeActivated")) {
+		if (configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			bungeeManager = new BungeeManager(this);
 		}
 
 		if (configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
-			FileConfiguration config = ConfigUtils.getConfig(this, "mysql");
-			database = new MysqlDatabase(config.getString("user"), config.getString("password"), config.getString("address"));
+			database = new MysqlDatabase(ConfigUtils.getConfig(this, "mysql"));
 		}
 
+		PermissionsManager.init(this);
+		SpecialItem.init(this);
+
 		userManager = new UserManager(this);
-		SpecialItem.loadAll();
-		PermissionsManager.init();
-		new SpectatorEvents(this);
-		new QuitEvent(this);
-		new JoinEvent(this);
-		new ChatEvents(this);
 		signManager = new SignManager(this);
 		ArenaRegistry.registerArenas();
 		signManager.loadSigns();
 		signManager.updateSigns();
+		rewardsFactory = new RewardsFactory(this);
+		commandFramework = new CommandFramework(this);
+
+		new AdminCommands(this);
+		new PlayerCommands(this);
+		new TabCompletion(commandFramework);
+
+		new SpectatorEvents(this);
+		new QuitEvent(this);
+		new JoinEvent(this);
+		new ChatEvents(this);
 		new Events(this);
 		new LobbyEvent(this);
 		new SpectatorItemEvents(this);
-		rewardsFactory = new RewardsFactory(this);
+
 		registerSoftDependenciesAndServices();
-		commandHandler = new CommandHandler(this);
-		new BowTrailsHandler(this);
 	}
 	
 	private void registerSoftDependenciesAndServices() {
@@ -198,9 +210,9 @@ public class Main extends JavaPlugin {
 		long start = System.currentTimeMillis();
 
 		startPluginMetrics();
-		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+		if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 			Debugger.debug("Hooking into PlaceholderAPI");
-			new PlaceholderManager().register();
+			new PlaceholderManager(this);
 		}
 
 		Debugger.debug("Hooked into soft dependencies took {0} ms", System.currentTimeMillis() - start);
@@ -233,31 +245,25 @@ public class Main extends JavaPlugin {
 			if (!result.requiresUpdate()) {
 				return;
 			}
+
 			if (result.getNewestVersion().contains("b")) {
 				if (getConfig().getBoolean("Update-Notifier.Notify-Beta-Versions", true)) {
 					Debugger.sendConsoleMessage("[OITC] Found a new beta version available: v" + result.getNewestVersion());
 					Debugger.sendConsoleMessage("[OITC] Download it on SpigotMC:");
-					Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-3.81185/");
+					Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/");
 				}
 
 				return;
 			}
 
-			MessageUtils.updateIsHere();
 			Debugger.sendConsoleMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
 			Debugger.sendConsoleMessage("[OITC] Download it SpigotMC:");
-			Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-3.81185/");
+			Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/");
 		});
 	}
 
 	private void setupFiles() {
-		for (String fileName : Arrays.asList("arenas", "bungee", "rewards", "stats", "lobbyitems", "mysql", "messages")) {
-			File file = new File(getDataFolder() + File.separator + fileName + ".yml");
-
-			if (!file.exists()) {
-				saveResource(fileName + ".yml", false);
-			}
-		}
+		Collections.streamOf("arenas", "bungee", "rewards", "stats", "items", "mysql", "messages").filter(name -> !new File(getDataFolder(),name + ".yml").exists()).forEach(name -> saveResource(name + ".yml", false));
 	}
 	
 	public RewardsFactory getRewardsFactory() {
@@ -284,8 +290,8 @@ public class Main extends JavaPlugin {
 		return chatManager;
 	}
 	
-	public CommandHandler getCommandHandler() {
-		return commandHandler;
+	public CommandFramework getCommandFramework() {
+		return commandFramework;
 	}
 
 	public UserManager getUserManager() {
@@ -308,12 +314,15 @@ public class Main extends JavaPlugin {
 					update.append(", ").append(stat.getName()).append("'='").append(user.getStat(stat));
 				}
 
+				MysqlManager database = (MysqlManager) userManager.getDatabase();
 				String finalUpdate = update.toString();
-				((MysqlManager) userManager.getDatabase()).getDatabase().executeUpdate("UPDATE " + ((MysqlManager) getUserManager().getDatabase()).getTableName() + finalUpdate + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';");
+				database.getDatabase().executeUpdate("UPDATE " + database.getTableName() + finalUpdate + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';");
 				continue;
 			}
 
-			Arrays.stream(StatsStorage.StatisticType.values()).forEach(stat -> userManager.getDatabase().saveStatistic(user, stat));
+			for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+				userManager.getDatabase().saveStatistic(user, stat);
+			}
 		}
 	}
 }

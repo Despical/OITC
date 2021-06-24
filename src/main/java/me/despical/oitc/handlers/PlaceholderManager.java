@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,12 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
@@ -30,6 +31,14 @@ import org.bukkit.entity.Player;
  * Created at 02.07.2020
  */
 public class PlaceholderManager extends PlaceholderExpansion {
+
+	private final Main plugin;
+
+	public PlaceholderManager(Main plugin) {
+		this.plugin = plugin;
+
+		register();
+	}
 
 	@Override
 	public boolean persist() {
@@ -45,7 +54,7 @@ public class PlaceholderManager extends PlaceholderExpansion {
 	}
 
 	public String getVersion() {
-		return "1.1.0";
+		return plugin.getDescription().getVersion();
 	}
 
 	public String onPlaceholderRequest(Player player, String id) {
@@ -55,27 +64,23 @@ public class PlaceholderManager extends PlaceholderExpansion {
 
 		switch (id.toLowerCase()) {
 			case "kills":
-				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.KILLS));
+				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.KILLS));
 			case "deaths":
-				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.DEATHS));
+				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.DEATHS));
 			case "games_played":
-				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.GAMES_PLAYED));
+				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.GAMES_PLAYED));
 			case "highest_score":
-				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.HIGHEST_SCORE));
+				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.HIGHEST_SCORE));
 			case "wins":
-				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.WINS));
+				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.WINS));
 			case "loses":
-				return String.valueOf(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOSES));
+				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOSES));
 			default:
 				return handleArenaPlaceholderRequest(id);
 		}
 	}
 
 	private String handleArenaPlaceholderRequest(String id) {
-		if (!id.contains(":")) {
-			return null;
-		}
-
 		String[] data = id.split(":");
 		Arena arena = ArenaRegistry.getArena(data[0]);
 
@@ -85,18 +90,18 @@ public class PlaceholderManager extends PlaceholderExpansion {
 
 		switch (data[1].toLowerCase()) {
 			case "players":
-				return String.valueOf(arena.getPlayers().size());
+				return Integer.toString(arena.getPlayers().size());
 			case "players_left":
-				return String.valueOf(arena.getPlayersLeft().size());
+				return Integer.toString(arena.getPlayersLeft().size());
 			case "max_players":
-				return String.valueOf(arena.getMaximumPlayers());
+				return Integer.toString(arena.getMaximumPlayers());
 			case "min_players":
-				return String.valueOf(arena.getMinimumPlayers());
+				return Integer.toString(arena.getMinimumPlayers());
 			case "state":
-				return String.valueOf(arena.getArenaState());
+				return arena.getArenaState().name();
 			case "state_pretty":
 				return arena.getArenaState().getFormattedName();
-			case "mapname":
+			case "map_name":
 				return arena.getMapName();
 			default:
 				return null;

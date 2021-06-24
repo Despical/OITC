@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,11 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers.items;
 
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -36,16 +37,12 @@ public class SpecialItemManager {
 	}
 
 	public static SpecialItem getSpecialItem(String name) {
-		if (specialItems.containsKey(name)) {
-			return specialItems.get(name);
-		}
-
-		return null;
+		return specialItems.get(name);
 	}
 
 	public static String getRelatedSpecialItem(ItemStack itemStack) {
 		for (String key : specialItems.keySet()) {
-			SpecialItem entityItem = specialItems.get(key);
+			SpecialItem entityItem = getSpecialItem(key);
 
 			if (entityItem.getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase(itemStack.getItemMeta().getDisplayName())) {
 				return key;
@@ -53,5 +50,17 @@ public class SpecialItemManager {
 		}
 
 		return null;
+	}
+
+	public static void giveItem(Player player, String... names) {
+		for (String name : names) {
+			SpecialItem item = getSpecialItem(name);
+
+			if (item == null) continue;
+
+			player.getInventory().setItem(item.getSlot(), item.getItemStack());
+		}
+
+		player.updateInventory();
 	}
 }

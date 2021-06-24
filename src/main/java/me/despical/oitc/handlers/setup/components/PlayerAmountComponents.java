@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,20 +13,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers.setup.components;
 
-import me.despical.commonsbox.configuration.ConfigUtils;
-import me.despical.commonsbox.item.ItemBuilder;
+import me.despical.commons.compat.XMaterial;
+import me.despical.commons.configuration.ConfigUtils;
+import me.despical.commons.item.ItemBuilder;
 import me.despical.inventoryframework.GuiItem;
 import me.despical.inventoryframework.pane.StaticPane;
-import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.handlers.setup.SetupInventory;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 /**
  * @author Despical
@@ -35,74 +35,74 @@ import org.bukkit.configuration.file.FileConfiguration;
  */
 public class PlayerAmountComponents implements SetupComponent {
 
-	private SetupInventory setupInventory;
-
 	@Override
-	public void prepare(SetupInventory setupInventory) {
-		this.setupInventory = setupInventory;
-	}
-
-	@Override
-	public void injectComponents(StaticPane pane) {
+	public void registerComponent(SetupInventory setupInventory, StaticPane pane) {
+		Player player = setupInventory.getPlayer();
 		FileConfiguration config = setupInventory.getConfig();
 		Arena arena = setupInventory.getArena();
-		Main plugin = setupInventory.getPlugin();
+		String error = chatManager.coloredRawMessage("&c&l✖ &cWarning | Please do not set amount lower than 2! Game is designed for 2 or more players!");
 
-		pane.addItem(new GuiItem(new ItemBuilder(Material.COAL)
+		pane.addItem(new GuiItem(new ItemBuilder(XMaterial.COAL)
 			.amount(setupInventory.getSetupUtilities().getMinimumValueHigherThanZero("minimumplayers"))
 			.name("&e&lSet Minimum Players Amount")
 			.lore("&7LEFT click to decrease")
 			.lore("&7RIGHT click to increase")
 			.lore("&8(how many players are needed")
-			.lore("&8for game to start lobby countdown)").lore("", setupInventory
-			.getSetupUtilities().isOptionDone("instances." + arena.getId() + ".minimumplayers"))
+			.lore("&8for game to start lobby countdown)")
+			.lore("", setupInventory.getSetupUtilities().isOptionDone("minimumplayers"))
 			.build(), e -> {
 
+			int amount = e.getCurrentItem().getAmount();
+
 			if (e.getClick().isRightClick()) {
-				e.getInventory().getItem(e.getSlot()).setAmount(e.getCurrentItem().getAmount() + 1);
+				e.getCurrentItem().setAmount(++amount);
 			}
 
 			if (e.getClick().isLeftClick()) {
-				e.getInventory().getItem(e.getSlot()).setAmount(e.getCurrentItem().getAmount() - 1);
+				e.getCurrentItem().setAmount(--amount);
 			}
 
-			if (e.getInventory().getItem(e.getSlot()).getAmount() <= 1) {
-				e.getWhoClicked().sendMessage(plugin.getChatManager().colorRawMessage("&c&l✖ &cWarning | Please do not set amount lower than 2! Game is designed for 2 or more players!"));
-				e.getInventory().getItem(e.getSlot()).setAmount(2);
+			if (amount <= 1) {
+				player.sendMessage(error);
+				amount++;
 			}
 
-			config.set("instances." + arena.getId() + ".minimumplayers", e.getCurrentItem().getAmount());
-			arena.setMinimumPlayers(e.getCurrentItem().getAmount());
+			arena.setMinimumPlayers(amount);
+
+			config.set("instances." + arena.getId() + ".minimumplayers", amount);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
-			new SetupInventory(arena, setupInventory.getPlayer()).openInventory();
-		}), 3, 0);
+			new SetupInventory(arena, player).openInventory();
+		}), 4, 1);
 
-		pane.addItem(new GuiItem(new ItemBuilder(Material.REDSTONE)
+		pane.addItem(new GuiItem(new ItemBuilder(XMaterial.REDSTONE)
 			.amount(setupInventory.getSetupUtilities().getMinimumValueHigherThanZero("maximumplayers"))
 			.name("&e&lSet Maximum Players Amount")
 			.lore("&7LEFT click to decrease")
 			.lore("&7RIGHT click to increase")
 			.lore("&8(how many players arena can hold)")
-			.lore("", setupInventory.getSetupUtilities().isOptionDone("instances." + arena.getId() + ".maximumplayers"))
+			.lore("", setupInventory.getSetupUtilities().isOptionDone("maximumplayers"))
 			.build(), e -> {
 
+			int amount = e.getCurrentItem().getAmount();
+
 			if (e.getClick().isRightClick()) {
-				e.getCurrentItem().setAmount(e.getCurrentItem().getAmount() + 1);
+				e.getCurrentItem().setAmount(++amount);
 			}
 
 			if (e.getClick().isLeftClick()) {
-				e.getCurrentItem().setAmount(e.getCurrentItem().getAmount() - 1);
+				e.getCurrentItem().setAmount(--amount);
 			}
 
-			if (e.getInventory().getItem(e.getSlot()).getAmount() <= 1) {
-				e.getWhoClicked().sendMessage(plugin.getChatManager().colorRawMessage("&c&l✖ &cWarning | Please do not set amount lower than 2! Game is designed for 2 or more players!"));
-				e.getInventory().getItem(e.getSlot()).setAmount(2);
+			if (amount <= 1) {
+				player.sendMessage(error);
+				amount++;
 			}
 
-			config.set("instances." + arena.getId() + ".maximumplayers", e.getCurrentItem().getAmount());
-			arena.setMaximumPlayers(e.getCurrentItem().getAmount());
+			arena.setMaximumPlayers(amount);
+
+			config.set("instances." + arena.getId() + ".maximumplayers", amount);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
-			new SetupInventory(arena, setupInventory.getPlayer()).openInventory();
-		}), 4, 0);
+			new SetupInventory(arena, player).openInventory();
+		}), 5, 1);
 	}
 }

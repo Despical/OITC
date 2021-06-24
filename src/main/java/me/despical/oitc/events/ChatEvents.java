@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.events;
@@ -23,9 +23,7 @@ import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
-import me.despical.oitc.user.User;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,7 +40,6 @@ import java.util.regex.Pattern;
 public class ChatEvents implements Listener {
 
 	private final Main plugin;
-	private final String[] regexChars = {"$", "\\"};
 
 	public ChatEvents(Main plugin) {
 		this.plugin = plugin;
@@ -51,68 +48,52 @@ public class ChatEvents implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onChatIngame(AsyncPlayerChatEvent event) {
-		Arena arena = ArenaRegistry.getArena(event.getPlayer());
+	public void onChatInGame(AsyncPlayerChatEvent event) {
+		Player player = event.getPlayer();
+		Arena arena = ArenaRegistry.getArena(player);
+		boolean disabledSeparateChat = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT);
 
 		if (arena == null) {
-			if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT)) {
-				for (Arena loopArena : ArenaRegistry.getArenas()) {
-					for (Player player : loopArena.getPlayers()) {
-						event.getRecipients().remove(player);
-					}
-				}
+			if (!disabledSeparateChat) {
+				ArenaRegistry.getArenas().forEach(loopArena -> loopArena.getPlayers().forEach(p -> event.getRecipients().remove(p)));
 			}
 
 			return;
 		}
 
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.CHAT_FORMAT_ENABLED)) {
-			String eventMessage = event.getMessage();
+			String message = formatChatPlaceholders(plugin.getChatManager().message("In-Game.Game-Chat-Format"), player, event.getMessage().replaceAll(Pattern.quote("[$\\]"), ""));
 
-			for (String regexChar : regexChars) {
-				if (eventMessage.contains(regexChar)) {
-					eventMessage = eventMessage.replaceAll(Pattern.quote(regexChar), "");
-				}
-			}
-
-			String message = formatChatPlaceholders(plugin.getChatManager().colorMessage("In-Game.Game-Chat-Format"), plugin.getUserManager().getUser(event.getPlayer()), eventMessage);
-
-			if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT)) {
+			if (!disabledSeparateChat) {
 				event.setCancelled(true);
 
-				boolean dead = !arena.getPlayersLeft().contains(event.getPlayer());
+				boolean dead = !arena.getPlayersLeft().contains(player);
 
-				for (Player player : arena.getPlayers()) {
-					if (dead && arena.getPlayersLeft().contains(player)) {
+				for (Player p : arena.getPlayers()) {
+					if (dead && arena.getPlayersLeft().contains(p)) {
 						continue;
 					}
 
-					if (dead) {
-						String prefix = formatChatPlaceholders(plugin.getChatManager().colorMessage("In-Game.Game-Death-Format"), plugin.getUserManager().getUser(event.getPlayer()), null);
-						player.sendMessage(prefix + message);
-					} else {
-						player.sendMessage(message);
-					}
+					p.sendMessage(dead ? formatChatPlaceholders(plugin.getChatManager().message("In-Game.Game-Death-Format"), player, null) + message : message);
 				}
 
-				Bukkit.getConsoleSender().sendMessage(message);
+				plugin.getServer().getConsoleSender().sendMessage(message);
 			} else {
 				event.setMessage(message);
 			}
 		}
 	}
 
-	private String formatChatPlaceholders(String message, User user, String saidMessage) {
+	private String formatChatPlaceholders(String message, Player player, String saidMessage) {
 		String formatted = message;
 
-		formatted = plugin.getChatManager().colorRawMessage(formatted);
-		formatted = StringUtils.replace(formatted, "%player%", user.getPlayer().getName());
+		formatted = StringUtils.replace(formatted, "%player%", player.getName());
 		formatted = StringUtils.replace(formatted, "%message%", ChatColor.stripColor(saidMessage));
 
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-			formatted = PlaceholderAPI.setPlaceholders(user.getPlayer(), formatted);
+			formatted = PlaceholderAPI.setPlaceholders(player, formatted);
 		}
 
-		return formatted;
+		return plugin.getChatManager().coloredRawMessage(formatted);
 	}
 }

@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,16 +13,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.arena;
 
-import me.despical.commonsbox.configuration.ConfigUtils;
-import me.despical.commonsbox.serializer.LocationSerializer;
+import me.despical.commons.configuration.ConfigUtils;
+import me.despical.commons.serializer.LocationSerializer;
 import me.despical.oitc.Main;
+import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.utils.Debugger;
-import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -30,7 +30,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * @author Despical
@@ -41,61 +42,22 @@ public class ArenaRegistry {
 
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private static final List<Arena> arenas = new ArrayList<>();
-	private static int bungeeArena = -999;
+	private static int bungeeArena = -1;
 
-	/**
-	 * Checks if player is in any arena
-	 *
-	 * @param player player to check
-	 * @return [b]true[/b] when player is in arena, [b]false[/b] if otherwise
-	 */
 	public static boolean isInArena(Player player) {
-		for (Arena arena : arenas) {
-			if (arena.getPlayers().contains(player)) {
-				return true;
-			}
-		}
-
-		return false;
+		return arenas.stream().anyMatch(arena -> arena.getPlayers().contains(player));
 	}
 
-	/**
-	 * Returns arena where the player is
-	 *
-	 * @param p target player
-	 * @return Arena or null if not playing
-	 * @see #isInArena(Player) to check if player is playing
-	 */
 	public static Arena getArena(Player p) {
-		if (p == null || !p.isOnline()) {
-			return null;
-		}
-
-		for (Arena arena : arenas) {
-			for (Player player : arena.getPlayers()) {
-				if (player.getUniqueId().equals(p.getUniqueId())) {
-					return arena;
-				}
-			}
-		}
-
-		return null;
+		return arenas.stream().filter(arena -> arena.getPlayers().stream().anyMatch(player -> player.equals(p))).findFirst().orElse(null);
 	}
 
-	/**
-	 * Returns arena based by ID
-	 *
-	 * @param id name of arena
-	 * @return Arena or null if not found
-	 */
 	public static Arena getArena(String id) {
-		for (Arena loopArena : arenas) {
-			if (loopArena.getId().equalsIgnoreCase(id)) {
-				return loopArena;
-			}
-		}
+		return arenas.stream().filter(arena -> arena.getId().equalsIgnoreCase(id)).findFirst().orElse(null);
+	}
 
-		return null;
+	public static boolean isArena(String id) {
+		return arenas.stream().anyMatch(arena -> arena.getId().equalsIgnoreCase(id));
 	}
 
 	public static void registerArena(Arena arena) {
@@ -112,61 +74,50 @@ public class ArenaRegistry {
 		Debugger.debug("Initial arenas registration");
 		long start = System.currentTimeMillis();
 
-		if (ArenaRegistry.getArenas().size() > 0) {
-			for (Arena arena : new ArrayList<>(ArenaRegistry.getArenas())) {
-				unregisterArena(arena);
-			}
-		}
+		arenas.clear();
 
 		FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
+		ChatManager chatManager = plugin.getChatManager();
 
 		if (!config.contains("instances")) {
-			Debugger.sendConsoleMessage(plugin.getChatManager().colorMessage("Validator.No-Instances-Created"));
+			Debugger.sendConsoleMessage(chatManager.message("Validator.No-Instances-Created"));
 			return;
 		}
 
 		ConfigurationSection section = config.getConfigurationSection("instances");
 
 		if (section == null) {
-			Debugger.sendConsoleMessage(plugin.getChatManager().colorMessage("Validator.No-Instances-Created"));
+			Debugger.sendConsoleMessage(chatManager.message("Validator.No-Instances-Created"));
 			return;
 		}
 
 		for (String id : section.getKeys(false)) {
-			Arena arena;
 			String s = "instances." + id + ".";
 
 			if (s.contains("default")) {
 				continue;
 			}
 
-			arena = new Arena(id);
+			Arena arena = new Arena(id);
 			arena.setReady(true);
 			arena.setMinimumPlayers(config.getInt(s + "minimumplayers", 2));
 			arena.setMaximumPlayers(config.getInt(s + "maximumplayers", 10));
 			arena.setMapName(config.getString(s + "mapname", "undefined"));
+			arena.setPlayerSpawnPoints(config.getStringList(s + "playerspawnpoints").stream().map(LocationSerializer::fromString).collect(Collectors.toList()));
+			arena.setLobbyLocation(LocationSerializer.fromString(config.getString(s + "lobbylocation")));
+			arena.setEndLocation(LocationSerializer.fromString(config.getString(s + "Endlocation")));
 
-			List<Location> playerSpawnPoints = new ArrayList<>();
-
-			for (String loc : config.getStringList(s + "playerspawnpoints")) {
-				playerSpawnPoints.add(LocationSerializer.locationFromString(loc));
-			}
-
-			arena.setPlayerSpawnPoints(playerSpawnPoints);
-			arena.setLobbyLocation(LocationSerializer.locationFromString(config.getString(s + "lobbylocation", "world, -994.000, 4.000, 853.000, 0.000, 0.000")));
-			arena.setEndLocation(LocationSerializer.locationFromString(config.getString(s + "Endlocation", "world, -994.000, 4.000, 853.000, 0.000, 0.000")));
-
-			if (!config.getBoolean(s + "isdone", false)) {
-				Debugger.sendConsoleMessage(plugin.getChatManager().colorMessage("Validator.Invalid-Arena-Configuration").replace("%arena%", id).replace("%error%", "NOT VALIDATED"));
+			if (!config.getBoolean(s + "isdone")) {
+				Debugger.sendConsoleMessage(chatManager.message("Validator.Invalid-Arena-Configuration").replace("%arena%", id).replace("%error%", "NOT VALIDATED"));
 				arena.setReady(false);
-				ArenaRegistry.registerArena(arena);
+				registerArena(arena);
 				continue;
 			}
 
 			arena.setArenaState(ArenaState.WAITING_FOR_PLAYERS);
-			ArenaRegistry.registerArena(arena);
+			registerArena(arena);
 			arena.start();
-			Debugger.sendConsoleMessage(plugin.getChatManager().colorMessage("Validator.Instance-Started").replace("%arena%", id));
+			Debugger.sendConsoleMessage(chatManager.message("Validator.Instance-Started").replace("%arena%", id));
 		}
 
 		Debugger.debug("Arenas registration completed, took {0} ms", System.currentTimeMillis() - start);
@@ -177,14 +128,10 @@ public class ArenaRegistry {
 	}
 
 	public static void shuffleBungeeArena() {
-		bungeeArena = new Random().nextInt(arenas.size());
+		bungeeArena = ThreadLocalRandom.current().nextInt(arenas.size());
 	}
 
-	public static int getBungeeArena() {
-		if (bungeeArena == -999) {
-			bungeeArena = new Random().nextInt(arenas.size());
-		}
-
-		return bungeeArena;
+	public static Arena getBungeeArena() {
+		return arenas.get(bungeeArena == -1 ? bungeeArena = ThreadLocalRandom.current().nextInt(arenas.size()) : bungeeArena);
 	}
 }

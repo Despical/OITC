@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,31 +13,45 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.api.events.game;
 
 import me.despical.oitc.api.events.OITCEvent;
 import me.despical.oitc.arena.Arena;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 
 /**
  * @author Despical
  * @since 1.0.0
  * <p>
- * Called when arena is stopped.
  */
 public class OITCGameStopEvent extends OITCEvent {
 
-	private final HandlerList HANDLERS = new HandlerList();
+	private static final HandlerList HANDLERS = new HandlerList();
+	private final StopReason stopReason;
 
-	public OITCGameStopEvent(Arena arena) {
+	public OITCGameStopEvent(Arena arena, StopReason stopReason) {
 		super(arena);
+		this.stopReason = stopReason;
+	}
+
+	public static HandlerList getHandlerList() {
+		return HANDLERS;
 	}
 
 	@Override
 	public HandlerList getHandlers() {
 		return HANDLERS;
+	}
+
+	public StopReason getStopReason() {
+		return stopReason;
+	}
+
+	public enum StopReason {
+		BY_COMMAND, BY_DEFAULT
 	}
 }

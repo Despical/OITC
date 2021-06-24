@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.utils;
@@ -23,7 +23,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import org.apache.commons.lang.math.NumberUtils;
+import me.despical.commons.number.NumberUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
  * are inconsistent with what is published on SpigotMC, it may be due to SpiGet's cache.
  * Results will be updated in due time.
  *
- * @author Parker Hawke - 2008Choco
+ * @author Despical and 2008Choco
  */
 public final class UpdateChecker {
 
@@ -60,7 +60,7 @@ public final class UpdateChecker {
 		}
 
 		for (int i = 0; i < Math.min(firstSplit.length, secondSplit.length); i++) {
-			int currentValue = NumberUtils.toInt(firstSplit[i]), newestValue = NumberUtils.toInt(secondSplit[i]);
+			int currentValue = NumberUtils.getInt(firstSplit[i]), newestValue = NumberUtils.getInt(secondSplit[i]);
 
 			if (newestValue > currentValue) {
 				return second;
@@ -69,8 +69,9 @@ public final class UpdateChecker {
 			}
 		}
 
-		return (secondSplit.length > firstSplit.length) ? second : first;
+		return secondSplit.length > firstSplit.length ? second : first;
 	};
+
 	private static UpdateChecker instance;
 	private final JavaPlugin plugin;
 	private final int pluginID;
@@ -85,11 +86,8 @@ public final class UpdateChecker {
 
 	private static String[] splitVersionInfo(String version) {
 		Matcher matcher = DECIMAL_SCHEME_PATTERN.matcher(version);
-		if (!matcher.find()) {
-			return null;
-		}
 
-		return matcher.group().split("\\.");
+		return !matcher.find() ? null : matcher.group().split("\\.");
 	}
 
 	/**
@@ -109,7 +107,7 @@ public final class UpdateChecker {
 		Preconditions.checkArgument(pluginID > 0, "Plugin ID must be greater than 0");
 		Preconditions.checkArgument(versionScheme != null, "null version schemes are unsupported");
 
-		return (instance == null) ? instance = new UpdateChecker(plugin, pluginID, versionScheme) : instance;
+		return instance == null ? instance = new UpdateChecker(plugin, pluginID, versionScheme) : instance;
 	}
 
 	/**
@@ -156,7 +154,8 @@ public final class UpdateChecker {
 	 */
 	public CompletableFuture<UpdateResult> requestUpdateCheck() {
 		return CompletableFuture.supplyAsync(() -> {
-			int responseCode = -1;
+			int responseCode;
+
 			try {
 				URL url = new URL(String.format(UPDATE_URL, pluginID));
 				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -166,6 +165,7 @@ public final class UpdateChecker {
 				responseCode = connection.getResponseCode();
 
 				JsonElement element = new JsonParser().parse(reader);
+
 				if (!element.isJsonArray()) {
 					return new UpdateResult(UpdateReason.INVALID_JSON);
 				}
@@ -202,7 +202,6 @@ public final class UpdateChecker {
 	public UpdateResult getLastResult() {
 		return lastResult;
 	}
-
 
 	/**
 	 * A constant reason for the result of {@link UpdateResult}.
@@ -250,7 +249,6 @@ public final class UpdateChecker {
 		 * The plugin is up to date with the version released on SpigotMC's resources section.
 		 */
 		UP_TO_DATE
-
 	}
 
 	/**
@@ -279,7 +277,7 @@ public final class UpdateChecker {
 		private final UpdateReason reason;
 		private final String newestVersion;
 
-		{ // An actual use for initializer blocks. This is madness!
+		{
 			UpdateChecker.this.lastResult = this;
 		}
 
@@ -289,7 +287,7 @@ public final class UpdateChecker {
 		}
 
 		private UpdateResult(UpdateReason reason) {
-			Preconditions.checkArgument(reason != UpdateReason.NEW_UPDATE, "Reasons that require updates must also provide the latest version String");
+			Preconditions.checkArgument(reason != UpdateReason.NEW_UPDATE, "Reasons that require updates must also provide the latest version string");
 			this.reason = reason;
 			this.newestVersion = plugin.getDescription().getVersion();
 		}

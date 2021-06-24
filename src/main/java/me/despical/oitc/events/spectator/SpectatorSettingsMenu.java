@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.events.spectator;
@@ -25,7 +25,6 @@ import me.despical.oitc.events.spectator.components.MiscComponents;
 import me.despical.oitc.events.spectator.components.SpeedComponents;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * @author Despical
@@ -34,42 +33,39 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SpectatorSettingsMenu implements Listener {
 
-	private final Main plugin = JavaPlugin.getPlugin(Main.class);
-	private final Player player;
 	private Gui gui;
 
-	public SpectatorSettingsMenu(Player player) {
+	private final Player player;
+
+	public SpectatorSettingsMenu(Player player, Main plugin) {
 		this.player = player;
 
-		prepareGui();
+		prepareGui(plugin);
 	}
 
-	private void prepareGui() {
-		this.gui = new Gui(plugin, 4, plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Inventory-Name"));
-		this.gui.setOnGlobalClick(e -> e.setCancelled(true));
+	private void prepareGui(Main plugin) {
+		gui = new Gui(plugin, 4, plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Inventory-Name"));
+		gui.setOnGlobalClick(e -> {
+			e.setCancelled(true);
+			e.getWhoClicked().closeInventory();
+		});
 
 		StaticPane pane = new StaticPane(9, 4);
-		this.gui.addPane(pane);
+		gui.addPane(pane);
 
 		prepareComponents(pane);
 	}
 
 	private void prepareComponents(StaticPane pane) {
 		SpeedComponents speedComponents = new SpeedComponents();
-		speedComponents.prepare(this);
-		speedComponents.injectComponents(pane);
+		speedComponents.registerComponent(this, pane);
 
 		MiscComponents miscComponents = new MiscComponents();
-		miscComponents.prepare(this);
-		miscComponents.injectComponents(pane);
+		miscComponents.registerComponent(this, pane);
 	}
 
 	public void openInventory() {
 		gui.show(player);
-	}
-
-	public Main getPlugin() {
-		return plugin;
 	}
 
 	public Player getPlayer() {

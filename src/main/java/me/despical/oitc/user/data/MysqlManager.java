@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,20 +13,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.user.data;
 
-import me.despical.commonsbox.configuration.ConfigUtils;
-import me.despical.commonsbox.database.MysqlDatabase;
-import me.despical.oitc.Main;
+import me.despical.commons.configuration.ConfigUtils;
+import me.despical.commons.database.MysqlDatabase;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
 import me.despical.oitc.utils.Debugger;
-import me.despical.oitc.utils.MessageUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -40,17 +36,17 @@ import java.sql.Statement;
  */
 public class MysqlManager implements UserDatabase {
 
-	private final Main plugin;
 	private final MysqlDatabase database;
+	private final String tableName;
 
-	public MysqlManager(Main plugin) {
-		this.plugin = plugin;
-		database = plugin.getMysqlDatabase();
+	public MysqlManager() {
+		this.database = plugin.getMysqlDatabase();
+		this.tableName = ConfigUtils.getConfig(plugin, "mysql").getString("table", "playerstats");
 
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 			try (Connection connection = database.getConnection()) {
 				Statement statement = connection.createStatement();
-				statement.executeUpdate("CREATE TABLE IF NOT EXISTS `" + getTableName() + "` (\n"
+				statement.executeUpdate("CREATE TABLE IF NOT EXISTS `" + tableName + "` (\n"
 					+ "  `UUID` char(36) NOT NULL PRIMARY KEY,\n"
 					+ "  `name` varchar(32) NOT NULL,\n"
 					+ "  `kills` int(11) NOT NULL DEFAULT '0',\n"
@@ -61,18 +57,18 @@ public class MysqlManager implements UserDatabase {
 					+ "  `loses` int(11) NOT NULL DEFAULT '0'\n" + ");");
 			} catch (SQLException e) {
 				e.printStackTrace();
-				MessageUtils.errorOccurred();
-				Bukkit.getConsoleSender().sendMessage("Cannot save contents to MySQL database!");
-				Bukkit.getConsoleSender().sendMessage("Check configuration of mysql.yml file or disable mysql option in config.yml");
+				Debugger.sendConsoleMessage("&cCouldn't save user statistics to MySQL database!");
+				Debugger.sendConsoleMessage("&cCheck your configuration or disable MySQL option in config.yml");
 			}
 		});
 	}
 
 	@Override
 	public void saveStatistic(User user, StatsStorage.StatisticType stat) {
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-			database.executeUpdate("UPDATE " + getTableName() + " SET " + stat.getName() + "=" + user.getStat(stat) + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';");
-			Debugger.debug("Executed MySQL: " + "UPDATE " + getTableName() + " SET " + stat.getName() + "=" + user.getStat(stat) + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';");
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+			String query = "UPDATE " + tableName + " SET " + stat.getName() + "=" + user.getStat(stat) + " WHERE UUID='" + user.getUniqueId().toString() + "';";
+			database.executeUpdate(query);
+			Debugger.debug("Executed MySQL: " + query);
 		});
 	}
 
@@ -90,33 +86,31 @@ public class MysqlManager implements UserDatabase {
 		}
 
 		String finalUpdate = update.toString();
-
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> database.executeUpdate("UPDATE " + getTableName() + finalUpdate + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';"));
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> database.executeUpdate("UPDATE " + tableName + finalUpdate + " WHERE UUID='" + user.getUniqueId().toString() + "';"));
 	}
 
 	@Override
 	public void loadStatistics(User user) {
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-			String uuid = user.getPlayer().getUniqueId().toString();
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+			String uuid = user.getUniqueId().toString(), playerName = user.getPlayer().getName();
 
 			try (Connection connection = database.getConnection()) {
 				Statement statement = connection.createStatement();
-				ResultSet rs = statement.executeQuery("SELECT * from " + getTableName() + " WHERE UUID='" + uuid + "';");
+				ResultSet rs = statement.executeQuery("SELECT * from " + tableName + " WHERE UUID='" + uuid + "';");
+
 				if (rs.next()) {
-					Debugger.debug("MySQL Stats | Player {0} already exist. Getting Stats...", user.getPlayer().getName());
+					Debugger.debug("MySQL Stats | Player {0} already exist. Getting Stats...", playerName);
 
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 						if (!stat.isPersistent()) continue;
-						int val = rs.getInt(stat.getName());
-						user.setStat(stat, val);
+						user.setStat(stat, rs.getInt(stat.getName()));
 					}
 				} else {
-					Debugger.debug("MySQL Stats | Player {0} does not exist. Creating new one...", user.getPlayer().getName());
-					statement.executeUpdate("INSERT INTO " + getTableName() + " (UUID,name) VALUES ('" + uuid + "','" + user.getPlayer().getName() + "');");
+					Debugger.debug("MySQL Stats | Player {0} does not exist. Creating new one...", playerName);
+					statement.executeUpdate("INSERT INTO " + tableName + " (UUID,name) VALUES ('" + uuid + "','" + playerName + "');");
 
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
-						if (!stat.isPersistent())
-							continue;
+						if (!stat.isPersistent()) continue;
 						user.setStat(stat, 0);
 					}
 				}
@@ -127,8 +121,7 @@ public class MysqlManager implements UserDatabase {
 	}
 
 	public String getTableName() {
-		FileConfiguration config = ConfigUtils.getConfig(plugin, "mysql");
-		return config.getString("table", "playerstats");
+		return tableName;
 	}
 
 	public MysqlDatabase getDatabase() {

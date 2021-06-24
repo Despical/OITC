@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.2</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -50,19 +50,24 @@
 		<dependency>
 			<groupId>com.destroystokyo.paper</groupId>
 			<artifactId>paper-api</artifactId>
-			<version>1.16.1-R0.1-SNAPSHOT</version>
+			<version>1.16.5-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Despical</groupId>
-			<artifactId>commons-box</artifactId>
-			<version>1.1.6</version>
+			<artifactId>Commons</artifactId>
+			<version>1.3.5</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Despical</groupId>
 			<artifactId>InventoryFramework</artifactId>
-			<version>1.0.4</version>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.Despical</groupId>
+			<artifactId>CommandFramework</artifactId>
+			<version>1.0.5</version>
 		</dependency>
 		<dependency>
 			<groupId>me.clip</groupId>
@@ -79,7 +84,7 @@
 		<dependency>
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
-			<version>13.0</version>
+			<version>19.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
@@ -122,6 +127,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.1.0</version>
+				<configuration>
+					<outputDirectory>C:\Users\pc\Desktop\Sunucu\plugins</outputDirectory>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -135,14 +143,6 @@
 						</goals>
 						<configuration>
 							<relocations>
-								<relocation>
-									<pattern>com.github.despical.inventoryframework</pattern>
-									<shadedPattern>me.despical.oitc.utils.inventoryframework</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>me.despical.commonsbox</pattern>
-									<shadedPattern>me.despical.oitc.commonsbox</shadedPattern>
-								</relocation>
 								<relocation>
 									<pattern>org.bstats</pattern>
 									<shadedPattern>me.despical.oitc.utils</shadedPattern>

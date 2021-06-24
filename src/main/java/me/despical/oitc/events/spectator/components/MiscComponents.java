@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,15 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.events.spectator.components;
 
-import me.despical.commonsbox.item.ItemBuilder;
+import me.despical.commons.item.ItemBuilder;
+import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.inventoryframework.GuiItem;
 import me.despical.inventoryframework.pane.StaticPane;
-import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.events.spectator.SpectatorSettingsMenu;
@@ -31,6 +31,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author Despical
  * <p>
@@ -38,35 +41,24 @@ import org.bukkit.potion.PotionEffectType;
  */
 public class MiscComponents implements SpectatorSettingComponent {
 
-	private SpectatorSettingsMenu spectatorSettingsMenu;
-
 	@Override
-	public void prepare(SpectatorSettingsMenu spectatorSettingsMenu) {
-		this.spectatorSettingsMenu = spectatorSettingsMenu;
-	}
-
-	@Override
-	public void injectComponents(StaticPane pane) {
-		Main plugin = spectatorSettingsMenu.getPlugin();
+	public void registerComponent(SpectatorSettingsMenu spectatorSettingsMenu, StaticPane pane) {
 		Player player = spectatorSettingsMenu.getPlayer();
 		Arena arena = ArenaRegistry.getArena(player);
-		ItemStack nightVision;
-
-		if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION)) {
-			nightVision = new ItemBuilder(Material.ENDER_PEARL)
-				.name(plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Disable-Night-Vision"))
+		ItemStack nightVision = player.hasPotionEffect(PotionEffectType.NIGHT_VISION) ?
+			new ItemBuilder(Material.ENDER_PEARL)
+				.name(plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Disable-Night-Vision"))
 				.lore(plugin.getChatManager().getStringList("In-Game.Spectator.Settings-Menu.Disable-Night-Vision-Lore"))
-				.build();
-		} else {
-			nightVision = new ItemBuilder(Material.ENDER_EYE)
-				.name(plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Enable-Night-Vision"))
+				.build()
+
+			:
+
+			new ItemBuilder(Material.ENDER_EYE)
+				.name(plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Enable-Night-Vision"))
 				.lore(plugin.getChatManager().getStringList("In-Game.Spectator.Settings-Menu.Enable-Night-Vision-Lore"))
 				.build();
-		}
 
 		pane.addItem(new GuiItem(nightVision, e -> {
-			e.getWhoClicked().closeInventory();
-
 			if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION)) {
 				player.removePotionEffect(PotionEffectType.NIGHT_VISION);
 			} else {
@@ -74,29 +66,29 @@ public class MiscComponents implements SpectatorSettingComponent {
 			}
 		}), 2, 2);
 
-		boolean canSee = arena.getPlayers().stream().filter(p -> plugin.getUserManager().getUser(p).isSpectator()).anyMatch(player::canSee);
-		ItemStack specItem;
+		List<Player> spectators = arena.getPlayers().stream().filter(p -> plugin.getUserManager().getUser(p).isSpectator()).collect(Collectors.toList());
+		boolean canSee = spectators.stream().anyMatch(player::canSee);
 
-		if (canSee) {
-			specItem = new ItemBuilder(Material.REDSTONE)
-				.name(plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Hide-Spectators"))
-				.lore(plugin.getChatManager().getStringList("In-Game.Spectator.Settings-Menu.Hide-Spectators-Lore"))
-				.build();
-		} else {
-			specItem = new ItemBuilder(Material.GLOWSTONE_DUST)
-				.name(plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Show-Spectators"))
-				.lore(plugin.getChatManager().getStringList("In-Game.Spectator.Settings-Menu.Show-Spectators-Lore"))
-				.build();
-		}
+		ItemStack specItem = canSee ?
+			new ItemBuilder(Material.REDSTONE)
+			.name(plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Hide-Spectators"))
+			.lore(plugin.getChatManager().getStringList("In-Game.Spectator.Settings-Menu.Hide-Spectators-Lore"))
+			.build()
+
+			:
+
+			new ItemBuilder(Material.GLOWSTONE_DUST)
+			.name(plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Show-Spectators"))
+			.lore(plugin.getChatManager().getStringList("In-Game.Spectator.Settings-Menu.Show-Spectators-Lore"))
+			.build();
 
 		pane.addItem(new GuiItem(specItem, e -> {
-			e.getWhoClicked().closeInventory();
 			if (canSee) {
-				arena.getPlayers().stream().filter(p -> plugin.getUserManager().getUser(p).isSpectator()).forEach(p -> player.hidePlayer(plugin, p));
-				player.sendMessage(plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Show-Spectators-Message"));
+				spectators.forEach(p -> PlayerUtils.hidePlayer(player, p, plugin));
+				player.sendMessage(plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Show-Spectators-Message"));
 			} else {
-				arena.getPlayers().stream().filter(p -> plugin.getUserManager().getUser(p).isSpectator()).forEach(p -> player.showPlayer(plugin, p));
-				player.sendMessage(plugin.getChatManager().colorMessage("In-Game.Spectator.Settings-Menu.Hide-Spectators-Message"));
+				spectators.forEach(p -> PlayerUtils.showPlayer(player, p, plugin));
+				player.sendMessage(plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Hide-Spectators-Message"));
 			}
 		}), 3, 2);
 	}

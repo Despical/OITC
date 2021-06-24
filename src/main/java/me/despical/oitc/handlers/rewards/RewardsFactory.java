@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,25 +13,22 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers.rewards;
 
-import me.despical.commonsbox.configuration.ConfigUtils;
-import me.despical.commonsbox.engine.ScriptEngine;
+import me.despical.commons.configuration.ConfigUtils;
+import me.despical.commons.engine.ScriptEngine;
+import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.utils.Debugger;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -42,91 +39,84 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class RewardsFactory {
 
-	private final Set<Reward> rewards = new HashSet<>();
-	private final FileConfiguration config;
-	private final boolean enabled;
+	private final Main plugin;
+	private final Set<Reward> rewards;
 
 	public RewardsFactory(Main plugin) {
-		enabled = plugin.getConfig().getBoolean("Rewards-Enabled");
-		config = ConfigUtils.getConfig(plugin, "rewards");
+		this.plugin = plugin;
+		this.rewards = new HashSet<>();
 
 		registerRewards();
 	}
 
 	public void performReward(Arena arena, Reward.RewardType type) {
-		if (!enabled) {
+		if (rewards.isEmpty()) {
 			return;
 		}
 
-		arena.getPlayers().forEach(p -> performReward(p, type));
+		for (Player player : arena.getPlayers()) {
+			performReward(player, type);
+		}
 	}
 
 	public void performReward(Player player, Reward.RewardType type) {
-		if (!enabled) {
+		Arena arena = ArenaRegistry.getArena(player);
+		Reward reward = rewards.stream().filter(r -> r.getType() == type).findFirst().orElse(null);
+
+		if (reward == null) {
 			return;
 		}
 
-		Arena arena = ArenaRegistry.getArena(player);
+		if (ThreadLocalRandom.current().nextInt(0, 100) > reward.getChance()) {
+			return;
+		}
 
-		for (Reward reward : rewards) {
-			if (reward.getType() == type) {
-				if (reward.getChance() != -1 && ThreadLocalRandom.current().nextInt(0, 100) > reward.getChance()) {
-					continue;
-				}
+		String command = formatCommandPlaceholders(reward.getExecutableCode(), arena, player);
 
-				String command = reward.getExecutableCode();
-				command = StringUtils.replace(command, "%player%", player.getName());
-				command = formatCommandPlaceholders(command, arena);
+		switch (reward.getExecutor()) {
+			case CONSOLE:
+				plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
+				break;
+			case PLAYER:
+				player.performCommand(command);
+				break;
+			case SCRIPT:
+				ScriptEngine engine = new ScriptEngine();
 
-				switch (reward.getExecutor()) {
-				case CONSOLE:
-					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-					break;
-				case PLAYER:
-					player.performCommand(command);
-					break;
-				case SCRIPT:
-					ScriptEngine engine = new ScriptEngine();
-
-					engine.setValue("player", player);
-					engine.setValue("server", Bukkit.getServer());
-					engine.setValue("arena", arena);
-					engine.execute(command);
-					break;
-				default:
-					break;
-				}
-			}
+				engine.setValue("player", player);
+				engine.setValue("server", plugin.getServer());
+				engine.setValue("arena", arena);
+				engine.execute(command);
+				break;
+			default:
+				break;
 		}
 	}
 
-	private String formatCommandPlaceholders(String command, Arena arena) {
+	private String formatCommandPlaceholders(String command, Arena arena, Player player) {
 		String formatted = command;
 
-		formatted = StringUtils.replace(formatted, "%arena-id%", arena.getId());
-		formatted = StringUtils.replace(formatted, "%mapname%", arena.getMapName());
-		formatted = StringUtils.replace(formatted, "%players%", String.valueOf(arena.getPlayers().size()));
+		formatted = StringUtils.replace(formatted, "%arena_id%", arena.getId());
+		formatted = StringUtils.replace(formatted, "%map_name%", arena.getMapName());
+		formatted = StringUtils.replace(formatted, "%player%", player.getName());
+		formatted = StringUtils.replace(formatted, "%players%", Integer.toString(arena.getPlayers().size()));
 		return formatted;
 	}
 
 	private void registerRewards() {
-		if (!enabled) {
+		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.REWARDS_ENABLED)) {
 			return;
 		}
 
-		Debugger.debug("[RewardsFactory] Starting rewards registration");
+		Debugger.debug("[Rewards Factory] Starting rewards registration.");
 		long start = System.currentTimeMillis();
 
-		Map<Reward.RewardType, Integer> registeredRewards = new HashMap<>();
-
 		for (Reward.RewardType rewardType : Reward.RewardType.values()) {
-			for (String reward : config.getStringList("rewards." + rewardType.getPath())) {
+			for (String reward : ConfigUtils.getConfig(plugin, "rewards").getStringList(rewardType.getPath())) {
 				rewards.add(new Reward(rewardType, reward));
-				registeredRewards.put(rewardType, registeredRewards.getOrDefault(rewardType, 0) + 1);
 			}
 		}
 
-		registeredRewards.keySet().forEach(rewardType -> Debugger.debug("[RewardsFactory] Registered {0} {1} rewards!", registeredRewards.get(rewardType), rewardType.name()));
-		Debugger.debug("[RewardsFactory] Registered all rewards took {0} ms", System.currentTimeMillis() - start);
+		Debugger.debug("[Rewards Factory] Registered all rewards took {0} ms.", System.currentTimeMillis() - start);
 	}
 }

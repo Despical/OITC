@@ -19,6 +19,7 @@ MOTD:
   Manager: false
   Message: "The actual game state of OITC is %state%"
   Game-States:
+    Waiting: "&lWaiting"
     Inactive: "&lInactive..."
     In-Game: "&lIn-game"
     Starting: "&e&lStarting"

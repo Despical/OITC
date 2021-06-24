@@ -1,0 +1,28 @@
+# Probably you will only translate display name and lore so don't mess with it.
+Leave:
+  displayname: "&c&lReturn to Lobby &7(Right Click)"
+  lore:
+    - "&7Right-click to leave to the lobby!"
+  material-name: RED_BED
+  slot: 8
+
+Teleporter:
+  displayname: "&a&lTeleporter &7(Right Click)"
+  lore:
+    - "&7Right-click to spectate players!"
+  material-name: COMPASS
+  slot: 0
+
+Spectator-Settings:
+  displayname: "&b&lSpectator Settings &7(Right Click)"
+  lore:
+    - "&7Right-click to change your spectator settings!"
+  material-name: REPEATER
+  slot: 4
+
+Play-Again:
+  displayname: "&b&lPlay Again &7(Right Click)"
+  lore:
+    - "&7Right-click to play another game!"
+  material-name: PAPER
+  slot: 7

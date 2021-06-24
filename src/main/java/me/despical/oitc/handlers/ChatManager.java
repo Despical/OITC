@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,20 +13,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.despical.commonsbox.compat.VersionResolver;
-import me.despical.commonsbox.configuration.ConfigUtils;
-import me.despical.commonsbox.string.StringFormatUtils;
-import me.despical.commonsbox.string.StringMatcher;
+import me.despical.commons.configuration.ConfigUtils;
+import me.despical.commons.string.StringFormatUtils;
+import me.despical.commons.util.Strings;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -47,49 +45,58 @@ public class ChatManager {
 	public ChatManager(Main plugin) {
 		this.plugin = plugin;
 		this.config = ConfigUtils.getConfig(plugin, "messages");
-		this.prefix = colorRawMessage(config.getString("In-Game.Plugin-Prefix"));
+		this.prefix = message("In-Game.Plugin-Prefix");
 	}
 	
 	public String getPrefix() {
 		return prefix;
 	}
 
-	public String colorRawMessage(String message) {
-		if (message == null) {
-			return "";
-		}
-
-		if (message.contains("#") && VersionResolver.isCurrentEqualOrHigher(VersionResolver.ServerVersion.v1_16_R1)) {
-			message = StringMatcher.matchColorRegex(message);
-		}
-
-		return ChatColor.translateAlternateColorCodes('&', message);
+	public String coloredRawMessage(String message) {
+		return Strings.format(message);
 	}
 
-	public String colorMessage(String message) {
-		return colorRawMessage(config.getString(message));
+	public String prefixedRawMessage(String message) {
+		return prefix + coloredRawMessage(message);
+	}
+
+	public String message(String message) {
+		return coloredRawMessage(config.getString(message));
+	}
+
+	public String prefixedMessage(String path) {
+		return prefix + message(path);
 	}
 	
-	public String colorMessage(String message, Player player) {
+	public String message(String message, Player player) {
 		String returnString = config.getString(message);
 
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 			returnString = PlaceholderAPI.setPlaceholders(player, returnString);
 		}
 
-		return colorRawMessage(returnString);
+		return coloredRawMessage(returnString);
+	}
+
+	public String prefixedMessage(String message, Player player) {
+		return prefix + message(message, player);
 	}
 
 	public String formatMessage(Arena arena, String message, Player player) {
 		String returnString = message;
+
 		returnString = StringUtils.replace(returnString, "%player%", player.getName());
-		returnString = colorRawMessage(formatPlaceholders(returnString, arena));
+		returnString = formatPlaceholders(returnString, arena);
 
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 			returnString = PlaceholderAPI.setPlaceholders(player, returnString);
 		}
 
-		return returnString;
+		return coloredRawMessage(returnString);
+	}
+
+	public String prefixedFormattedMessage(Arena arena, String message, Player player) {
+		return prefix + formatMessage(arena, message, player);
 	}
 
 	private String formatPlaceholders(String message, Arena arena) {
@@ -97,49 +104,57 @@ public class ChatManager {
 
 		returnString = StringUtils.replace(returnString, "%arena%", arena.getMapName());
 		returnString = StringUtils.replace(returnString, "%time%", Integer.toString(arena.getTimer()));
-		returnString = StringUtils.replace(returnString, "%formatted_time%", StringFormatUtils.formatIntoMMSS((arena.getTimer())));
+		returnString = StringUtils.replace(returnString, "%formatted_time%", StringFormatUtils.formatIntoMMSS(arena.getTimer()));
 		returnString = StringUtils.replace(returnString, "%players%", Integer.toString(arena.getPlayers().size()));
 		returnString = StringUtils.replace(returnString, "%maxplayers%", Integer.toString(arena.getMaximumPlayers()));
 		returnString = StringUtils.replace(returnString, "%minplayers%", Integer.toString(arena.getMinimumPlayers()));
 		return returnString;
 	}
 	
-	public String formatMessage(Arena arena, String message, int integer) {
+	public String formatMessage(Arena arena, String message, int i) {
 		String returnString = message;
 
-		returnString = StringUtils.replace(returnString, "%number%", Integer.toString(integer));
-		returnString = colorRawMessage(formatPlaceholders(returnString, arena));
-		return returnString;
+		returnString = StringUtils.replace(returnString, "%number%", Integer.toString(i));
+		returnString = formatPlaceholders(returnString, arena);
+		return coloredRawMessage(returnString);
+	}
+
+	public String prefixedFormattedMessage(Arena arena, String message, int i) {
+		return prefix + formatMessage(arena, message, i);
+	}
+
+	public String prefixedFormattedPathMessage(Arena arena, String path, int i) {
+		return prefix + formatMessage(arena, message(path), i);
 	}
 
 	public List<String> getStringList(String path) {
 		return config.getStringList(path);
 	}
 
-	public void broadcast(Arena a, String msg) {
-		a.getPlayers().forEach(p -> p.sendMessage(prefix + msg));
-	}
+	public void broadcastAction(Arena arena, Player player, ActionType action) {
+		if (plugin.getUserManager().getUser(player).isSpectator()) return;
 
-	public void broadcastAction(Arena a, Player p, ActionType action) {
 		String message;
 
 		switch (action) {
 			case JOIN:
-				message = formatMessage(a, colorMessage("In-Game.Messages.Join"), p);
+				message = formatMessage(arena, message("In-Game.Messages.Join"), player);
 				break;
 			case LEAVE:
-				message = formatMessage(a, colorMessage("In-Game.Messages.Leave"), p);
+				message = formatMessage(arena, message("In-Game.Messages.Leave"), player);
 				break;
 			default:
 				return;
 		}
 
-		broadcast(a, message);
+		arena.broadcastMessage(prefix + message);
 	}
 	
 	public void reloadConfig() {
+		plugin.reloadConfig();
+
 		config = ConfigUtils.getConfig(plugin, "messages");
-		prefix = colorRawMessage(config.getString("In-Game.Plugin-Prefix"));
+		prefix = message("In-Game.Plugin-Prefix");
 	}
 
 	public enum ActionType {

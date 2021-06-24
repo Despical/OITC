@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,18 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.user.data;
 
-import me.despical.commonsbox.configuration.ConfigUtils;
-import me.despical.oitc.Main;
+import me.despical.commons.configuration.ConfigUtils;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
 import org.bukkit.configuration.file.FileConfiguration;
-
-import java.util.Arrays;
 
 /**
  * @author Despical
@@ -33,30 +30,34 @@ import java.util.Arrays;
  */
 public class FileStats implements UserDatabase {
 
-	private final Main plugin;
 	private final FileConfiguration config;
 
-	public FileStats(Main plugin) {
-		this.plugin = plugin;
-		config = ConfigUtils.getConfig(plugin, "stats");
+	public FileStats() {
+		this.config = ConfigUtils.getConfig(plugin, "stats");
 	}
 
 	@Override
 	public void saveStatistic(User user, StatsStorage.StatisticType stat) {
-		config.set(user.getPlayer().getUniqueId().toString() + "." + stat.getName(), user.getStat(stat));
+		config.set(user.getUniqueId().toString() + "." + stat.getName(), user.getStat(stat));
 
 		ConfigUtils.saveConfig(plugin, config, "stats");
 	}
 
 	@Override
 	public void saveAllStatistic(User user) {
-		Arrays.stream(StatsStorage.StatisticType.values()).filter(StatsStorage.StatisticType::isPersistent).forEach(stat -> config.set(user.getPlayer().getUniqueId().toString() + "." + stat.getName(), user.getStat(stat)));
+		for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+			if (stat.isPersistent()) {
+				config.set(user.getUniqueId().toString() + "." + stat.getName(), user.getStat(stat));
+			}
+		}
 
 		ConfigUtils.saveConfig(plugin, config, "stats");
 	}
 
 	@Override
 	public void loadStatistics(User user) {
-		Arrays.stream(StatsStorage.StatisticType.values()).forEach(stat -> user.setStat(stat, config.getInt(user.getPlayer().getUniqueId().toString() + "." + stat.getName(), 0)));
+		for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+			user.setStat(stat, config.getInt(user.getUniqueId().toString() + "." + stat.getName()));
+		}
 	}
 }

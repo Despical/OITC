@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.user;
@@ -23,13 +23,12 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.api.events.player.OITCPlayerStatisticChangeEvent;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Despical
@@ -38,14 +37,23 @@ import java.util.Map;
  */
 public class User {
 
-	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
-	private final ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+	private final Main plugin;
+	private final UUID uuid;
 	private final Player player;
-	private boolean spectator = false;
-	private final Map<StatsStorage.StatisticType, Integer> stats = new EnumMap<>(StatsStorage.StatisticType.class);
+	private final Map<StatsStorage.StatisticType, Integer> stats;
 
+	private boolean spectator;
+
+	@Deprecated
 	public User(Player player) {
-		this.player = player;
+		this(player.getUniqueId());
+	}
+
+	public User(UUID uuid) {
+		this.uuid = uuid;
+		this.plugin = JavaPlugin.getPlugin(Main.class);
+		this.player = plugin.getServer().getPlayer(uuid);
+		this.stats = new EnumMap<>(StatsStorage.StatisticType.class);
 	}
 
 	public Arena getArena() {
@@ -55,45 +63,51 @@ public class User {
 	public Player getPlayer() {
 		return player;
 	}
-	
+
+	public UUID getUniqueId() {
+		return uuid;
+	}
+
 	public boolean isSpectator() {
 		return spectator;
 	}
 	
-	public void setSpectator(boolean b) {
-		spectator = b;
+	public void setSpectator(boolean spectating) {
+		spectator = spectating;
 	}
 
-	public int getStat(StatsStorage.StatisticType stat) {
-		if (!stats.containsKey(stat)) {
-			stats.put(stat, 0);
-			return 0;
-		} else if (stats.get(stat) == null) {
+	public int getStat(StatsStorage.StatisticType statisticType) {
+		Integer statistic = stats.get(statisticType);
+
+		if (statistic == null) {
+			stats.put(statisticType, 0);
 			return 0;
 		}
 
-		return stats.get(stat);
+		return statistic;
 	}
 	
-	public void removeScoreboard() {
-		player.setScoreboard(scoreboardManager.getNewScoreboard());
+	public void removeScoreboard(Arena arena) {
+		arena.getScoreboardManager().removeScoreboard(player);
 	}
 
 	public void setStat(StatsStorage.StatisticType stat, int i) {
 		stats.put(stat, i);
 
-		Bukkit.getScheduler().runTask(plugin, () -> {
-			OITCPlayerStatisticChangeEvent playerStatisticChangeEvent = new OITCPlayerStatisticChangeEvent(getArena(), player, stat, i);
-			Bukkit.getPluginManager().callEvent(playerStatisticChangeEvent);
-		});
+		plugin.getServer().getScheduler().runTask(plugin, () -> plugin.getServer().getPluginManager().callEvent(new OITCPlayerStatisticChangeEvent(getArena(), player, stat, i)));
 	}
 
 	public void addStat(StatsStorage.StatisticType stat, int i) {
 		stats.put(stat, getStat(stat) + i);
 
-		Bukkit.getScheduler().runTask(plugin, () -> {
-			OITCPlayerStatisticChangeEvent playerStatisticChangeEvent = new OITCPlayerStatisticChangeEvent(getArena(), player, stat, getStat(stat));
-			Bukkit.getPluginManager().callEvent(playerStatisticChangeEvent);
-		});
+		plugin.getServer().getScheduler().runTask(plugin, () -> plugin.getServer().getPluginManager().callEvent(new OITCPlayerStatisticChangeEvent(getArena(), player, stat, getStat(stat))));
+	}
+
+	public void resetStats() {
+		for (StatsStorage.StatisticType statistic : StatsStorage.StatisticType.values()) {
+			if (!statistic.isPersistent()) continue;
+
+			setStat(statistic, 0);
+		}
 	}
 }

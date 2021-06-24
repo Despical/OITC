@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,17 +13,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.commands;
 
+import me.despical.commandframework.CommandArguments;
+import me.despical.commandframework.CommandFramework;
+import me.despical.commandframework.Completer;
+import me.despical.commons.util.Collections;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import java.util.*;
@@ -34,42 +37,47 @@ import java.util.stream.Collectors;
  * <p>
  * Created at 02.07.2020
  */
-public class TabCompletion implements TabCompleter {
+public class TabCompletion {
 
-	public CommandHandler commandHandler;
+	public CommandFramework commandFramework;
 	
-	public TabCompletion(CommandHandler commandHandler) {
-		this.commandHandler = commandHandler;
+	public TabCompletion(CommandFramework commandFramework) {
+		this.commandFramework = commandFramework;
+//		this.commandFramework.registerCommands(this);
 	}
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		List<String> completions = new ArrayList<>();
-		List<String> commands = commandHandler.getSubCommands().stream().map(command -> command.getName().toLowerCase()).collect(Collectors.toList());
+	@Completer(
+		name = "oitc"
+	)
+	public List<String> onTabComplete(CommandArguments arguments) {
+		List<String> completions = new ArrayList<>(), commands = commandFramework.getCommands().stream().map(cmd -> cmd.name().replace(arguments.getLabel() + '.', "")).collect(Collectors.toList());
+		String[] args = arguments.getArguments();
 
 		if (args.length == 1) {
 			StringUtil.copyPartialMatches(args[0], commands, completions);
 		} 
 
 		if (args.length == 2) {
-			if (args[0].equalsIgnoreCase("create") || args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("list") ||
-				args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("randomjoin") || args[0].equalsIgnoreCase("stop") ||
-				args[0].equalsIgnoreCase("forcestart") || args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("arenas")) {
+			if (Collections.contains(args[0], "create", "help", "list", "reload", "randomjoin", "stop", "forcestart", "stats", "arenas")) {
 				return null;
 			}
 
 			if (args[0].equalsIgnoreCase("top")) {
-				return Arrays.stream(StatsStorage.StatisticType.values()).filter(StatsStorage.StatisticType::isPersistent).map(statistic -> statistic.name().toLowerCase(Locale.ENGLISH)).collect(Collectors.toList());
+				return Collections.streamOf(StatsStorage.StatisticType.values()).filter(StatsStorage.StatisticType::isPersistent).map(statistic -> statistic.name().toLowerCase(Locale.ENGLISH)).collect(Collectors.toList());
+			}
+
+			if (args[0].equalsIgnoreCase("stats")) {
+				return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
 			}
 
 			List<String> arenas = ArenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());
 
 			StringUtil.copyPartialMatches(args[1], arenas, completions);
-			Collections.sort(arenas);
+			arenas.sort(null);
 			return arenas;
 		}
 
-		Collections.sort(completions);
+		completions.sort(null);
 		return completions;
 	}
 }

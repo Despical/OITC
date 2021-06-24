@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,14 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.arena;
 
+import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
@@ -36,11 +36,15 @@ public class ArenaUtils {
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	public static void hidePlayer(Player p, Arena arena) {
-		arena.getPlayers().forEach(player -> player.hidePlayer(plugin, p));
+		for (Player player : arena.getPlayers()) {
+			PlayerUtils.hidePlayer(player , p, plugin);
+		}
 	}
 
 	public static void showPlayer(Player p, Arena arena) {
-		arena.getPlayers().forEach(player -> player.showPlayer(plugin, p));
+		for (Player player : arena.getPlayers()) {
+			PlayerUtils.showPlayer(player, p, plugin);
+		}
 	}
 
 	public static void hidePlayersOutsideTheGame(Player player, Arena arena) {
@@ -49,12 +53,12 @@ public class ArenaUtils {
 				continue;
 			}
 
-			player.hidePlayer(plugin, players);
-			players.hidePlayer(plugin, player);
+			PlayerUtils.hidePlayer(player, players, plugin);
+			PlayerUtils.hidePlayer(players, player, plugin);
 		}
 	}
 
-	public static void updateNameTagsVisibility(final Player p) {
+	public static void updateNameTagsVisibility(Player p) {
 		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.NAMETAGS_HIDDEN)) {
 			return;
 		}
@@ -68,8 +72,8 @@ public class ArenaUtils {
 
 			Scoreboard scoreboard = players.getScoreboard();
 
-			if (scoreboard == Bukkit.getScoreboardManager().getMainScoreboard()) {
-				scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+			if (scoreboard == plugin.getServer().getScoreboardManager().getMainScoreboard()) {
+				scoreboard = plugin.getServer().getScoreboardManager().getNewScoreboard();
 			}
 
 			Team team = scoreboard.getTeam("OITCHide");
@@ -83,9 +87,7 @@ public class ArenaUtils {
 
 			if (arena.getArenaState() == ArenaState.IN_GAME) {
 				team.addEntry(p.getName());
-			} else if (arena.getArenaState() == ArenaState.STARTING || arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS) {
-				team.removeEntry(p.getName());
-			} else if (arena.getArenaState() == ArenaState.ENDING || arena.getArenaState() == ArenaState.RESTARTING) {
+			} else {
 				team.removeEntry(p.getName());
 			}
 

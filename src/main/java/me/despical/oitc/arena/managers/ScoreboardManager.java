@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,26 +13,24 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.arena.managers;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.despical.commonsbox.scoreboard.ScoreboardLib;
-import me.despical.commonsbox.scoreboard.common.EntryBuilder;
-import me.despical.commonsbox.scoreboard.type.Entry;
-import me.despical.commonsbox.scoreboard.type.Scoreboard;
-import me.despical.commonsbox.scoreboard.type.ScoreboardHandler;
-import me.despical.commonsbox.string.StringFormatUtils;
+import me.despical.commons.scoreboard.ScoreboardLib;
+import me.despical.commons.scoreboard.common.EntryBuilder;
+import me.despical.commons.scoreboard.type.Entry;
+import me.despical.commons.scoreboard.type.Scoreboard;
+import me.despical.commons.scoreboard.type.ScoreboardHandler;
+import me.despical.commons.string.StringFormatUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaState;
-import me.despical.oitc.user.User;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,31 +42,27 @@ import java.util.stream.Collectors;
  */
 public class ScoreboardManager {
 
-	private final Main plugin = JavaPlugin.getPlugin(Main.class);
-	private final List<Scoreboard> scoreboards = new ArrayList<>();
+	private final Main plugin;
+	private final Set<Scoreboard> scoreboards;
 	private final Arena arena;
 
-	public ScoreboardManager(Arena arena) {
+	public ScoreboardManager(Main plugin, Arena arena) {
+		this.plugin = plugin;
 		this.arena = arena;
+		this.scoreboards = new HashSet<>();
 	}
 
-	/**
-	 * Creates arena scoreboard for target user
-	 *
-	 * @param user user that represents game player
-	 * @see User
-	 */
-	public void createScoreboard(User user) {
-		Scoreboard scoreboard = ScoreboardLib.createScoreboard(user.getPlayer()).setHandler(new ScoreboardHandler() {
+	public void createScoreboard(Player player) {
+		Scoreboard scoreboard = ScoreboardLib.createScoreboard(player).setHandler(new ScoreboardHandler() {
 
 			@Override
 			public String getTitle(Player player) {
-				return plugin.getChatManager().colorMessage("Scoreboard.Title");
+				return plugin.getChatManager().message("Scoreboard.Title");
 			}
 
 			@Override
 			public List<Entry> getEntries(Player player) {
-				return formatScoreboard(user);
+				return formatScoreboard(player);
 			}
 		});
 
@@ -76,15 +70,9 @@ public class ScoreboardManager {
 		scoreboards.add(scoreboard);
 	}
 
-	/**
-	 * Removes scoreboard of user
-	 *
-	 * @param user user that represents game player
-	 * @see User
-	 */
-	public void removeScoreboard(User user) {
+	public void removeScoreboard(Player player) {
 		for (Scoreboard board : scoreboards) {
-			if (board.getHolder().equals(user.getPlayer())) {
+			if (board.getHolder().equals(player)) {
 				scoreboards.remove(board);
 				board.deactivate();
 				return;
@@ -92,61 +80,52 @@ public class ScoreboardManager {
 		}
 	}
 
-	/**
-	 * Forces all scoreboards to deactivate.
-	 */
 	public void stopAllScoreboards() {
 		scoreboards.forEach(Scoreboard::deactivate);
 		scoreboards.clear();
 	}
 
-	private List<Entry> formatScoreboard(User user) {
+	private List<Entry> formatScoreboard(Player player) {
 		EntryBuilder builder = new EntryBuilder();
 		List<String> lines;
 
-		if (arena.getArenaState() == ArenaState.IN_GAME) {
+		if (arena.getArenaState() == ArenaState.IN_GAME || arena.getArenaState() == ArenaState.ENDING) {
 			lines = plugin.getChatManager().getStringList("Scoreboard.Content.Playing");
 		} else {
-			if (arena.getArenaState() == ArenaState.ENDING) {
-				lines = plugin.getChatManager().getStringList("Scoreboard.Content.Playing");
-			} else {
-				lines = plugin.getChatManager().getStringList("Scoreboard.Content." + arena.getArenaState().getFormattedName());
-			}
+			lines = plugin.getChatManager().getStringList("Scoreboard.Content." + arena.getArenaState().getFormattedName());
 		}
 
 		for (String line : lines) {
-			if (!formatScoreboardLine(line, user).equals("%empty%")) {
-				builder.next(formatScoreboardLine(line, user));
+			if (!formatScoreboardLine(line, player).equals("%empty%")) {
+				builder.next(formatScoreboardLine(line, player));
 			}
 		}
 
 		return builder.build();
 	}
 
-	private String formatScoreboardLine(String line, User user) {
+	private String formatScoreboardLine(String line, Player player) {
 		String formattedLine = line;
 
-		formattedLine = StringUtils.replace(formattedLine, "%time%", String.valueOf(arena.getTimer()));
+		formattedLine = StringUtils.replace(formattedLine, "%time%", Integer.toString(arena.getTimer()));
 		formattedLine = StringUtils.replace(formattedLine, "%formatted_time%", StringFormatUtils.formatIntoMMSS(arena.getTimer()));
-		formattedLine = StringUtils.replace(formattedLine, "%mapname%", arena.getMapName());
-		formattedLine = StringUtils.replace(formattedLine, "%players%", String.valueOf(arena.getPlayers().size()));
-		formattedLine = StringUtils.replace(formattedLine, "%max_players%", String.valueOf(arena.getMaximumPlayers()));
-		formattedLine = StringUtils.replace(formattedLine, "%min_players%", String.valueOf(arena.getMinimumPlayers()));
-		formattedLine = StringUtils.replace(formattedLine, "%kills%", String.valueOf(StatsStorage.getUserStats(user.getPlayer(), StatsStorage.StatisticType.LOCAL_KILLS)));
-		formattedLine = StringUtils.replace(formattedLine, "%deaths%", String.valueOf(StatsStorage.getUserStats(user.getPlayer(), StatsStorage.StatisticType.LOCAL_DEATHS)));
-		formattedLine = StringUtils.replace(formattedLine, "%kill_streak%", String.valueOf(StatsStorage.getUserStats(user.getPlayer(), StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
+		formattedLine = StringUtils.replace(formattedLine, "%map_name%", arena.getMapName());
+		formattedLine = StringUtils.replace(formattedLine, "%players%", Integer.toString(arena.getPlayers().size()));
+		formattedLine = StringUtils.replace(formattedLine, "%max_players%", Integer.toString(arena.getMaximumPlayers()));
+		formattedLine = StringUtils.replace(formattedLine, "%min_players%", Integer.toString(arena.getMinimumPlayers()));
+		formattedLine = StringUtils.replace(formattedLine, "%kills%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS)));
+		formattedLine = StringUtils.replace(formattedLine, "%deaths%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_DEATHS)));
+		formattedLine = StringUtils.replace(formattedLine, "%kill_streak%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
 
 		for (int i = 0; i <= arena.getMaximumPlayers(); i++) {
 			formattedLine = StringUtils.replace(formattedLine, "%top_player_" + (i + 1) + "%", arena.getPlayersLeft().size() > i ? formatTopPlayer(getTopPlayerName(i), i) : "%empty%");
 		}
 
-		formattedLine = plugin.getChatManager().colorRawMessage(formattedLine);
-
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-			formattedLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), formattedLine);
+			formattedLine = PlaceholderAPI.setPlaceholders(player, formattedLine);
 		}
 
-		return formattedLine;
+		return plugin.getChatManager().coloredRawMessage(formattedLine);
 	}
 
 	private Map<Player, Integer> getSortedLeaderboard() {
@@ -160,42 +139,23 @@ public class ScoreboardManager {
 	}
 
 	public String getTopPlayerName(int rank) {
-		List<String> names = new ArrayList<>();
+		List<String> names = getSortedLeaderboard().keySet().stream().map(Player::getName).collect(Collectors.toList());
 
-		for (Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
-			names.add(entry.getKey().getName());
-		}
-
-		if (rank < getSortedLeaderboard().size()) {
-			return names.get(rank);
-		}
-
-		return "";
+		return rank < getSortedLeaderboard().size() ? names.get(rank) : "";
 	}
 
 	public int getTopPlayerScore(int rank) {
-		List<Integer> scores = new ArrayList<>();
+		Map<Player, Integer> leaderboard = getSortedLeaderboard();
+		List<Integer> scores = new ArrayList<>(leaderboard.values());
 
-		for (Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
-			scores.add(entry.getValue());
-		}
-
-		if (rank < getSortedLeaderboard().size()) {
-			return scores.get(rank);
-		}
-
-		return 0;
+		return rank < leaderboard.size() ? scores.get(rank) : 0;
 	}
 
 	public int getRank(Player player) {
-		List<Player> ranks = new ArrayList<>();
-
-		for (Map.Entry<Player, Integer> entry : getSortedLeaderboard().entrySet()) {
-			ranks.add(entry.getKey());
-		}
+		List<Player> ranks = new ArrayList<>(getSortedLeaderboard().keySet());
 
 		for (int i = 0; i <= ranks.size(); i++) {
-			if (ranks.get(i) == player) {
+			if (ranks.get(i).equals(player)) {
 				return i + 1;
 			}
 		}
@@ -204,10 +164,10 @@ public class ScoreboardManager {
 	}
 
 	private String formatTopPlayer(String player, int rank) {
-		String formatted = plugin.getChatManager().colorMessage("Scoreboard.Top-Player-Format");
+		String formatted = plugin.getChatManager().message("Scoreboard.Top-Player-Format");
 
 		formatted = StringUtils.replace(formatted, "%player%", player);
-		formatted = StringUtils.replace(formatted, "%score%", String.valueOf(getTopPlayerScore(rank)));
+		formatted = StringUtils.replace(formatted, "%score%", Integer.toString(getTopPlayerScore(rank)));
 		return formatted;
 	}
 }

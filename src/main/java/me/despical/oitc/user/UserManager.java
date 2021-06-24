@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.user;
@@ -29,8 +29,8 @@ import me.despical.oitc.utils.Debugger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -41,18 +41,11 @@ import java.util.stream.Collectors;
 public class UserManager {
 
 	private final UserDatabase database;
-	private final List<User> users = new ArrayList<>();
+	private final Set<User> users;
 
 	public UserManager(Main plugin) {
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
-			database = new MysqlManager(plugin);
-
-			Debugger.debug("MySQL Stats enabled");
-		} else {
-			database = new FileStats(plugin);
-
-			Debugger.debug("File Stats enabled");
-		}
+		this.database = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED) ? new MysqlManager() : new FileStats();
+		this.users = new HashSet<>();
 
 		loadStatsForPlayersOnline();
 	}
@@ -63,19 +56,19 @@ public class UserManager {
 
 	public User getUser(Player player) {
 		for (User user : users) {
-			if (user.getPlayer().equals(player)) {
+			if (user.getUniqueId().equals(player.getUniqueId())) {
 				return user;
 			}
 		}
 
 		Debugger.debug("Registering new user {0} ({1})", player.getUniqueId(), player.getName());
-		User user = new User(player);
+		User user = new User(player.getUniqueId());
 		users.add(user);
 		return user;
 	}
 	
-	public List<User> getUsers(Arena arena) {
-		return arena.getPlayers().stream().map(this::getUser).collect(Collectors.toList());
+	public Set<User> getUsers(Arena arena) {
+		return arena.getPlayers().stream().map(this::getUser).collect(Collectors.toSet());
 	}
 
 	public void saveStatistic(User user, StatsStorage.StatisticType stat) {
@@ -94,8 +87,8 @@ public class UserManager {
 		database.loadStatistics(user);
 	}
 
-	public void removeUser(User user) {
-		users.remove(user);
+	public void removeUser(Player player) {
+		users.remove(getUser(player));
 	}
 
 	public UserDatabase getDatabase() {

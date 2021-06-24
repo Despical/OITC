@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,18 +13,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.handlers;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import me.despical.commonsbox.configuration.ConfigUtils;
+import me.despical.commons.configuration.ConfigUtils;
 import me.despical.oitc.Main;
+import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -45,25 +47,25 @@ public class BungeeManager implements Listener {
 
 	private final Main plugin;
 	private final Map<ArenaState, String> gameStateToString = new EnumMap<>(ArenaState.class);
+	private final FileConfiguration config;
 	private final String motd;
 
 	public BungeeManager(Main plugin) {
 		this.plugin = plugin;
-		ChatManager chatManager = plugin.getChatManager();
-		
-		gameStateToString.put(ArenaState.WAITING_FOR_PLAYERS, chatManager.colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Inactive", "Inactive")));
-		gameStateToString.put(ArenaState.STARTING, chatManager.colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Starting", "Starting")));
-		gameStateToString.put(ArenaState.IN_GAME, chatManager.colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.In-Game", "In-Game")));
-		gameStateToString.put(ArenaState.ENDING, chatManager.colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Ending", "Ending")));
-		gameStateToString.put(ArenaState.RESTARTING, chatManager.colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Game-States.Restarting", "Restarting")));
-		motd = plugin.getChatManager().colorRawMessage(ConfigUtils.getConfig(plugin, "bungee").getString("MOTD.Message", "The actual game state of oitc is %state%"));
+		this.config = ConfigUtils.getConfig(plugin, "bungee");
+
+		for (ArenaState state : ArenaState.values()) {
+			gameStateToString.put(state, plugin.getChatManager().message("MOTD.Game-States." + state.getFormattedName()));
+		}
+
+		motd = plugin.getChatManager().message("MOTD.Message");
 
 		plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, "BungeeCord");
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
 	public void connectToHub(Player player) {
-		if (!ConfigUtils.getConfig(plugin, "bungee").getBoolean("Connect-To-Hub", true)) {
+		if (!config.getBoolean("Connect-To-Hub", true)) {
 			return;
 		}
 
@@ -74,17 +76,13 @@ public class BungeeManager implements Listener {
 		player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
 	}
 
-	private ArenaState getArenaState() {
-		return ArenaRegistry.getArenas().get(ArenaRegistry.getBungeeArena()).getArenaState();
-	}
-
 	private String getHubServerName() {
-		return ConfigUtils.getConfig(plugin, "bungee").getString("Hub");
+		return config.getString("Hub");
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onServerListPing(ServerListPingEvent event) {
-		if (!ConfigUtils.getConfig(plugin, "bungee").getBoolean("MOTD.Manager", false)) {
+		if (!config.getBoolean("MOTD.Manager")) {
 			return;
 		}
 
@@ -92,21 +90,32 @@ public class BungeeManager implements Listener {
 			return;
 		}
 
-		event.setMaxPlayers(ArenaRegistry.getArenas().get(ArenaRegistry.getBungeeArena()).getMaximumPlayers());
-		event.setMotd(motd.replace("%state%", gameStateToString.get(getArenaState())));
+		Arena bungeeArena = ArenaRegistry.getBungeeArena(); // Do not cache in constructor
+
+		event.setMaxPlayers(bungeeArena.getMaximumPlayers());
+		event.setMotd(motd.replace("%state%", gameStateToString.get(bungeeArena.getArenaState())));
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onJoin(final PlayerJoinEvent event) {
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onJoin(PlayerJoinEvent event) {
+		if (ArenaRegistry.getArenas().isEmpty()) {
+			return;
+		}
+
 		event.setJoinMessage("");
-		plugin.getServer().getScheduler().runTaskLater(plugin, () -> ArenaManager.joinAttempt(event.getPlayer(), ArenaRegistry.getArenas().get(ArenaRegistry.getBungeeArena())), 1L);
+		plugin.getServer().getScheduler().runTaskLater(plugin, () -> ArenaManager.joinAttempt(event.getPlayer(), ArenaRegistry.getBungeeArena()), 1L);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onQuit(PlayerQuitEvent event) {
+		if (ArenaRegistry.getArenas().isEmpty()) {
+			return;
+		}
+
 		event.setQuitMessage("");
-		if (ArenaRegistry.getArena(event.getPlayer()) != null) {
-			ArenaManager.leaveAttempt(event.getPlayer(), ArenaRegistry.getArenas().get(ArenaRegistry.getBungeeArena()));
+
+		if (ArenaRegistry.isInArena(event.getPlayer())) {
+			ArenaManager.leaveAttempt(event.getPlayer(), ArenaRegistry.getBungeeArena());
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /*
- * OITC - Reach 25 points to win!
- * Copyright (C) 2020 Despical
+ * OITC - Kill your opponents and reach 25 points to win!
+ * Copyright (C) 2021 Despical and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.despical.oitc.api.events;
@@ -21,9 +21,6 @@ package me.despical.oitc.api.events;
 import me.despical.oitc.arena.Arena;
 import org.bukkit.event.Event;
 
-/**
- * Represents One in the Chamber game related events.
- */
 public abstract class OITCEvent extends Event {
 
 	protected Arena arena;
@@ -32,11 +29,6 @@ public abstract class OITCEvent extends Event {
 		arena = eventArena;
 	}
 
-	/**
-	 * Returns event arena
-	 *
-	 * @return event arena
-	 */
 	public Arena getArena() {
 		return arena;
 	}
