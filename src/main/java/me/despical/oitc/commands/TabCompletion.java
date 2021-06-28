@@ -43,11 +43,12 @@ public class TabCompletion {
 	
 	public TabCompletion(CommandFramework commandFramework) {
 		this.commandFramework = commandFramework;
-//		this.commandFramework.registerCommands(this);
+		this.commandFramework.registerCommands(this);
 	}
 
 	@Completer(
-		name = "oitc"
+		name = "oitc",
+		aliases = {"oneinthechamber"}
 	)
 	public List<String> onTabComplete(CommandArguments arguments) {
 		List<String> completions = new ArrayList<>(), commands = commandFramework.getCommands().stream().map(cmd -> cmd.name().replace(arguments.getLabel() + '.', "")).collect(Collectors.toList());

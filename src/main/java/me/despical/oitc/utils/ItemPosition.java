@@ -45,37 +45,21 @@ public enum ItemPosition {
 		this.itemStack = itemBuilder.build();
 	}
 
-	/**
-	 * Adds target item to specified hot bar position.
-	 * Item will be added if there is already set or 
-	 * will be set when no item is set in the position.
-	 *
-	 * @param player to add item to
-	 * @param itemPosition position of item to set/add
-	 * @param itemStack to be added at item position or set at
-	 */
 	public static void addItem(Player player, ItemPosition itemPosition, ItemStack itemStack) {
 		if (player == null) {
 			return;
 		}
 
 		Inventory inv = player.getInventory();
+		ItemStack item = inv.getItem(itemPosition.getItemPosition());
 
-		if (inv.getItem(itemPosition.getItemPosition()) != null) {
-			inv.getItem(itemPosition.getItemPosition()).setAmount(inv.getItem(itemPosition.getItemPosition()).getAmount() + itemStack.getAmount());
+		if (item != null) {
+			item.setAmount(item.getAmount() + itemStack.getAmount());
 		} else {
 			inv.setItem(itemPosition.getItemPosition(), itemStack);
 		}
 	}
 
-	/**
-	 * Sets target item in specified hot bar position.
-	 * If item there is already set it will be incremented 
-	 * by itemStack amount if possible.
-	 *
-	 * @param player to set item to
-	 * @param itemPositions array of item to set
-	 */
 	public static void setItem(Player player, ItemPosition... itemPositions) {
 		if (player == null) {
 			return;

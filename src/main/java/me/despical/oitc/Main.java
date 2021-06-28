@@ -26,6 +26,7 @@ import me.despical.commons.exception.ExceptionLogHandler;
 import me.despical.commons.scoreboard.ScoreboardLib;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
+import me.despical.commons.util.JavaVersion;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
@@ -78,19 +79,19 @@ public class Main extends JavaPlugin {
 
 		exceptionLogHandler = new ExceptionLogHandler(this);
 		exceptionLogHandler.setMainPackage("me.despical.oitc");
-		exceptionLogHandler.addBlacklistedClass("me.despical.kotl.user.data.MysqlManager", "me.despical.commons.database.MysqlDatabase");
+		exceptionLogHandler.addBlacklistedClass("me.despical.oitc.user.data.MysqlManager", "me.despical.commons.database.MysqlDatabase");
 		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official Discord server (Invite link: https://discordapp.com/invite/Vhyy4HA) with the following error given above!");
 
 		getServer().getLogger().addHandler(exceptionLogHandler);
 
 		saveDefaultConfig();
-		Debugger.setEnabled(getDescription().getVersion().contains("debug") || getConfig().getBoolean("Debug-Messages"));
 
-		Debugger.debug("Initialization started");
+		Debugger.setEnabled(getDescription().getVersion().contains("debug") || getConfig().getBoolean("Debug-Messages"));
+		Debugger.debug("Initialization started.");
 
 		if (getConfig().getBoolean("Developer-Mode")) {
 			Debugger.deepDebug(true);
-			Debugger.debug("Deep debug enabled");
+			Debugger.debug("Deep debug enabled.");
 			getConfig().getStringList("Listenable-Performances").forEach(Debugger::monitorPerformance);
 		}
 
@@ -114,9 +115,16 @@ public class Main extends JavaPlugin {
 			Debugger.sendConsoleMessage("&cYour server version is not supported by One in the Chamber!");
 			Debugger.sendConsoleMessage("&cSadly, we must shut off. Maybe you consider changing your server version?");
 			return false;
-		} try {
+		}
+
+		if (JavaVersion.getCurrentVersion().isAt(JavaVersion.JAVA_8)) {
+			Debugger.sendConsoleMessage("&cThis plugin won't support Java 8 in future updates.");
+			Debugger.sendConsoleMessage("&cSo, maybe consider to update your version, right?");
+		}
+
+		try {
 			Class.forName("org.spigotmc.SpigotConfig");
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			Debugger.sendConsoleMessage("&cYour server software is not supported by One in the Chamber!");
 			Debugger.sendConsoleMessage("&cWe support only Spigot and Spigot forks only! Shutting off...");
 			return false;
