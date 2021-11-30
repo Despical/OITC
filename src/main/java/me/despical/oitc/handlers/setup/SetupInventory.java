@@ -63,7 +63,7 @@ public class SetupInventory {
 		gui.setOnGlobalClick(e -> e.setCancelled(true));
 
 		StaticPane pane = new StaticPane(9, 5);
-		pane.fillProgressBorder(GuiItem.of(XMaterial.GREEN_STAINED_GLASS_PANE.parseItem()), GuiItem.of(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()), arena.isReady() ? 100 : 0);
+		pane.fillProgressBorder(GuiItem.of(XMaterial.GREEN_STAINED_GLASS_PANE.parseItem()), GuiItem.of(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()), arena.getComplementProgress());
 
 		gui.addPane(pane);
 
@@ -88,17 +88,14 @@ public class SetupInventory {
 	private void sendProTip(Player player) {
 		ChatManager chatManager = plugin.getChatManager();
 
-		switch (ThreadLocalRandom.current().nextInt(16 + 1)) {
+		switch (ThreadLocalRandom.current().nextInt(9 + 1)) {
 			case 0:
 				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7We are open source! You can always help us by contributing! Check https://github.com/Despical/OITC"));
 				break;
 			case 1:
-				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7Need help? Join our discord server: https://discordapp.com/invite/Vhyy4HA"));
-				break;
-			case 2:
 				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7Need help? Check our wiki: https://github.com/Despical/OITC/wiki"));
 				break;
-			case 3:
+			case 2:
 				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7Help us translating plugin to your language here: https://github.com/Despical/LocaleStorage"));
 				break;
 			default:

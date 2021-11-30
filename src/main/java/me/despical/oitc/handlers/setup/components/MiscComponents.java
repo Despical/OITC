@@ -71,7 +71,7 @@ public class MiscComponents implements SetupComponent {
 				.build();
 		}
 
-		pane.addItem(new GuiItem(bungeeItem, e -> {
+		pane.addItem(GuiItem.of(bungeeItem, e -> {
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				return;
 			}
@@ -84,8 +84,8 @@ public class MiscComponents implements SetupComponent {
 				return;
 			}
 
-			if (block.getLocation().distance(player.getWorld().getSpawnLocation()) <= Bukkit.getServer().getSpawnRadius() && e.getClick() != ClickType.SHIFT_LEFT) {
-				player.sendMessage(chatManager.coloredRawMessage("&c&l✖ &cWarning | Server spawn protection is set to &6" + Bukkit.getServer().getSpawnRadius() + " &cand sign you want to place is in radius of this protection! &c&lNon opped players won't be able to interact with this sign and can't join the game so."));
+			if (block.getLocation().distance(player.getWorld().getSpawnLocation()) <= plugin.getServer().getSpawnRadius() && e.getClick() != ClickType.SHIFT_LEFT) {
+				player.sendMessage(chatManager.coloredRawMessage("&c&l✖ &cWarning | Server spawn protection is set to &6" + plugin.getServer().getSpawnRadius() + " &cand sign you want to place is in radius of this protection! &c&lNon OP players won't be able to interact with this sign and can't join the game so."));
 				player.sendMessage(chatManager.coloredRawMessage("&cYou can ignore this warning and add sign with Shift + Left Click, but for now &c&loperation is cancelled"));
 				return;
 			}
@@ -94,14 +94,14 @@ public class MiscComponents implements SetupComponent {
 
 			player.sendMessage(chatManager.prefixedMessage("Signs.Sign-Created"));
 
-			List<String> locs = config.getStringList("instances." + arena.getId() + ".signs");
-			locs.add(LocationSerializer.toString(block.getLocation()));
+			List<String> locations = config.getStringList("instances." + arena.getId() + ".signs");
+			locations.add(LocationSerializer.toString(block.getLocation()));
 
-			config.set("instances." + arena.getId() + ".signs", locs);
+			config.set("instances." + arena.getId() + ".signs", locations);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
 		}), 6, 1);
 
-		pane.addItem(new GuiItem(new ItemBuilder(XMaterial.NAME_TAG)
+		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.NAME_TAG)
 			.name("&e&lSet Map Name")
 			.lore("&7Click to set arena map name")
 			.lore("", "&a&lCurrently: &e" + config.getString("instances." + arena.getId() + ".mapname"))

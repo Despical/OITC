@@ -90,6 +90,10 @@ public class Arena extends BukkitRunnable {
 		this.ready = ready;
 	}
 
+	public int getComplementProgress() {
+		return ready ? 100 : 0;
+	}
+
 	@Override
 	public void run() {
 		if (players.isEmpty() && getArenaState() == ArenaState.WAITING_FOR_PLAYERS) {

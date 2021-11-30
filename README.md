@@ -1,4 +1,4 @@
-# Command Framework
+# One in the Chamber
 [![](https://jitpack.io/v/Despical/OITC.svg)](https://jitpack.io/#Despical/OITC)
 [![](https://img.shields.io/badge/JavaDocs-latest-lime.svg)](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html)
 [![discord](https://img.shields.io/discord/719922452259668000.svg?color=lime&label=Discord)](https://discord.gg/Vhyy4HA)
@@ -28,7 +28,7 @@ To add this project as a dependency to your project, add the following to your p
 <dependency>
     <groupId>com.github.Despical</groupId>
     <artifactId>OITC</artifactId>
-    <version>1.1.2</version>
+    <version>1.1.3</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -41,7 +41,7 @@ repositories {
 ```
 ```
 dependencies {
-    compileOnly group: "com.github.Despical", name: "OITC", version: "1.1.2";
+    compileOnly group: "com.github.Despical", name: "OITC", version: "1.1.3";
 }
 ```
 

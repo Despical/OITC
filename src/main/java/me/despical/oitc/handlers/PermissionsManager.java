@@ -27,18 +27,18 @@ import me.despical.oitc.Main;
  */
 public class PermissionsManager {
 
-	private static String joinFullPerm = "oitc.fullgames", joinPerm = "oitc.join.<arena>";
+	private final String joinFullPerm, joinPerm;
 
-	public static void init(Main plugin) {
-		joinPerm = plugin.getConfig().getString("Basic-Permissions.Join-Permission");
-		joinFullPerm = plugin.getConfig().getString("Basic-Permissions.Full-Games-Permission");
+	public PermissionsManager(Main plugin) {
+		this.joinPerm = plugin.getConfig().getString("Basic-Permissions.Join-Permission");
+		this.joinFullPerm = plugin.getConfig().getString("Basic-Permissions.Full-Games-Permission");
 	}
 
-	public static String getJoinFullGames() {
+	public String getJoinFullPerm() {
 		return joinFullPerm;
 	}
 
-	public static String getJoinPerm() {
+	public String getJoinPerm() {
 		return joinPerm;
 	}
 }

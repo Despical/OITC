@@ -111,6 +111,7 @@ public class MysqlManager implements UserDatabase {
 
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 						if (!stat.isPersistent()) continue;
+
 						user.setStat(stat, 0);
 					}
 				}

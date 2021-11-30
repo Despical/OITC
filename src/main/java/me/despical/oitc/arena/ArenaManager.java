@@ -32,7 +32,6 @@ import me.despical.oitc.api.events.game.OITCGameLeaveAttemptEvent;
 import me.despical.oitc.api.events.game.OITCGameStopEvent;
 import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.handlers.ChatManager.ActionType;
-import me.despical.oitc.handlers.PermissionsManager;
 import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
@@ -81,7 +80,7 @@ public class ArenaManager {
 		}
 
 		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-			String perm = PermissionsManager.getJoinPerm();
+			String perm = plugin.getPermissionsManager().getJoinPerm();
 
 			if (!player.hasPermission(perm.replace("<arena>", "*")) || !player.hasPermission(perm.replace("<arena>", arena.getId()))) {
 				player.sendMessage(chatManager.prefixedMessage("In-Game.Join-No-Permission").replace("%permission%", perm.replace("<arena>", arena.getId())));
@@ -94,7 +93,7 @@ public class ArenaManager {
 		}
 
 		if (arena.getPlayers().size() >= arena.getMaximumPlayers() && arena.getArenaState() == ArenaState.STARTING) {
-			String perm = PermissionsManager.getJoinFullGames();
+			String perm = plugin.getPermissionsManager().getJoinFullPerm();
 
 			if (!player.hasPermission(perm)) {
 				player.sendMessage(chatManager.prefixedMessage("In-Game.Full-Game-No-Permission"));

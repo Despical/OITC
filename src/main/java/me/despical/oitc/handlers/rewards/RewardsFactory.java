@@ -26,6 +26,7 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.utils.Debugger;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -61,7 +62,7 @@ public class RewardsFactory {
 
 	public void performReward(Player player, Reward.RewardType type) {
 		Arena arena = ArenaRegistry.getArena(player);
-		Reward reward = rewards.stream().filter(r -> r.getType() == type).findFirst().orElse(null);
+		Reward reward = rewards.stream().filter(rew -> rew.getType() == type).findFirst().orElse(null);
 
 		if (reward == null) {
 			return;
@@ -111,8 +112,10 @@ public class RewardsFactory {
 		Debugger.debug("[Rewards Factory] Starting rewards registration.");
 		long start = System.currentTimeMillis();
 
+		FileConfiguration config = ConfigUtils.getConfig(plugin, "rewards");
+
 		for (Reward.RewardType rewardType : Reward.RewardType.values()) {
-			for (String reward : ConfigUtils.getConfig(plugin, "rewards").getStringList(rewardType.getPath())) {
+			for (String reward : config.getStringList(rewardType.getPath())) {
 				rewards.add(new Reward(rewardType, reward));
 			}
 		}

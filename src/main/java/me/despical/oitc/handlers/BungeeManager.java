@@ -46,19 +46,21 @@ import java.util.Map;
 public class BungeeManager implements Listener {
 
 	private final Main plugin;
-	private final Map<ArenaState, String> gameStateToString = new EnumMap<>(ArenaState.class);
+	private final Map<ArenaState, String> gameStates;
 	private final FileConfiguration config;
-	private final String motd;
+
+	private final String motd, hubName;
 
 	public BungeeManager(Main plugin) {
 		this.plugin = plugin;
+		this.gameStates = new EnumMap<>(ArenaState.class);
 		this.config = ConfigUtils.getConfig(plugin, "bungee");
+		this.motd = plugin.getChatManager().message("MOTD.Message");
+		this.hubName = config.getString("Hub");
 
 		for (ArenaState state : ArenaState.values()) {
-			gameStateToString.put(state, plugin.getChatManager().message("MOTD.Game-States." + state.getFormattedName()));
+			gameStates.put(state, plugin.getChatManager().message("MOTD.Game-States." + state.getFormattedName()));
 		}
-
-		motd = plugin.getChatManager().message("MOTD.Message");
 
 		plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, "BungeeCord");
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -77,7 +79,7 @@ public class BungeeManager implements Listener {
 	}
 
 	private String getHubServerName() {
-		return config.getString("Hub");
+		return hubName;
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
@@ -93,7 +95,7 @@ public class BungeeManager implements Listener {
 		Arena bungeeArena = ArenaRegistry.getBungeeArena(); // Do not cache in constructor
 
 		event.setMaxPlayers(bungeeArena.getMaximumPlayers());
-		event.setMotd(motd.replace("%state%", gameStateToString.get(bungeeArena.getArenaState())));
+		event.setMotd(motd.replace("%state%", gameStates.get(bungeeArena.getArenaState())));
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)

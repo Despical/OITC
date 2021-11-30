@@ -42,7 +42,7 @@ public class PlayerAmountComponents implements SetupComponent {
 		Arena arena = setupInventory.getArena();
 		String error = chatManager.coloredRawMessage("&c&l✖ &cWarning | Please do not set amount lower than 2! Game is designed for 2 or more players!");
 
-		pane.addItem(new GuiItem(new ItemBuilder(XMaterial.COAL)
+		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.COAL)
 			.amount(setupInventory.getSetupUtilities().getMinimumValueHigherThanZero("minimumplayers"))
 			.name("&e&lSet Minimum Players Amount")
 			.lore("&7LEFT click to decrease")
@@ -74,7 +74,7 @@ public class PlayerAmountComponents implements SetupComponent {
 			new SetupInventory(arena, player).openInventory();
 		}), 4, 1);
 
-		pane.addItem(new GuiItem(new ItemBuilder(XMaterial.REDSTONE)
+		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.REDSTONE)
 			.amount(setupInventory.getSetupUtilities().getMinimumValueHigherThanZero("maximumplayers"))
 			.name("&e&lSet Maximum Players Amount")
 			.lore("&7LEFT click to decrease")

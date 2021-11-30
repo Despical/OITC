@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Despical
@@ -30,7 +31,7 @@ import java.util.HashMap;
  */
 public class SpecialItemManager {
 
-	private static final HashMap<String, SpecialItem> specialItems = new HashMap<>();
+	private static final Map<String, SpecialItem> specialItems = new HashMap<>();
 
 	public static void addItem(String name, SpecialItem entityItem) {
 		specialItems.put(name, entityItem);

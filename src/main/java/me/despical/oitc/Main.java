@@ -68,6 +68,7 @@ public class Main extends JavaPlugin {
 	private CommandFramework commandFramework;
 	private ChatManager chatManager;
 	private UserManager userManager;
+	private PermissionsManager permissionsManager;
 	
 	@Override
 	public void onEnable() {
@@ -111,7 +112,7 @@ public class Main extends JavaPlugin {
 	}
 	
 	private boolean validateIfPluginShouldStart() {
-		if (VersionResolver.isCurrentLower(VersionResolver.ServerVersion.v1_9_R1)) {
+		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_9_R1, VersionResolver.ServerVersion.v1_17_R1)) {
 			Debugger.sendConsoleMessage("&cYour server version is not supported by One in the Chamber!");
 			Debugger.sendConsoleMessage("&cSadly, we must shut off. Maybe you consider changing your server version?");
 			return false;
@@ -187,8 +188,7 @@ public class Main extends JavaPlugin {
 			database = new MysqlDatabase(ConfigUtils.getConfig(this, "mysql"));
 		}
 
-		PermissionsManager.init(this);
-		SpecialItem.init(this);
+				SpecialItem.init(this);
 
 		userManager = new UserManager(this);
 		signManager = new SignManager(this);
@@ -197,6 +197,7 @@ public class Main extends JavaPlugin {
 		signManager.updateSigns();
 		rewardsFactory = new RewardsFactory(this);
 		commandFramework = new CommandFramework(this);
+		permissionsManager = new PermissionsManager(this);
 
 		new AdminCommands(this);
 		new PlayerCommands(this);
@@ -304,6 +305,10 @@ public class Main extends JavaPlugin {
 
 	public UserManager getUserManager() {
 		return userManager;
+	}
+
+	public PermissionsManager getPermissionsManager() {
+		return permissionsManager;
 	}
 
 	private void saveAllUserStatistics() {

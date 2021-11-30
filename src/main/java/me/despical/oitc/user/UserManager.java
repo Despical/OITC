@@ -26,11 +26,11 @@ import me.despical.oitc.user.data.FileStats;
 import me.despical.oitc.user.data.MysqlManager;
 import me.despical.oitc.user.data.UserDatabase;
 import me.despical.oitc.utils.Debugger;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -40,29 +40,32 @@ import java.util.stream.Collectors;
  */
 public class UserManager {
 
-	private final UserDatabase database;
 	private final Set<User> users;
+	private final UserDatabase database;
 
 	public UserManager(Main plugin) {
-		this.database = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED) ? new MysqlManager() : new FileStats();
 		this.users = new HashSet<>();
+		this.database = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED) ? new MysqlManager() : new FileStats();
 
-		loadStatsForPlayersOnline();
+		loadStatsForPlayersOnline(plugin);
 	}
 
-	private void loadStatsForPlayersOnline() {
-		Bukkit.getServer().getOnlinePlayers().stream().map(this::getUser).forEach(this::loadStatistics);
+	private void loadStatsForPlayersOnline(Main plugin) {
+		plugin.getServer().getOnlinePlayers().stream().map(this::getUser).forEach(this::loadStatistics);
 	}
 
 	public User getUser(Player player) {
+		UUID uuid = player.getUniqueId();
+
 		for (User user : users) {
-			if (user.getUniqueId().equals(player.getUniqueId())) {
+			if (user.getUniqueId().equals(uuid)) {
 				return user;
 			}
 		}
 
-		Debugger.debug("Registering new user {0} ({1})", player.getUniqueId(), player.getName());
-		User user = new User(player.getUniqueId());
+		Debugger.debug("Registering new user {0} ({1})", uuid, player.getName());
+
+		User user = new User(uuid);
 		users.add(user);
 		return user;
 	}

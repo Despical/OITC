@@ -48,7 +48,7 @@ public class SpawnComponents implements SetupComponent {
 		Arena arena = setupInventory.getArena();
 		String serializedLocation = LocationSerializer.toString(player.getLocation());
 
-		pane.addItem(new GuiItem(new ItemBuilder(XMaterial.REDSTONE_BLOCK)
+		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.REDSTONE_BLOCK)
 			.name("&e&lSet Ending Location")
 			.lore("&7Click to set the ending location")
 			.lore("&7on the place where you are standing.")
@@ -58,13 +58,15 @@ public class SpawnComponents implements SetupComponent {
 			.build(), e -> {
 
 			player.closeInventory();
+
 			config.set("instances." + arena.getId() + ".Endlocation", serializedLocation);
+			ConfigUtils.saveConfig(plugin, config, "arenas");
+
 			arena.setEndLocation(player.getLocation());
 			player.sendMessage(chatManager.coloredRawMessage("&e✔ Completed | &aEnding location for arena " + arena.getId() + " set at your location!"));
-			ConfigUtils.saveConfig(plugin, config, "arenas");
 		}), 1, 1);
 
-		pane.addItem(new GuiItem(new ItemBuilder(XMaterial.LAPIS_BLOCK)
+		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.LAPIS_BLOCK)
 			.name(chatManager.coloredRawMessage("&e&lSet Lobby Location"))
 			.lore("&7Click to set the lobby location")
 			.lore("&7on the place where you are standing")
@@ -78,7 +80,7 @@ public class SpawnComponents implements SetupComponent {
 			ConfigUtils.saveConfig(plugin, config, "arenas");
 		}), 2, 1);
 
-		pane.addItem(new GuiItem(new ItemBuilder(XMaterial.EMERALD_BLOCK)
+		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.EMERALD_BLOCK)
 			.name("&e&lAdd Starting Location")
 			.lore("&7Click to add the starting location")
 			.lore("&7on the place where you are standing.")
@@ -91,10 +93,12 @@ public class SpawnComponents implements SetupComponent {
 			player.closeInventory();
 
 			if (e.getClick() == ClickType.SHIFT_RIGHT) {
-				config.set("instances." + arena.getId() + ".playerspawnpoints", new ArrayList<>());
-				arena.setPlayerSpawnPoints(new ArrayList<>());
 				player.sendMessage(chatManager.coloredRawMessage("&eDone | &aPlayer spawn points deleted, you can add them again now!"));
+
+				arena.setPlayerSpawnPoints(new ArrayList<>());
 				arena.setReady(false);
+
+				config.set("instances." + arena.getId() + ".playerspawnpoints", new ArrayList<>());
 				ConfigUtils.saveConfig(plugin, config, "arenas");
 				return;
 			}

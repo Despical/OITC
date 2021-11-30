@@ -68,7 +68,7 @@ public class ArenaRegisterComponent implements SetupComponent {
 				.build();
 		}
 
-		pane.addItem(new GuiItem(registeredItem, e -> {
+		pane.addItem(GuiItem.of(registeredItem, e -> {
 			player.closeInventory();
 
 			if (arena.isReady()) {
@@ -76,28 +76,26 @@ public class ArenaRegisterComponent implements SetupComponent {
 				return;
 			}
 
-			String path = "instances." + arena.getId() + ".";
-			String[] locations = {"lobbylocation", "Endlocation"}, spawns = {"playerspawnpoints"};
+			String path = "instances." + arena.getId() + ".", locations[] = {"lobbylocation", "Endlocation"}, spawns[] = {"playerspawnpoints"};
 
-			for (String s : locations) {
-				if (!config.isSet(path + s) || LocationSerializer.isDefaultLocation(config.getString(path + s))) {
-					player.sendMessage(chatManager.coloredRawMessage("&c&l✘ &cArena validation failed! Please configure following spawn properly: " + s + " (cannot be world spawn location)"));
+			for (String location : locations) {
+				if (!config.isSet(path + location) || LocationSerializer.isDefaultLocation(config.getString(path + location))) {
+					player.sendMessage(chatManager.coloredRawMessage("&c&l✘ &cArena validation failed! Please configure following spawn properly: " + location + " (cannot be world spawn location)"));
 					return;
 				}
 			}
 
-			for (String s : spawns) {
-				if (!config.isSet(path + s) || config.getStringList(path + s).size() < arena.getMaximumPlayers()) {
-					player.sendMessage(chatManager.coloredRawMessage("&c&l✘ &cArena validation failed! Please configure following spawns properly: " + s + " (must be minimum " + arena.getMaximumPlayers() + " spawns)"));
+			for (String spawn : spawns) {
+				if (!config.isSet(path + spawn) || config.getStringList(path + spawn).size() < arena.getMaximumPlayers()) {
+					player.sendMessage(chatManager.coloredRawMessage("&c&l✘ &cArena validation failed! Please configure following spawns properly: " + spawn + " (must be minimum " + arena.getMaximumPlayers() + " spawns)"));
 					return;
 				}
 			}
 
 			player.sendMessage(chatManager.coloredRawMessage("&a&l✔ &aValidation succeeded! Registering new arena instance: " + arena.getId()));
+
 			config.set(path + "isdone", true);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
-
-			ArenaRegistry.unregisterArena(arena);
 
 			arena.setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 			arena.setReady(true);
@@ -107,14 +105,10 @@ public class ArenaRegisterComponent implements SetupComponent {
 			arena.setMapName(config.getString(path + "mapname"));
 			arena.setLobbyLocation(LocationSerializer.fromString(config.getString(path + "lobbylocation")));
 			arena.setEndLocation(LocationSerializer.fromString(config.getString(path + "Endlocation")));
-
-			ArenaRegistry.registerArena(arena);
 			arena.start();
 
-			ConfigUtils.saveConfig(plugin, config, "arenas");
-
 			plugin.getSignManager().getArenaSigns().stream().filter(arenaSign -> arenaSign.getArena().equals(arena)).map(ArenaSign::getSign)
-				.forEach(s -> plugin.getSignManager().addArenaSign(s.getBlock(), arena));
+				.forEach(sign -> plugin.getSignManager().addArenaSign(sign.getBlock(), arena));
 		}), 7, 3);
 	}
 }

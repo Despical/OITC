@@ -37,21 +37,16 @@ import java.util.UUID;
  */
 public class User {
 
-	private final Main plugin;
+	private final static Main plugin = JavaPlugin.getPlugin(Main.class);
+
 	private final UUID uuid;
 	private final Player player;
 	private final Map<StatsStorage.StatisticType, Integer> stats;
 
 	private boolean spectator;
 
-	@Deprecated
-	public User(Player player) {
-		this(player.getUniqueId());
-	}
-
 	public User(UUID uuid) {
 		this.uuid = uuid;
-		this.plugin = JavaPlugin.getPlugin(Main.class);
 		this.player = plugin.getServer().getPlayer(uuid);
 		this.stats = new EnumMap<>(StatsStorage.StatisticType.class);
 	}
@@ -98,9 +93,7 @@ public class User {
 	}
 
 	public void addStat(StatsStorage.StatisticType stat, int i) {
-		stats.put(stat, getStat(stat) + i);
-
-		plugin.getServer().getScheduler().runTask(plugin, () -> plugin.getServer().getPluginManager().callEvent(new OITCPlayerStatisticChangeEvent(getArena(), player, stat, getStat(stat))));
+		setStat(stat, getStat(stat) + i);
 	}
 
 	public void resetStats() {

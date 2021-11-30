@@ -48,10 +48,6 @@ public class ChatManager {
 		this.prefix = message("In-Game.Plugin-Prefix");
 	}
 	
-	public String getPrefix() {
-		return prefix;
-	}
-
 	public String coloredRawMessage(String message) {
 		return Strings.format(message);
 	}
@@ -117,10 +113,6 @@ public class ChatManager {
 		returnString = StringUtils.replace(returnString, "%number%", Integer.toString(i));
 		returnString = formatPlaceholders(returnString, arena);
 		return coloredRawMessage(returnString);
-	}
-
-	public String prefixedFormattedMessage(Arena arena, String message, int i) {
-		return prefix + formatMessage(arena, message, i);
 	}
 
 	public String prefixedFormattedPathMessage(Arena arena, String path, int i) {
