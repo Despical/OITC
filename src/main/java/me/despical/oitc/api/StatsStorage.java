@@ -20,10 +20,10 @@ package me.despical.oitc.api;
 
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.sorter.SortUtils;
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.user.data.MysqlManager;
-import me.despical.oitc.utils.Debugger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -57,8 +57,8 @@ public class StatsStorage {
 				return column;
 			} catch (SQLException exception) {
 				plugin.getLogger().log(Level.WARNING, "SQL Exception occurred! " + exception.getSQLState() + " (" + exception.getErrorCode() + ")");
-				Debugger.sendConsoleMessage("Cannot get contents from MySQL database!");
-				Debugger.sendConsoleMessage("Check configuration of mysql.yml file or disable it in config.yml");
+				LogUtils.sendConsoleMessage("Cannot get contents from MySQL database!");
+				LogUtils.sendConsoleMessage("Check configuration of mysql.yml file or disable it in config.yml");
 				return null;
 			}
 		}

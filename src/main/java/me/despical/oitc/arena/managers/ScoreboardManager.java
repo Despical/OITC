@@ -117,8 +117,8 @@ public class ScoreboardManager {
 		formattedLine = StringUtils.replace(formattedLine, "%deaths%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_DEATHS)));
 		formattedLine = StringUtils.replace(formattedLine, "%kill_streak%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
 
-		for (int i = 0; i <= arena.getMaximumPlayers(); i++) {
-			formattedLine = StringUtils.replace(formattedLine, "%top_player_" + (i + 1) + "%", arena.getPlayersLeft().size() > i ? formatTopPlayer(getTopPlayerName(i), i) : "%empty%");
+		for (int i = 0, size = arena.getPlayersLeft().size(); i <= arena.getMaximumPlayers(); i++) {
+			formattedLine = StringUtils.replace(formattedLine, "%top_player_" + (i + 1) + "%", size > i ? formatTopPlayer(getTopPlayerName(i), i) : "%empty%");
 		}
 
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {

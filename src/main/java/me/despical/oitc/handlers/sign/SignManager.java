@@ -22,13 +22,13 @@ import me.despical.commons.compat.XMaterial;
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.miscellaneous.BlockUtils;
 import me.despical.commons.serializer.LocationSerializer;
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
-import me.despical.oitc.utils.Debugger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -184,7 +184,7 @@ public class SignManager implements Listener {
 	}
 
 	public void loadSigns() {
-		Debugger.debug("Signs load event started.");
+		LogUtils.log("Signs load event started.");
 		long start = System.currentTimeMillis();
 
 		arenaSigns.clear();
@@ -196,16 +196,16 @@ public class SignManager implements Listener {
 				if (loc.getBlock().getState() instanceof Sign) {
 					arenaSigns.add(new ArenaSign((Sign) loc.getBlock().getState(), ArenaRegistry.getArena(path)));
 				} else {
-					Debugger.debug(Level.WARNING, "Block at location {0} for arena {1} not a sign.", loc, path);
+					LogUtils.log(Level.WARNING, "Block at location {0} for arena {1} not a sign.", loc, path);
 				}
 			}
 		}
 
-		Debugger.debug("Sign load event finished took {0} ms.", System.currentTimeMillis() - start);
+		LogUtils.log("Sign load event finished took {0} ms.", System.currentTimeMillis() - start);
 	}
 
 	public void updateSigns() {
-		Debugger.performance("SignUpdate", "[Sign Update] Updating signs.");
+		LogUtils.log("SignUpdate", "[Sign Update] Updating signs.");
 		long start = System.currentTimeMillis();
 
 		for (ArenaSign arenaSign : arenaSigns) {
@@ -259,7 +259,7 @@ public class SignManager implements Listener {
 			sign.update();
 		}
 
-		Debugger.performance("SignUpdate", "[Sign Update] Updated signs, took {0} ms.", System.currentTimeMillis() - start);
+		LogUtils.log("[Sign Update] Updated signs, took {0} ms.", System.currentTimeMillis() - start);
 	}
 
 	public void addArenaSign(Block block, Arena arena) {

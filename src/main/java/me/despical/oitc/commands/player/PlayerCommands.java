@@ -22,6 +22,7 @@ import me.despical.commandframework.Command;
 import me.despical.commandframework.CommandArguments;
 import me.despical.commons.string.StringMatcher;
 import me.despical.commons.util.Collections;
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
@@ -32,7 +33,6 @@ import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.user.User;
 import me.despical.oitc.user.data.MysqlManager;
-import me.despical.oitc.utils.Debugger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -152,12 +152,12 @@ public class PlayerCommands {
 
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				plugin.getBungeeManager().connectToHub(player);
-				Debugger.debug("{0} was teleported to the Hub server", player.getName());
+				LogUtils.log("{0} was teleported to the Hub server", player.getName());
 				return;
 			}
 
 			ArenaManager.leaveAttempt(player, arena);
-			Debugger.debug("{0} has left the arena {1}! Teleported to end location.", player.getName(), arena.getId());
+			LogUtils.log("{0} has left the arena {1}! Teleported to end location.", player.getName(), arena.getId());
 		}
 	}
 

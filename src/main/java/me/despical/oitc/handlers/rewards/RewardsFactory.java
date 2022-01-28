@@ -20,11 +20,11 @@ package me.despical.oitc.handlers.rewards;
 
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.engine.ScriptEngine;
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
-import me.despical.oitc.utils.Debugger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -109,7 +109,7 @@ public class RewardsFactory {
 			return;
 		}
 
-		Debugger.debug("[Rewards Factory] Starting rewards registration.");
+		LogUtils.log("[Rewards Factory] Starting rewards registration.");
 		long start = System.currentTimeMillis();
 
 		FileConfiguration config = ConfigUtils.getConfig(plugin, "rewards");
@@ -120,6 +120,6 @@ public class RewardsFactory {
 			}
 		}
 
-		Debugger.debug("[Rewards Factory] Registered all rewards took {0} ms.", System.currentTimeMillis() - start);
+		LogUtils.log("[Rewards Factory] Registered all rewards took {0} ms.", System.currentTimeMillis() - start);
 	}
 }

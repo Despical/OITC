@@ -27,6 +27,8 @@ import me.despical.commons.scoreboard.ScoreboardLib;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
 import me.despical.commons.util.JavaVersion;
+import me.despical.commons.util.LogUtils;
+import me.despical.commons.util.UpdateChecker;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
@@ -44,7 +46,6 @@ import me.despical.oitc.handlers.sign.SignManager;
 import me.despical.oitc.user.User;
 import me.despical.oitc.user.UserManager;
 import me.despical.oitc.user.data.MysqlManager;
-import me.despical.oitc.utils.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -87,13 +88,9 @@ public class Main extends JavaPlugin {
 
 		saveDefaultConfig();
 
-		Debugger.setEnabled(getDescription().getVersion().contains("debug") || getConfig().getBoolean("Debug-Messages"));
-		Debugger.debug("Initialization started.");
-
-		if (getConfig().getBoolean("Developer-Mode")) {
-			Debugger.deepDebug(true);
-			Debugger.debug("Deep debug enabled.");
-			getConfig().getStringList("Listenable-Performances").forEach(Debugger::monitorPerformance);
+		if (getConfig().getBoolean("Debug-Messages")) {
+			LogUtils.enableLogging();
+			LogUtils.log("Initialization started.");
 		}
 
 		long start = System.currentTimeMillis();
@@ -103,7 +100,7 @@ public class Main extends JavaPlugin {
 		initializeClasses();
 		checkUpdate();
 
-		Debugger.debug("Initialization finished took {0} ms", System.currentTimeMillis() - start);
+		LogUtils.log("Initialization finished took {0} ms", System.currentTimeMillis() - start);
 
 		if (configPreferences.getOption(ConfigPreferences.Option.NAMETAGS_HIDDEN)) {
 			getServer().getScheduler().scheduleSyncRepeatingTask(this, () ->
@@ -112,22 +109,22 @@ public class Main extends JavaPlugin {
 	}
 	
 	private boolean validateIfPluginShouldStart() {
-		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_9_R1, VersionResolver.ServerVersion.v1_17_R1)) {
-			Debugger.sendConsoleMessage("&cYour server version is not supported by One in the Chamber!");
-			Debugger.sendConsoleMessage("&cSadly, we must shut off. Maybe you consider changing your server version?");
+		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_9_R1, VersionResolver.ServerVersion.v1_18_R1)) {
+			LogUtils.sendConsoleMessage("&cYour server version is not supported by One in the Chamber!");
+			LogUtils.sendConsoleMessage("&cSadly, we must shut off. Maybe you consider changing your server version?");
 			return false;
 		}
 
 		if (JavaVersion.getCurrentVersion().isAt(JavaVersion.JAVA_8)) {
-			Debugger.sendConsoleMessage("&cThis plugin won't support Java 8 in future updates.");
-			Debugger.sendConsoleMessage("&cSo, maybe consider to update your version, right?");
+			LogUtils.sendConsoleMessage("&cThis plugin won't support Java 8 in future updates.");
+			LogUtils.sendConsoleMessage("&cSo, maybe consider to update your version, right?");
 		}
 
 		try {
 			Class.forName("org.spigotmc.SpigotConfig");
 		} catch (Exception exception) {
-			Debugger.sendConsoleMessage("&cYour server software is not supported by One in the Chamber!");
-			Debugger.sendConsoleMessage("&cWe support only Spigot and Spigot forks only! Shutting off...");
+			LogUtils.sendConsoleMessage("&cYour server software is not supported by One in the Chamber!");
+			LogUtils.sendConsoleMessage("&cWe support only Spigot and Spigot forks only! Shutting off...");
 			return false;
 		}
 
@@ -140,7 +137,7 @@ public class Main extends JavaPlugin {
 			return;
 		}
 
-		Debugger.debug("System disable initialized");
+		LogUtils.log("System disable initialized");
 		long start = System.currentTimeMillis();
 
 		getServer().getLogger().removeHandler(exceptionLogHandler);
@@ -173,7 +170,7 @@ public class Main extends JavaPlugin {
 			arena.teleportAllToEndLocation();
 		}
 
-		Debugger.debug("System disable finished took {0} ms", System.currentTimeMillis() - start);
+		LogUtils.log("System disable finished took {0} ms", System.currentTimeMillis() - start);
 	}
 	
 	private void initializeClasses() {
@@ -188,7 +185,7 @@ public class Main extends JavaPlugin {
 			database = new MysqlDatabase(ConfigUtils.getConfig(this, "mysql"));
 		}
 
-				SpecialItem.init(this);
+		SpecialItem.init(this);
 
 		userManager = new UserManager(this);
 		signManager = new SignManager(this);
@@ -215,16 +212,17 @@ public class Main extends JavaPlugin {
 	}
 	
 	private void registerSoftDependenciesAndServices() {
-		Debugger.debug("Hooking into soft dependencies");
+		LogUtils.log("Hooking into soft dependencies");
 		long start = System.currentTimeMillis();
 
 		startPluginMetrics();
+
 		if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-			Debugger.debug("Hooking into PlaceholderAPI");
+			LogUtils.log("Hooking into PlaceholderAPI");
 			new PlaceholderManager(this);
 		}
 
-		Debugger.debug("Hooked into soft dependencies took {0} ms", System.currentTimeMillis() - start);
+		LogUtils.log("Hooked into soft dependencies took {0} ms", System.currentTimeMillis() - start);
 	}
 	
 	private void startPluginMetrics() {
@@ -257,17 +255,17 @@ public class Main extends JavaPlugin {
 
 			if (result.getNewestVersion().contains("b")) {
 				if (getConfig().getBoolean("Update-Notifier.Notify-Beta-Versions", true)) {
-					Debugger.sendConsoleMessage("[OITC] Found a new beta version available: v" + result.getNewestVersion());
-					Debugger.sendConsoleMessage("[OITC] Download it on SpigotMC:");
-					Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/");
+					LogUtils.sendConsoleMessage("[OITC] Found a new beta version available: v" + result.getNewestVersion());
+					LogUtils.sendConsoleMessage("[OITC] Download it on SpigotMC:");
+					LogUtils.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/");
 				}
 
 				return;
 			}
 
-			Debugger.sendConsoleMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
-			Debugger.sendConsoleMessage("[OITC] Download it SpigotMC:");
-			Debugger.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/");
+			LogUtils.sendConsoleMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
+			LogUtils.sendConsoleMessage("[OITC] Download it SpigotMC:");
+			LogUtils.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/");
 		});
 	}
 

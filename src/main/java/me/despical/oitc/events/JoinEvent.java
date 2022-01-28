@@ -20,11 +20,10 @@ package me.despical.oitc.events;
 
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
+import me.despical.commons.util.UpdateChecker;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.ArenaRegistry;
-import me.despical.oitc.handlers.PermissionsManager;
-import me.despical.oitc.utils.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,7 +52,7 @@ public class JoinEvent implements Listener {
 			return;
 		}
 
-		if (e.getPlayer().hasPermission(PermissionsManager.getJoinFullGames())) {
+		if (e.getPlayer().hasPermission(plugin.getPermissionsManager().joinFullPerm)) {
 			e.setResult(PlayerLoginEvent.Result.ALLOWED);
 		}
 	}

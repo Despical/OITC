@@ -20,9 +20,9 @@ package me.despical.oitc.arena;
 
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.serializer.LocationSerializer;
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.handlers.ChatManager;
-import me.despical.oitc.utils.Debugger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -61,17 +61,17 @@ public class ArenaRegistry {
 	}
 
 	public static void registerArena(Arena arena) {
-		Debugger.debug("Registering new game instance {0}", arena.getId());
+		LogUtils.log("Registering new game instance {0}", arena.getId());
 		arenas.add(arena);
 	}
 
 	public static void unregisterArena(Arena arena) {
-		Debugger.debug("Unregistering game instance {0}", arena.getId());
+		LogUtils.log("Unregistering game instance {0}", arena.getId());
 		arenas.remove(arena);
 	}
 
 	public static void registerArenas() {
-		Debugger.debug("Initial arenas registration");
+		LogUtils.log("Initial arenas registration");
 		long start = System.currentTimeMillis();
 
 		arenas.clear();
@@ -80,14 +80,14 @@ public class ArenaRegistry {
 		ChatManager chatManager = plugin.getChatManager();
 
 		if (!config.contains("instances")) {
-			Debugger.sendConsoleMessage(chatManager.message("Validator.No-Instances-Created"));
+			LogUtils.sendConsoleMessage(chatManager.message("Validator.No-Instances-Created"));
 			return;
 		}
 
 		ConfigurationSection section = config.getConfigurationSection("instances");
 
 		if (section == null) {
-			Debugger.sendConsoleMessage(chatManager.message("Validator.No-Instances-Created"));
+			LogUtils.sendConsoleMessage(chatManager.message("Validator.No-Instances-Created"));
 			return;
 		}
 
@@ -108,7 +108,7 @@ public class ArenaRegistry {
 			arena.setEndLocation(LocationSerializer.fromString(config.getString(s + "Endlocation")));
 
 			if (!config.getBoolean(s + "isdone")) {
-				Debugger.sendConsoleMessage(chatManager.message("Validator.Invalid-Arena-Configuration").replace("%arena%", id).replace("%error%", "NOT VALIDATED"));
+				LogUtils.sendConsoleMessage(chatManager.message("Validator.Invalid-Arena-Configuration").replace("%arena%", id).replace("%error%", "NOT VALIDATED"));
 				arena.setReady(false);
 				registerArena(arena);
 				continue;
@@ -117,10 +117,10 @@ public class ArenaRegistry {
 			arena.setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 			registerArena(arena);
 			arena.start();
-			Debugger.sendConsoleMessage(chatManager.message("Validator.Instance-Started").replace("%arena%", id));
+			LogUtils.sendConsoleMessage(chatManager.message("Validator.Instance-Started").replace("%arena%", id));
 		}
 
-		Debugger.debug("Arenas registration completed, took {0} ms", System.currentTimeMillis() - start);
+		LogUtils.log("Arenas registration completed, took {0} ms", System.currentTimeMillis() - start);
 	}
 
 	public static List<Arena> getArenas() {

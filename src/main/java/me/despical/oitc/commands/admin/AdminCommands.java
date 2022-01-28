@@ -23,6 +23,7 @@ import me.despical.commandframework.CommandArguments;
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.miscellaneous.MiscUtils;
 import me.despical.commons.serializer.LocationSerializer;
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
@@ -30,7 +31,6 @@ import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.handlers.setup.SetupInventory;
-import me.despical.oitc.utils.Debugger;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -168,11 +168,10 @@ public class AdminCommands {
 		name = "oitc.reload",
 		permission = "oitc.admin",
 		usage = "/oitc reload",
-		desc = "Reloads all game arenas and configurations",
-		cooldown = 5
+		desc = "Reloads all game arenas and configurations"
 	)
 	public void reloadCommand(CommandArguments arguments) {
-		Debugger.debug("Initiated plugin reload by {0}", arguments.getSender().getName());
+		LogUtils.log("Initiated plugin reload by {0}", arguments.getSender().getName());
 		long start = System.currentTimeMillis();
 
 		chatManager.reloadConfig();
@@ -181,7 +180,7 @@ public class AdminCommands {
 		ArenaRegistry.registerArenas();
 
 		arguments.sendMessage(chatManager.prefixedMessage("Commands.Admin-Commands.Success-Reload"));
-		Debugger.debug("[Reloader] Finished reloading took {0} ms", System.currentTimeMillis() - start);
+		LogUtils.log("[Reloader] Finished reloading took {0} ms", System.currentTimeMillis() - start);
 	}
 
 	@Command(

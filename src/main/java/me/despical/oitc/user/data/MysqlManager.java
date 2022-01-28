@@ -20,9 +20,9 @@ package me.despical.oitc.user.data;
 
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.database.MysqlDatabase;
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
-import me.despical.oitc.utils.Debugger;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -57,8 +57,8 @@ public class MysqlManager implements UserDatabase {
 					+ "  `loses` int(11) NOT NULL DEFAULT '0'\n" + ");");
 			} catch (SQLException e) {
 				e.printStackTrace();
-				Debugger.sendConsoleMessage("&cCouldn't save user statistics to MySQL database!");
-				Debugger.sendConsoleMessage("&cCheck your configuration or disable MySQL option in config.yml");
+				LogUtils.sendConsoleMessage("&cCouldn't save user statistics to MySQL database!");
+				LogUtils.sendConsoleMessage("&cCheck your configuration or disable MySQL option in config.yml");
 			}
 		});
 	}
@@ -68,7 +68,7 @@ public class MysqlManager implements UserDatabase {
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 			String query = "UPDATE " + tableName + " SET " + stat.getName() + "=" + user.getStat(stat) + " WHERE UUID='" + user.getUniqueId().toString() + "';";
 			database.executeUpdate(query);
-			Debugger.debug("Executed MySQL: " + query);
+			LogUtils.log("Executed MySQL: " + query);
 		});
 	}
 
@@ -78,11 +78,14 @@ public class MysqlManager implements UserDatabase {
 
 		for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 			if (!stat.isPersistent()) continue;
+			String name = stat.getName();
+			int val = user.getStat(stat);
+
 			if (update.toString().equalsIgnoreCase(" SET ")) {
-				update.append(stat.getName()).append("=").append(user.getStat(stat));
+				update.append(name).append("=").append(val);
 			}
 
-			update.append(", ").append(stat.getName()).append("=").append(user.getStat(stat));
+			update.append(", ").append(name).append("=").append(val);
 		}
 
 		String finalUpdate = update.toString();
@@ -96,17 +99,17 @@ public class MysqlManager implements UserDatabase {
 
 			try (Connection connection = database.getConnection()) {
 				Statement statement = connection.createStatement();
-				ResultSet rs = statement.executeQuery("SELECT * from " + tableName + " WHERE UUID='" + uuid + "';");
+				ResultSet result = statement.executeQuery("SELECT * from " + tableName + " WHERE UUID='" + uuid + "';");
 
-				if (rs.next()) {
-					Debugger.debug("MySQL Stats | Player {0} already exist. Getting Stats...", playerName);
+				if (result.next()) {
+					LogUtils.log("MySQL Stats | Player {0} already exist. Getting Stats...", playerName);
 
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 						if (!stat.isPersistent()) continue;
-						user.setStat(stat, rs.getInt(stat.getName()));
+						user.setStat(stat, result.getInt(stat.getName()));
 					}
 				} else {
-					Debugger.debug("MySQL Stats | Player {0} does not exist. Creating new one...", playerName);
+					LogUtils.log("MySQL Stats | Player {0} does not exist. Creating new one...", playerName);
 					statement.executeUpdate("INSERT INTO " + tableName + " (UUID,name) VALUES ('" + uuid + "','" + playerName + "');");
 
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {

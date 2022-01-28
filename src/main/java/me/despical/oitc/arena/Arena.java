@@ -22,6 +22,7 @@ import me.despical.commons.compat.Titles;
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
@@ -31,8 +32,7 @@ import me.despical.oitc.arena.managers.ScoreboardManager;
 import me.despical.oitc.arena.options.ArenaOption;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
-import me.despical.oitc.utils.Debugger;
-import me.despical.oitc.utils.ItemPosition;
+import me.despical.oitc.util.ItemPosition;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
@@ -75,7 +75,7 @@ public class Arena extends BukkitRunnable {
 			arenaOptions.put(option, option.getDefaultValue());
 		}
 
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
+		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
 			gameBar = plugin.getServer().createBossBar(plugin.getChatManager().message("Bossbar.Main-Title"), BarColor.BLUE, BarStyle.SOLID);
 		}
 
@@ -100,7 +100,7 @@ public class Arena extends BukkitRunnable {
 			return;
 		}
 
-		Debugger.performance("ArenaTask", "[{0}] Running game task", id);
+		LogUtils.log("[{0}] Running game task", id);
 		long start = System.currentTimeMillis();
 		int timer = getTimer();
 
@@ -117,7 +117,7 @@ public class Arena extends BukkitRunnable {
 					break;
 				}
 			} else {
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
+				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
 					gameBar.setTitle(plugin.getChatManager().message("Bossbar.Waiting-For-Players"));
 				}
 
@@ -138,7 +138,7 @@ public class Arena extends BukkitRunnable {
 			}
 
 			double waitingTime = plugin.getConfigPreferences().getIntOption(ConfigPreferences.IntOption.STARTING_WAITING_TIME);
-			boolean bossBarEnabled = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED);
+			boolean bossBarEnabled = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED);
 
 			if (bossBarEnabled) {
 				gameBar.setTitle(plugin.getChatManager().message("Bossbar.Starting-In").replace("%time%", Integer.toString(timer)));
@@ -202,7 +202,7 @@ public class Arena extends BukkitRunnable {
 				}
 			}
 
-			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
+			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
 				gameBar.setTitle(plugin.getChatManager().message("Bossbar.In-Game-Info"));
 			}
 
@@ -244,7 +244,7 @@ public class Arena extends BukkitRunnable {
 			}
 
 			if (timer <= 0) {
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
+				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
 					gameBar.setTitle(plugin.getChatManager().message("Bossbar.Game-Ended"));
 				}
 
@@ -316,7 +316,7 @@ public class Arena extends BukkitRunnable {
 				}
 			}
 
-			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
+			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
 				gameBar.setTitle(plugin.getChatManager().message("Bossbar.Waiting-For-Players"));
 			}
 
@@ -325,7 +325,7 @@ public class Arena extends BukkitRunnable {
 			break;
 		}
 
-		Debugger.performance("ArenaTask", "[{0}] Game task finished took {1} ms", id, System.currentTimeMillis() - start);
+		LogUtils.log("[{0}] Game task finished took {1} ms", id, System.currentTimeMillis() - start);
 	}
 
 	public void setForceStart(boolean forceStart) {
@@ -399,7 +399,7 @@ public class Arena extends BukkitRunnable {
 		Location location = getLobbyLocation();
 
 		if (location == null) {
-			Debugger.sendConsoleMessage("&cLobby location isn't initialized for arena " + id);
+			LogUtils.sendConsoleMessage("&cLobby location isn't initialized for arena " + id);
 			return;
 		}
 
@@ -407,7 +407,7 @@ public class Arena extends BukkitRunnable {
 	}
 
 	public void doBarAction(BarAction action, Player p) {
-		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSSBAR_ENABLED)) {
+		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
 			return;
 		}
 
@@ -469,7 +469,7 @@ public class Arena extends BukkitRunnable {
 
 		if (location == null) {
 			location = getLobbyLocation();
-			Debugger.sendConsoleMessage(String.format("&cCouldn't teleport %s to end location for arena %s because it isn't initialized!", player.getName(), id));
+			LogUtils.sendConsoleMessage(String.format("&cCouldn't teleport %s to end location for arena %s because it isn't initialized!", player.getName(), id));
 		}
 
 		if (location != null) {
@@ -497,7 +497,7 @@ public class Arena extends BukkitRunnable {
 		this.runTaskTimer(plugin, 20L, 20L);
 		this.setArenaState(ArenaState.RESTARTING);
 
-		Debugger.debug("[{0}] Game instance started.", id);
+		LogUtils.log("[{0}] Game instance started.", id);
 	}
 
 	public void addPlayer(Player player) {

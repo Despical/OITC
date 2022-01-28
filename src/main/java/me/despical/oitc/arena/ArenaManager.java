@@ -24,6 +24,7 @@ import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.MiscUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
@@ -35,7 +36,6 @@ import me.despical.oitc.handlers.ChatManager.ActionType;
 import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
-import me.despical.oitc.utils.Debugger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -58,7 +58,7 @@ public class ArenaManager {
 	}
 
 	public static void joinAttempt(Player player, Arena arena) {
-		Debugger.debug("[{0}] Initial join attempt for {1}", arena.getId(), player.getName());
+		LogUtils.log("[{0}] Initial join attempt for {1}", arena.getId(), player.getName());
 		long start = System.currentTimeMillis();
 
 		OITCGameJoinAttemptEvent gameJoinEvent = new OITCGameJoinAttemptEvent(player, arena);
@@ -120,7 +120,7 @@ public class ArenaManager {
 			}
 		}
 
-		Debugger.debug("[{0}] Checked join attempt for {1} initialized", arena.getId(), player.getName());
+		LogUtils.log("[{0}] Checked join attempt for {1} initialized", arena.getId(), player.getName());
 
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.saveInventoryToFile(plugin, player);
@@ -167,7 +167,7 @@ public class ArenaManager {
 			}
 
 			ArenaUtils.hidePlayersOutsideTheGame(player, arena);
-			Debugger.debug("[{0}] Join attempt as spectator finished for {1} took {2} ms.", arena.getId(), player.getName(), System.currentTimeMillis() - start);
+			LogUtils.log("[{0}] Join attempt as spectator finished for {1} took {2} ms.", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 			return;
 		}
 
@@ -184,11 +184,11 @@ public class ArenaManager {
 		plugin.getSignManager().updateSigns();
 
 		ArenaUtils.updateNameTagsVisibility(player);
-		Debugger.debug("[{0}] Join attempt as player for {1} took {2} ms.", arena.getId(), player.getName(), System.currentTimeMillis() - start);
+		LogUtils.log("[{0}] Join attempt as player for {1} took {2} ms.", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 	}
 
 	public static void leaveAttempt(Player player, Arena arena) {
-		Debugger.debug("[{0}] Initial leave attempt for {1}", arena.getId(), player.getName());
+		LogUtils.log("[{0}] Initial leave attempt for {1}", arena.getId(), player.getName());
 		long start = System.currentTimeMillis();
 
 		OITCGameLeaveAttemptEvent event = new OITCGameLeaveAttemptEvent(player, arena);
@@ -255,11 +255,11 @@ public class ArenaManager {
 		plugin.getUserManager().saveAllStatistic(user);
 		plugin.getSignManager().updateSigns();
 
-		Debugger.debug("[{0}] Game leave finished for {1} took {2} ms.", arena.getId(), player.getName(), System.currentTimeMillis() - start);
+		LogUtils.log("[{0}] Game leave finished for {1} took {2} ms.", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 	}
 
 	public static void stopGame(boolean quickStop, Arena arena) {
-		Debugger.debug("[{0}] Stop game event initialized | quickStop = {1}", arena.getId(), quickStop);
+		LogUtils.log("[{0}] Stop game event initialized | quickStop = {1}", arena.getId(), quickStop);
 		long start = System.currentTimeMillis();
 
 		OITCGameStopEvent gameStopEvent = new OITCGameStopEvent(arena, quickStop ? OITCGameStopEvent.StopReason.BY_COMMAND : OITCGameStopEvent.StopReason.BY_DEFAULT);
@@ -322,7 +322,7 @@ public class ArenaManager {
 			}
 		}
 
-		Debugger.debug("[{0}] Stop game event finished took {1} ms", arena.getId(), System.currentTimeMillis() - start);
+		LogUtils.log("[{0}] Stop game event finished took {1} ms", arena.getId(), System.currentTimeMillis() - start);
 	}
 
 	private static String formatSummaryPlaceholders(String msg, Arena arena, Player player) {

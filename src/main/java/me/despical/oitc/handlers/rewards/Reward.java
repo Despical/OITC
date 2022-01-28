@@ -18,7 +18,7 @@
 
 package me.despical.oitc.handlers.rewards;
 
-import me.despical.oitc.utils.Debugger;
+import me.despical.commons.util.LogUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -54,7 +54,7 @@ public class Reward {
 			int loc = processedCode.indexOf(")");
 
 			if (loc == -1) {
-				Debugger.sendConsoleMessage("&cRewards configuration is broken! Make sure you don't forget using ')' character in chance condition! Command: " + rawCode);
+				LogUtils.sendConsoleMessage("&cRewards configuration is broken! Make sure you don't forget using ')' character in chance condition! Command: " + rawCode);
 				this.chance = 101;
 				return;
 			}

@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.despical.oitc.utils;
+package me.despical.oitc.util;
 
 import me.despical.commons.compat.XMaterial;
 import me.despical.commons.item.ItemBuilder;
@@ -51,12 +51,12 @@ public enum ItemPosition {
 		}
 
 		Inventory inv = player.getInventory();
-		ItemStack item = inv.getItem(itemPosition.getItemPosition());
+		ItemStack item = inv.getItem(itemPosition.itemPosition);
 
 		if (item != null) {
 			item.setAmount(item.getAmount() + itemStack.getAmount());
 		} else {
-			inv.setItem(itemPosition.getItemPosition(), itemStack);
+			inv.setItem(itemPosition.itemPosition, itemStack);
 		}
 	}
 

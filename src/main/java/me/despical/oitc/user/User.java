@@ -45,9 +45,9 @@ public class User {
 
 	private boolean spectator;
 
-	public User(UUID uuid) {
-		this.uuid = uuid;
-		this.player = plugin.getServer().getPlayer(uuid);
+	public User(Player player) {
+		this.player = player;
+		this.uuid = player.getUniqueId();
 		this.stats = new EnumMap<>(StatsStorage.StatisticType.class);
 	}
 

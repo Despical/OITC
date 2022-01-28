@@ -5,7 +5,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Enable boss bar support?
-Bossbar-Enabled: true
+Boss-Bar-Enabled: true
 
 # How many seconds game should take to start.
 Starting-Waiting-Time: 60

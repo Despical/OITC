@@ -32,7 +32,7 @@ import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
-import me.despical.oitc.utils.ItemPosition;
+import me.despical.oitc.util.ItemPosition;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;

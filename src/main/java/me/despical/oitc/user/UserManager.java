@@ -18,6 +18,7 @@
 
 package me.despical.oitc.user;
 
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
@@ -25,7 +26,6 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.user.data.FileStats;
 import me.despical.oitc.user.data.MysqlManager;
 import me.despical.oitc.user.data.UserDatabase;
-import me.despical.oitc.utils.Debugger;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -47,10 +47,6 @@ public class UserManager {
 		this.users = new HashSet<>();
 		this.database = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED) ? new MysqlManager() : new FileStats();
 
-		loadStatsForPlayersOnline(plugin);
-	}
-
-	private void loadStatsForPlayersOnline(Main plugin) {
 		plugin.getServer().getOnlinePlayers().stream().map(this::getUser).forEach(this::loadStatistics);
 	}
 
@@ -63,9 +59,9 @@ public class UserManager {
 			}
 		}
 
-		Debugger.debug("Registering new user {0} ({1})", uuid, player.getName());
+		LogUtils.log("Registering new user {0} ({1})", uuid, player.getName());
 
-		User user = new User(uuid);
+		User user = new User(player);
 		users.add(user);
 		return user;
 	}

@@ -80,7 +80,7 @@ public class ConfigPreferences {
 	}
 
 	public enum Option {
-		BOSSBAR_ENABLED("Bossbar-Enabled"), BUNGEE_ENABLED("BungeeActivated", false),
+		BOSS_BAR_ENABLED("Boss-Bar-Enabled"), BUNGEE_ENABLED("BungeeActivated", false),
 		CHAT_FORMAT_ENABLED("ChatFormat-Enabled"), DATABASE_ENABLED("DatabaseActivated", false),
 		DISABLE_FALL_DAMAGE("Disable-Fall-Damage", false), DISABLE_SEPARATE_CHAT("Disable-Separate-Chat", false),
 		ENABLE_SHORT_COMMANDS("Enable-Short-Commands", false), INVENTORY_MANAGER_ENABLED("InventoryManager"),
