@@ -27,7 +27,7 @@ import me.despical.oitc.Main;
  */
 public class PermissionsManager {
 
-	private final String joinFullPerm, joinPerm;
+	public final String joinFullPerm, joinPerm;
 
 	public PermissionsManager(Main plugin) {
 		this.joinPerm = plugin.getConfig().getString("Basic-Permissions.Join-Permission");
