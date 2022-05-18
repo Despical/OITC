@@ -37,5 +37,4 @@ public interface UserDatabase {
 	void saveAllStatistic(User user);
 
 	void loadStatistics(User user);
-
 }

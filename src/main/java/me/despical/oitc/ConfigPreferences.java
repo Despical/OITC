@@ -50,11 +50,11 @@ public class ConfigPreferences {
 
 	private void loadOptions() {
 		for (Option option : Option.values()) {
-			options.put(option, plugin.getConfig().getBoolean(option.getPath(), option.getDefault()));
+			options.put(option, plugin.getConfig().getBoolean(option.path, option.def));
 		}
 
 		for (IntOption option : IntOption.values()) {
-			intOptions.put(option, plugin.getConfig().getInt(option.getPath(), option.getDefault()));
+			intOptions.put(option, plugin.getConfig().getInt(option.path, option.def));
 		}
 	}
 
@@ -62,20 +62,12 @@ public class ConfigPreferences {
 		CLASSIC_GAMEPLAY_TIME("Classic-Gameplay-Time", 600), STARTING_WAITING_TIME("Starting-Waiting-Time", 60),
 		STARTING_TIME_ON_FULL_LOBBY("Start-Time-On-Full-Lobby", 15);
 
-		private final String path;
-		private final int def;
+		String path;
+		int def;
 
 		IntOption(String path, int def) {
 			this.path = path;
 			this.def = def;
-		}
-
-		public String getPath() {
-			return path;
-		}
-
-		public int getDefault() {
-			return def;
 		}
 	}
 
@@ -88,8 +80,8 @@ public class ConfigPreferences {
 		BLOCK_COMMANDS("Block-Commands-In-Game"), DISABLE_LEAVE_COMMAND("Disable-Leave-Command"),
 		SIGNS_BLOCK_STATES_ENABLED("Signs-Block-States-Enabled"), REWARDS_ENABLED("Rewards-Enabled", false);
 
-		private final String path;
-		private final boolean def;
+		String path;
+		boolean def;
 
 		Option(String path) {
 			this(path, true);
@@ -98,14 +90,6 @@ public class ConfigPreferences {
 		Option(String path, boolean def) {
 			this.path = path;
 			this.def = def;
-		}
-
-		public String getPath() {
-			return path;
-		}
-
-		public boolean getDefault() {
-			return def;
 		}
 	}
 }

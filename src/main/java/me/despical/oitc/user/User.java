@@ -86,14 +86,14 @@ public class User {
 		arena.getScoreboardManager().removeScoreboard(player);
 	}
 
-	public void setStat(StatsStorage.StatisticType stat, int i) {
-		stats.put(stat, i);
+	public void setStat(StatsStorage.StatisticType stat, int value) {
+		stats.put(stat, value);
 
-		plugin.getServer().getScheduler().runTask(plugin, () -> plugin.getServer().getPluginManager().callEvent(new OITCPlayerStatisticChangeEvent(getArena(), player, stat, i)));
+		plugin.getServer().getScheduler().runTask(plugin, () -> plugin.getServer().getPluginManager().callEvent(new OITCPlayerStatisticChangeEvent(getArena(), player, stat, value)));
 	}
 
-	public void addStat(StatsStorage.StatisticType stat, int i) {
-		setStat(stat, getStat(stat) + i);
+	public void addStat(StatsStorage.StatisticType stat, int value) {
+		setStat(stat, getStat(stat) + value);
 	}
 
 	public void resetStats() {

@@ -202,6 +202,8 @@ public class SignManager implements Listener {
 		}
 
 		LogUtils.log("Sign load event finished took {0} ms.", System.currentTimeMillis() - start);
+
+		updateSigns();
 	}
 
 	public void updateSigns() {

@@ -24,6 +24,7 @@ import me.despical.commons.string.StringFormatUtils;
 import me.despical.commons.util.Strings;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
+import me.despical.oitc.user.User;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -107,39 +108,26 @@ public class ChatManager {
 		return returnString;
 	}
 	
-	public String formatMessage(Arena arena, String message, int i) {
+	public String formatMessage(Arena arena, String message, int value) {
 		String returnString = message;
 
-		returnString = StringUtils.replace(returnString, "%number%", Integer.toString(i));
+		returnString = StringUtils.replace(returnString, "%number%", Integer.toString(value));
 		returnString = formatPlaceholders(returnString, arena);
 		return coloredRawMessage(returnString);
 	}
 
-	public String prefixedFormattedPathMessage(Arena arena, String path, int i) {
-		return prefix + formatMessage(arena, message(path), i);
+	public String prefixedFormattedPathMessage(Arena arena, String path, int value) {
+		return prefix + formatMessage(arena, message(path), value);
 	}
 
 	public List<String> getStringList(String path) {
 		return config.getStringList(path);
 	}
 
-	public void broadcastAction(Arena arena, Player player, ActionType action) {
-		if (plugin.getUserManager().getUser(player).isSpectator()) return;
-
-		String message;
-
-		switch (action) {
-			case JOIN:
-				message = formatMessage(arena, message("In-Game.Messages.Join"), player);
-				break;
-			case LEAVE:
-				message = formatMessage(arena, message("In-Game.Messages.Leave"), player);
-				break;
-			default:
-				return;
+	public void broadcastAction(Arena arena, User user, ActionType action) {
+		if (!user.isSpectator()) {
+			arena.broadcastMessage(prefix + formatMessage(arena, message("In-Game.Messages." + StringUtils.capitalize(action.name())), user.getPlayer()));
 		}
-
-		arena.broadcastMessage(prefix + message);
 	}
 	
 	public void reloadConfig() {

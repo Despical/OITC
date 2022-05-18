@@ -24,7 +24,6 @@ import me.despical.commons.util.UpdateChecker;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.ArenaRegistry;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -87,21 +86,13 @@ public class JoinEvent implements Listener {
 			return;
 		}
 
-		Bukkit.getScheduler().runTaskLater(plugin, () -> UpdateChecker.init(plugin, 81185).requestUpdateCheck().whenComplete((result, exception) -> {
-			if (!result.requiresUpdate()) {
-				return;
+		plugin.getServer().getScheduler().runTaskLater(plugin, () -> UpdateChecker.init(plugin, 81185).requestUpdateCheck().whenComplete((result, exception) -> {
+			if (result.requiresUpdate()) {
+				final Player player = event.getPlayer();
+
+				player.sendMessage(plugin.getChatManager().coloredRawMessage("&3[OITC] &bFound an update: v" + result.getNewestVersion() + " Download:"));
+				player.sendMessage(plugin.getChatManager().coloredRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber.81185/"));
 			}
-
-			String newestVersion = result.getNewestVersion();
-			Player player = event.getPlayer();
-
-			if (newestVersion.contains("b")) {
-				player.sendMessage(plugin.getChatManager().coloredRawMessage("&3[OITC] &bFound a beta update: v" + newestVersion + " Download:"));
-			} else {
-				player.sendMessage(plugin.getChatManager().coloredRawMessage("&3[OITC] &bFound an update: v" + newestVersion + " Download:"));
-			}
-
-			player.sendMessage(plugin.getChatManager().coloredRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/"));
 		}), 25);
 	}
 }

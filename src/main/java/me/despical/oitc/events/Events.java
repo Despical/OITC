@@ -33,7 +33,6 @@ import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.util.ItemPosition;
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -301,7 +300,7 @@ public class Events implements Listener {
 		}
 
 		ItemPosition.addItem(victim.getKiller(), ItemPosition.ARROW, new ItemStack(Material.ARROW, 1));
-		Bukkit.getScheduler().runTaskLater(plugin, () -> victim.spigot().respawn(), 5);
+		plugin.getServer().getScheduler().runTaskLater(plugin, () -> victim.spigot().respawn(), 5);
 
 		plugin.getRewardsFactory().performReward(victim.getKiller(), Reward.RewardType.KILL);
 

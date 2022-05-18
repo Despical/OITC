@@ -45,16 +45,16 @@ public class QuitEvent implements Listener {
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		onLeave(event.getPlayer());
+		handleEvent(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onKick(PlayerKickEvent event) {
-		onLeave(event.getPlayer());
+		handleEvent(event.getPlayer());
 	}
 
-	private void onLeave(Player player) {
-		Arena arena = ArenaRegistry.getArena(player);
+	private void handleEvent(Player player) {
+		final Arena arena = ArenaRegistry.getArena(player);
 
 		if (arena != null) {
 			ArenaManager.leaveAttempt(player, arena);

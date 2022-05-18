@@ -45,8 +45,8 @@ public class LobbyEvent implements Listener {
 			return;
 		}
 
-		Player player = (Player) event.getEntity();
-		Arena arena = ArenaRegistry.getArena(player);
+		final Player player = (Player) event.getEntity();
+		final Arena arena = ArenaRegistry.getArena(player);
 
 		if (arena == null || arena.getArenaState() == ArenaState.IN_GAME) {
 			return;

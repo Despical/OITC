@@ -21,7 +21,6 @@ package me.despical.oitc.user;
 import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
-import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.user.data.FileStats;
 import me.despical.oitc.user.data.MysqlManager;
@@ -47,11 +46,11 @@ public class UserManager {
 		this.users = new HashSet<>();
 		this.database = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED) ? new MysqlManager() : new FileStats();
 
-		plugin.getServer().getOnlinePlayers().stream().map(this::getUser).forEach(this::loadStatistics);
+		plugin.getServer().getOnlinePlayers().forEach(this::getUser);
 	}
 
 	public User getUser(Player player) {
-		UUID uuid = player.getUniqueId();
+		final UUID uuid = player.getUniqueId();
 
 		for (User user : users) {
 			if (user.getUniqueId().equals(uuid)) {
@@ -61,21 +60,15 @@ public class UserManager {
 
 		LogUtils.log("Registering new user {0} ({1})", uuid, player.getName());
 
-		User user = new User(player);
+		final User user = new User(player);
 		users.add(user);
+
+		database.loadStatistics(user);
 		return user;
 	}
 	
 	public Set<User> getUsers(Arena arena) {
 		return arena.getPlayers().stream().map(this::getUser).collect(Collectors.toSet());
-	}
-
-	public void saveStatistic(User user, StatsStorage.StatisticType stat) {
-		if (!stat.isPersistent()) {
-			return;
-		}
-
-		database.saveStatistic(user, stat);
 	}
 
 	public void saveAllStatistic(User user) {

@@ -123,7 +123,7 @@ public class PlayerCommands {
 		List<Arena> arenas = ArenaRegistry.getArenas().stream().filter(arena -> Collections.contains(arena.getArenaState(), ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING)
 			&& arena.getPlayers().size() < arena.getMaximumPlayers()).collect(Collectors.toList());
 
-		if(!arenas.isEmpty()) {
+		if (!arenas.isEmpty()) {
 			Arena arena = arenas.get(ThreadLocalRandom.current().nextInt(arenas.size()));
 			ArenaManager.joinAttempt(arguments.getSender(), arena);
 			return;
@@ -169,27 +169,28 @@ public class PlayerCommands {
 	)
 	public void statsCommand(CommandArguments arguments) {
 		Player sender = arguments.getSender(), player = arguments.isArgumentsEmpty() ? sender : plugin.getServer().getPlayerExact(arguments.getArgument(0));
+		String path = "Commands.Stats-Command.";
 
 		if (player == null) {
-			sender.sendMessage(chatManager.prefixedMessage("Commands.Admin-Commands.Player-Not-Found"));
+			sender.sendMessage(chatManager.prefixedMessage(path + "Player-Not-Found"));
 			return;
 		}
 
 		User user = plugin.getUserManager().getUser(player);
 
 		if (player.equals(sender)) {
-			player.sendMessage(chatManager.message("Commands.Stats-Command.Header", player));
+			player.sendMessage(chatManager.message(path + "Header", player));
 		} else {
 			player.sendMessage(chatManager.message("Commands.Stats-Command.Header-Other", player).replace("%player%", player.getName()));
 		}
 
-		sender.sendMessage(chatManager.message("Commands.Stats-Command.Kills", player) + user.getStat(StatsStorage.StatisticType.KILLS));
-		sender.sendMessage(chatManager.message("Commands.Stats-Command.Deaths", player) + user.getStat(StatsStorage.StatisticType.DEATHS));
-		sender.sendMessage(chatManager.message("Commands.Stats-Command.Wins", player) + user.getStat(StatsStorage.StatisticType.WINS));
-		sender.sendMessage(chatManager.message("Commands.Stats-Command.Loses", player) + user.getStat(StatsStorage.StatisticType.LOSES));
-		sender.sendMessage(chatManager.message("Commands.Stats-Command.Games-Played", player) + user.getStat(StatsStorage.StatisticType.GAMES_PLAYED));
-		sender.sendMessage(chatManager.message("Commands.Stats-Command.Highest-Score", player) + user.getStat(StatsStorage.StatisticType.HIGHEST_SCORE));
-		sender.sendMessage(chatManager.message("Commands.Stats-Command.Footer", player));
+		sender.sendMessage(chatManager.message(path + "Kills", player) + user.getStat(StatsStorage.StatisticType.KILLS));
+		sender.sendMessage(chatManager.message(path + "Deaths", player) + user.getStat(StatsStorage.StatisticType.DEATHS));
+		sender.sendMessage(chatManager.message(path + "Wins", player) + user.getStat(StatsStorage.StatisticType.WINS));
+		sender.sendMessage(chatManager.message(path + "Loses", player) + user.getStat(StatsStorage.StatisticType.LOSES));
+		sender.sendMessage(chatManager.message(path + "Games-Played", player) + user.getStat(StatsStorage.StatisticType.GAMES_PLAYED));
+		sender.sendMessage(chatManager.message(path + "Highest-Score", player) + user.getStat(StatsStorage.StatisticType.HIGHEST_SCORE));
+		sender.sendMessage(chatManager.message(path + "Footer", player));
 	}
 
 	@Command(

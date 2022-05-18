@@ -59,9 +59,10 @@ import java.io.File;
  */
 public class Main extends JavaPlugin {
 
-	private ExceptionLogHandler exceptionLogHandler;
 	private boolean forceDisable = false;
-	private BungeeManager bungeeManager;	
+
+	private ExceptionLogHandler exceptionLogHandler;
+	private BungeeManager bungeeManager;
 	private RewardsFactory rewardsFactory;
 	private MysqlDatabase database;
 	private SignManager signManager;
@@ -73,8 +74,7 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-		if (!validateIfPluginShouldStart()) {
-			forceDisable = true;
+		if (forceDisable = !validateIfPluginShouldStart()) {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -82,7 +82,7 @@ public class Main extends JavaPlugin {
 		exceptionLogHandler = new ExceptionLogHandler(this);
 		exceptionLogHandler.setMainPackage("me.despical.oitc");
 		exceptionLogHandler.addBlacklistedClass("me.despical.oitc.user.data.MysqlManager", "me.despical.commons.database.MysqlDatabase");
-		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official Discord server (Invite link: https://discordapp.com/invite/Vhyy4HA) with the following error given above!");
+		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official GitHub repo (Repo link: https://github.com/Despical/OITC) with the following error given above!");
 
 		getServer().getLogger().addHandler(exceptionLogHandler);
 
@@ -103,8 +103,7 @@ public class Main extends JavaPlugin {
 		LogUtils.log("Initialization finished took {0} ms", System.currentTimeMillis() - start);
 
 		if (configPreferences.getOption(ConfigPreferences.Option.NAMETAGS_HIDDEN)) {
-			getServer().getScheduler().scheduleSyncRepeatingTask(this, () ->
-				getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
+			getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
 		}
 	}
 	
@@ -133,11 +132,9 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		if (forceDisable) {
-			return;
-		}
+		if (forceDisable) return;
 
-		LogUtils.log("System disable initialized");
+		LogUtils.log("System disable initialized.");
 		long start = System.currentTimeMillis();
 
 		getServer().getLogger().removeHandler(exceptionLogHandler);
@@ -151,12 +148,12 @@ public class Main extends JavaPlugin {
 			arena.getScoreboardManager().stopAllScoreboards();
 
 			for (Player player : arena.getPlayers()) {
-				arena.doBarAction(Arena.BarAction.REMOVE, player);
 				arena.teleportToEndLocation(player);
-				player.setFlySpeed(0.1f);
-				player.setWalkSpeed(0.2f);
-
+				arena.doBarAction(Arena.BarAction.REMOVE, player);
 				arena.getScoreboardManager().removeScoreboard(player);
+
+				player.setFlySpeed(.1F);
+				player.setWalkSpeed(.2F);
 
 				if (configPreferences.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 					InventorySerializer.loadInventory(this, player);
@@ -191,7 +188,6 @@ public class Main extends JavaPlugin {
 		signManager = new SignManager(this);
 		ArenaRegistry.registerArenas();
 		signManager.loadSigns();
-		signManager.updateSigns();
 		rewardsFactory = new RewardsFactory(this);
 		commandFramework = new CommandFramework(this);
 		permissionsManager = new PermissionsManager(this);
@@ -249,23 +245,11 @@ public class Main extends JavaPlugin {
 		}
 
 		UpdateChecker.init(this, 81185).requestUpdateCheck().whenComplete((result, exception) -> {
-			if (!result.requiresUpdate()) {
-				return;
+			if (result.requiresUpdate()) {
+				LogUtils.sendConsoleMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
+				LogUtils.sendConsoleMessage("[OITC] Download it SpigotMC:");
+				LogUtils.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber.81185/");
 			}
-
-			if (result.getNewestVersion().contains("b")) {
-				if (getConfig().getBoolean("Update-Notifier.Notify-Beta-Versions", true)) {
-					LogUtils.sendConsoleMessage("[OITC] Found a new beta version available: v" + result.getNewestVersion());
-					LogUtils.sendConsoleMessage("[OITC] Download it on SpigotMC:");
-					LogUtils.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/");
-				}
-
-				return;
-			}
-
-			LogUtils.sendConsoleMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
-			LogUtils.sendConsoleMessage("[OITC] Download it SpigotMC:");
-			LogUtils.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber-1-12-1-16-5.81185/");
 		});
 	}
 
@@ -331,9 +315,7 @@ public class Main extends JavaPlugin {
 				continue;
 			}
 
-			for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
-				userManager.getDatabase().saveStatistic(user, stat);
-			}
+			userManager.getDatabase().saveAllStatistic(user);
 		}
 	}
 }

@@ -55,8 +55,8 @@ public class MysqlManager implements UserDatabase {
 					+ "  `gamesplayed` int(11) NOT NULL DEFAULT '0',\n"
 					+ "  `wins` int(11) NOT NULL DEFAULT '0',\n"
 					+ "  `loses` int(11) NOT NULL DEFAULT '0'\n" + ");");
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (SQLException exception) {
+				exception.printStackTrace();
 				LogUtils.sendConsoleMessage("&cCouldn't save user statistics to MySQL database!");
 				LogUtils.sendConsoleMessage("&cCheck your configuration or disable MySQL option in config.yml");
 			}
@@ -66,7 +66,8 @@ public class MysqlManager implements UserDatabase {
 	@Override
 	public void saveStatistic(User user, StatsStorage.StatisticType stat) {
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-			String query = "UPDATE " + tableName + " SET " + stat.getName() + "=" + user.getStat(stat) + " WHERE UUID='" + user.getUniqueId().toString() + "';";
+			final String query = "UPDATE " + tableName + " SET " + stat.getName() + "=" + user.getStat(stat) + " WHERE UUID='" + user.getUniqueId().toString() + "';";
+
 			database.executeUpdate(query);
 			LogUtils.log("Executed MySQL: " + query);
 		});
@@ -74,38 +75,40 @@ public class MysqlManager implements UserDatabase {
 
 	@Override
 	public void saveAllStatistic(User user) {
-		StringBuilder update = new StringBuilder(" SET ");
+		final StringBuilder builder = new StringBuilder(" SET ");
 
 		for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 			if (!stat.isPersistent()) continue;
-			String name = stat.getName();
-			int val = user.getStat(stat);
 
-			if (update.toString().equalsIgnoreCase(" SET ")) {
-				update.append(name).append("=").append(val);
+			final String name = stat.getName();
+			final int val = user.getStat(stat);
+
+			if (builder.toString().equalsIgnoreCase(" SET ")) {
+				builder.append(name).append("=").append(val);
 			}
 
-			update.append(", ").append(name).append("=").append(val);
+			builder.append(", ").append(name).append("=").append(val);
 		}
 
-		String finalUpdate = update.toString();
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> database.executeUpdate("UPDATE " + tableName + finalUpdate + " WHERE UUID='" + user.getUniqueId().toString() + "';"));
+		final String update = builder.toString();
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> database.executeUpdate("UPDATE " + tableName + update + " WHERE UUID='" + user.getUniqueId().toString() + "';"));
 	}
 
 	@Override
 	public void loadStatistics(User user) {
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-			String uuid = user.getUniqueId().toString(), playerName = user.getPlayer().getName();
+			final String uuid = user.getUniqueId().toString(), playerName = user.getPlayer().getName();
 
 			try (Connection connection = database.getConnection()) {
-				Statement statement = connection.createStatement();
-				ResultSet result = statement.executeQuery("SELECT * from " + tableName + " WHERE UUID='" + uuid + "';");
+				final Statement statement = connection.createStatement();
+				final ResultSet result = statement.executeQuery("SELECT * from " + tableName + " WHERE UUID='" + uuid + "';");
 
 				if (result.next()) {
 					LogUtils.log("MySQL Stats | Player {0} already exist. Getting Stats...", playerName);
 
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 						if (!stat.isPersistent()) continue;
+
 						user.setStat(stat, result.getInt(stat.getName()));
 					}
 				} else {
@@ -118,8 +121,8 @@ public class MysqlManager implements UserDatabase {
 						user.setStat(stat, 0);
 					}
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (SQLException exception) {
+				exception.printStackTrace();
 			}
 		});
 	}

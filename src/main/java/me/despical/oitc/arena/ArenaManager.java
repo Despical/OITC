@@ -180,7 +180,7 @@ public class ArenaManager {
 		arena.getPlayers().forEach(p -> ArenaUtils.showPlayer(p, arena));
 		arena.showPlayers();
 
-		chatManager.broadcastAction(arena, player, ActionType.JOIN);
+		chatManager.broadcastAction(arena, user, ActionType.JOIN);
 		plugin.getSignManager().updateSigns();
 
 		ArenaUtils.updateNameTagsVisibility(player);
@@ -210,7 +210,7 @@ public class ArenaManager {
 		arena.removePlayer(player);
 		arena.teleportToEndLocation(player);
 
-		chatManager.broadcastAction(arena, player, ActionType.LEAVE);
+		chatManager.broadcastAction(arena, user, ActionType.LEAVE);
 
 		PlayerUtils.setGlowing(player, false);
 		PlayerUtils.setCollidable(player, false);

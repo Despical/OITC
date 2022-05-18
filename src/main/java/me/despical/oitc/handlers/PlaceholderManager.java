@@ -23,6 +23,7 @@ import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
+import me.despical.oitc.user.User;
 import org.bukkit.entity.Player;
 
 /**
@@ -36,11 +37,9 @@ public class PlaceholderManager extends PlaceholderExpansion {
 
 	public PlaceholderManager(Main plugin) {
 		this.plugin = plugin;
-
-		register();
+		this.register();
 	}
 
-	@Override
 	public boolean persist() {
 		return true;
 	}
@@ -62,27 +61,29 @@ public class PlaceholderManager extends PlaceholderExpansion {
 			return null;
 		}
 
+		final User user = plugin.getUserManager().getUser(player);
+
 		switch (id.toLowerCase()) {
 			case "kills":
-				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.KILLS));
+				return Integer.toString(user.getStat(StatsStorage.StatisticType.KILLS));
 			case "deaths":
-				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.DEATHS));
+				return Integer.toString(user.getStat(StatsStorage.StatisticType.DEATHS));
 			case "games_played":
-				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.GAMES_PLAYED));
+				return Integer.toString(user.getStat(StatsStorage.StatisticType.GAMES_PLAYED));
 			case "highest_score":
-				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.HIGHEST_SCORE));
+				return Integer.toString(user.getStat(StatsStorage.StatisticType.HIGHEST_SCORE));
 			case "wins":
-				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.WINS));
+				return Integer.toString(user.getStat(StatsStorage.StatisticType.WINS));
 			case "loses":
-				return Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOSES));
+				return Integer.toString(user.getStat(StatsStorage.StatisticType.LOSES));
 			default:
 				return handleArenaPlaceholderRequest(id);
 		}
 	}
 
 	private String handleArenaPlaceholderRequest(String id) {
-		String[] data = id.split(":");
-		Arena arena = ArenaRegistry.getArena(data[0]);
+		final String[] data = id.split(":");
+		final Arena arena = ArenaRegistry.getArena(data[0]);
 
 		if (arena == null) {
 			return null;

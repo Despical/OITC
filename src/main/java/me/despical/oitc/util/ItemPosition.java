@@ -70,11 +70,6 @@ public enum ItemPosition {
 		}
 	}
 
-	/**
-	 * Gives game kit to specified player.
-	 *
-	 * @param player to give kit
-	 */
 	public static void giveKit(Player player) {
 		player.getInventory().clear();
 		setItem(player, SWORD, BOW, ARROW);
