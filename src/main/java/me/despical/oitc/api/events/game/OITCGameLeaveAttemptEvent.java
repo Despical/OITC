@@ -34,7 +34,7 @@ public class OITCGameLeaveAttemptEvent extends OITCEvent {
 	private final Player player;
 
 	public OITCGameLeaveAttemptEvent(Player player, Arena targetArena) {
-		super(targetArena);
+		super (targetArena);
 		this.player = player;
 	}
 

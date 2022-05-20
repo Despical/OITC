@@ -20,7 +20,6 @@ package me.despical.oitc.api;
 
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.sorter.SortUtils;
-import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.user.data.MysqlManager;
@@ -34,6 +33,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * @author Despical
@@ -57,18 +57,12 @@ public class StatsStorage {
 				return column;
 			} catch (SQLException exception) {
 				plugin.getLogger().log(Level.WARNING, "SQL Exception occurred! " + exception.getSQLState() + " (" + exception.getErrorCode() + ")");
-				LogUtils.sendConsoleMessage("Cannot get contents from MySQL database!");
-				LogUtils.sendConsoleMessage("Check configuration of mysql.yml file or disable it in config.yml");
 				return null;
 			}
 		}
 
 		FileConfiguration config = ConfigUtils.getConfig(plugin, "stats");
-		Map<UUID, Integer> stats = new HashMap<>();
-
-		for (String string : config.getKeys(false)) {
-			stats.put(UUID.fromString(string), config.getInt(string + "." + stat.getName()));
-		}
+		Map<UUID, Integer> stats = config.getKeys(false).stream().collect(Collectors.toMap(UUID::fromString, string -> config.getInt(string + "." + stat.getName()), (a, b) -> b));
 
 		return SortUtils.sortByValue(stats);
 	}
@@ -82,11 +76,11 @@ public class StatsStorage {
 		LOSES("loses"), WINS("wins"), LOCAL_KILLS("local_kills", false), LOCAL_DEATHS("local_deaths", false),
 		LOCAL_KILL_STREAK("local_kill_streak", false);
 
-		private final String name;
-		private final boolean persistent;
+		String name;
+		boolean persistent;
 
 		StatisticType(String name) {
-			this(name, true);
+			this (name, true);
 		}
 
 		StatisticType(String name, boolean persistent) {

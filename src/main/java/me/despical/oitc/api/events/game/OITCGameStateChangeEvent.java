@@ -34,7 +34,7 @@ public class OITCGameStateChangeEvent extends OITCEvent {
 	private final ArenaState arenaState;
 
 	public OITCGameStateChangeEvent(Arena eventArena, ArenaState arenaState) {
-		super(eventArena);
+		super (eventArena);
 		this.arenaState = arenaState;
 	}
 
@@ -47,7 +47,7 @@ public class OITCGameStateChangeEvent extends OITCEvent {
 		return HANDLERS;
 	}
 
-	public ArenaState getPreviousState() {
+	public ArenaState getState() {
 		return arenaState;
 	}
 }

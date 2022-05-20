@@ -171,8 +171,6 @@ public class ArenaManager {
 			return;
 		}
 
-		player.setFlying(false);
-		player.setAllowFlight(false);
 		SpecialItemManager.giveItem(player, "Leave");
 
 		arena.teleportToLobby(player);
@@ -262,7 +260,7 @@ public class ArenaManager {
 		LogUtils.log("[{0}] Stop game event initialized | quickStop = {1}", arena.getId(), quickStop);
 		long start = System.currentTimeMillis();
 
-		OITCGameStopEvent gameStopEvent = new OITCGameStopEvent(arena, quickStop ? OITCGameStopEvent.StopReason.BY_COMMAND : OITCGameStopEvent.StopReason.BY_DEFAULT);
+		OITCGameStopEvent gameStopEvent = new OITCGameStopEvent(arena, quickStop ? OITCGameStopEvent.StopReason.COMMAND : OITCGameStopEvent.StopReason.DEFAULT);
 		plugin.getServer().getPluginManager().callEvent(gameStopEvent);
 
 		arena.setArenaState(ArenaState.ENDING);

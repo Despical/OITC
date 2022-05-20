@@ -21,15 +21,20 @@ package me.despical.oitc.api.events;
 import me.despical.oitc.arena.Arena;
 import org.bukkit.event.Event;
 
+/**
+ * @author Despical
+ * @since 1.0.0
+ * <p>
+ */
 public abstract class OITCEvent extends Event {
 
-	protected Arena arena;
+	protected final Arena arena;
 
 	public OITCEvent(Arena eventArena) {
-		arena = eventArena;
+		this.arena = eventArena;
 	}
 
 	public Arena getArena() {
-		return arena;
+		return this.arena;
 	}
 }

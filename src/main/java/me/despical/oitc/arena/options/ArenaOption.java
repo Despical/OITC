@@ -25,13 +25,9 @@ package me.despical.oitc.arena.options;
  */
 public enum ArenaOption {
 
-	TIMER(0),
+	TIMER(0), MINIMUM_PLAYERS(2), MAXIMUM_PLAYERS(10);
 
-	MINIMUM_PLAYERS(2),
-
-	MAXIMUM_PLAYERS(10);
-
-	private final int defaultValue;
+	int defaultValue;
 
 	ArenaOption(int defaultValue) {
 		this.defaultValue = defaultValue;

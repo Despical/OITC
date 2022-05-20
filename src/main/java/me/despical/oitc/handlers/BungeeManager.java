@@ -21,6 +21,7 @@ package me.despical.oitc.handlers;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import me.despical.commons.configuration.ConfigUtils;
+import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
@@ -76,6 +77,14 @@ public class BungeeManager implements Listener {
 		out.writeUTF(getHubServerName());
 
 		player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
+	}
+
+	public void shutdownIfEnabled() {
+		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) return;
+
+		if (config.getBoolean("Shutdown-When-Game-Ends")) {
+			plugin.getServer().shutdown();
+		}
 	}
 
 	private String getHubServerName() {

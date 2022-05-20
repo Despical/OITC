@@ -36,7 +36,7 @@ public class OITCGameJoinAttemptEvent extends OITCEvent implements Cancellable {
 	private boolean isCancelled;
 
 	public OITCGameJoinAttemptEvent(Player player, Arena targetArena) {
-		super(targetArena);
+		super (targetArena);
 		this.player = player;
 		this.isCancelled = false;
 	}

@@ -19,20 +19,14 @@
 package me.despical.oitc.arena;
 
 /**
- * Contains all GameStates.
- * 
  * @author Despical
  * <p>
  * Created at 02.07.2020
  */
 public enum ArenaState {
 
-	WAITING_FOR_PLAYERS("Waiting"),
-	STARTING("Starting"),
-	IN_GAME("Playing"),
-	ENDING("Ending"),
-	RESTARTING("Restarting"),
-	INACTIVE("Inactive");
+	WAITING_FOR_PLAYERS("Waiting"), STARTING("Starting"), IN_GAME("Playing"),
+	ENDING("Ending"), RESTARTING("Restarting"), INACTIVE("Inactive");
 
 	String formattedName;
 

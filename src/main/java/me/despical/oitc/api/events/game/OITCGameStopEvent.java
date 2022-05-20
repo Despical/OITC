@@ -34,7 +34,7 @@ public class OITCGameStopEvent extends OITCEvent {
 	private final StopReason stopReason;
 
 	public OITCGameStopEvent(Arena arena, StopReason stopReason) {
-		super(arena);
+		super (arena);
 		this.stopReason = stopReason;
 	}
 
@@ -52,6 +52,6 @@ public class OITCGameStopEvent extends OITCEvent {
 	}
 
 	public enum StopReason {
-		BY_COMMAND, BY_DEFAULT
+		COMMAND, DEFAULT
 	}
 }

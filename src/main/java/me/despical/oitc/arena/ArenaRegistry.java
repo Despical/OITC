@@ -42,22 +42,23 @@ public class ArenaRegistry {
 
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 	private static final List<Arena> arenas = new ArrayList<>();
+
 	private static int bungeeArena = -1;
 
 	public static boolean isInArena(Player player) {
-		return arenas.stream().anyMatch(arena -> arena.getPlayers().contains(player));
+		return getArena(player) != null;
 	}
 
-	public static Arena getArena(Player p) {
-		return arenas.stream().filter(arena -> arena.getPlayers().stream().anyMatch(player -> player.equals(p))).findFirst().orElse(null);
+	public static boolean isArena(String id) {
+		return getArena(id) != null;
+	}
+
+	public static Arena getArena(Player player) {
+		return arenas.stream().filter(arena -> arena.getPlayers().contains(player)).findFirst().orElse(null);
 	}
 
 	public static Arena getArena(String id) {
 		return arenas.stream().filter(arena -> arena.getId().equalsIgnoreCase(id)).findFirst().orElse(null);
-	}
-
-	public static boolean isArena(String id) {
-		return arenas.stream().anyMatch(arena -> arena.getId().equalsIgnoreCase(id));
 	}
 
 	public static void registerArena(Arena arena) {
@@ -117,7 +118,6 @@ public class ArenaRegistry {
 			arena.setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 			registerArena(arena);
 			arena.start();
-			LogUtils.sendConsoleMessage(chatManager.message("Validator.Instance-Started").replace("%arena%", id));
 		}
 
 		LogUtils.log("Arenas registration completed, took {0} ms", System.currentTimeMillis() - start);

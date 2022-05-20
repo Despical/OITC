@@ -37,7 +37,7 @@ public class OITCPlayerStatisticChangeEvent extends OITCEvent {
 	private final int number;
 
 	public OITCPlayerStatisticChangeEvent(Arena eventArena, Player player, StatsStorage.StatisticType statisticType, int number) {
-		super(eventArena);
+		super (eventArena);
 		this.player = player;
 		this.statisticType = statisticType;
 		this.number = number;

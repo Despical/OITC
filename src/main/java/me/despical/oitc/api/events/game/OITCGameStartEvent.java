@@ -32,7 +32,7 @@ public class OITCGameStartEvent extends OITCEvent {
 	private static final HandlerList HANDLERS = new HandlerList();
 
 	public OITCGameStartEvent(Arena arena) {
-		super(arena);
+		super (arena);
 	}
 
 	public static HandlerList getHandlerList() {

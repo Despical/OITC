@@ -1,7 +1,6 @@
 # One in the Chamber
 [![](https://jitpack.io/v/Despical/OITC.svg)](https://jitpack.io/#Despical/OITC)
 [![](https://img.shields.io/badge/JavaDocs-latest-lime.svg)](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html)
-[![discord](https://img.shields.io/discord/719922452259668000.svg?color=lime&label=Discord)](https://discord.gg/Vhyy4HA)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Despical/OITC/OITC%20Build)
 
 One in the Chamber is an old Minecraft mini game. Each player is equipped with a sword, bow and arrow.
@@ -9,8 +8,8 @@ The arrows do one hit one kill damage and if player missed the shot they can't r
 or killing other players. When a player reaches 25 points the game ends and winner is the player who reached first.
 
 ## Documentation
-More information can be found on the [wiki page](https://github.com/Despical/OITC/wiki). The [Javadoc](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html) can be browsed. Questions
-related to the usage of One in the Chamber should be posted on my [Discord server](https://discord.com/invite/Vhyy4HA).
+More information can be found on the [wiki page](https://github.com/Despical/OITC/wiki).
+The [Javadoc](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html) can be browsed.
 
 ## Using One in the Chamber API
 The project isn't in the Central Repository yet, so specifying a repository is needed.<br>
