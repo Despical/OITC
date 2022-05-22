@@ -40,7 +40,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -82,7 +81,7 @@ public class SpectatorItemEvents implements Listener {
 	}
 
 	private void openSpectatorMenu(World world, Player p) {
-		List<Player> players = ArenaRegistry.getArena(p).getPlayers();
+		Set<Player> players = ArenaRegistry.getArena(p).getPlayers();
 		Inventory inventory = plugin.getServer().createInventory(null, NumberUtils.roundInteger(players.size(), 9), plugin.getChatManager().message("In-Game.Spectator.Spectator-Menu-Name"));
 
 		for (Player player : world.getPlayers()) {
