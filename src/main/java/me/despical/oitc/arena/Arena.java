@@ -162,8 +162,8 @@ public class Arena extends BukkitRunnable {
 		player.setFlying(false);
 		player.setAllowFlight(false);
 		player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-		player.setFlySpeed(0.1f);
-		player.setWalkSpeed(0.2f);
+		player.setFlySpeed(.1F);
+		player.setWalkSpeed(.2F);
 
 		Location location = getLobbyLocation();
 
@@ -297,7 +297,7 @@ public class Arena extends BukkitRunnable {
 			return;
 		}
 
-		LogUtils.log("[{0}] Running game task", id);
+		LogUtils.log("[{0}] Running game task.", id);
 		long start = System.currentTimeMillis();
 		int timer = getTimer();
 
@@ -396,6 +396,8 @@ public class Arena extends BukkitRunnable {
 						ItemPosition.giveKit(player);
 
 						setTimer(plugin.getConfigPreferences().getIntOption(ConfigPreferences.IntOption.CLASSIC_GAMEPLAY_TIME));
+
+						player.setInvulnerable(false);
 					}
 				}
 

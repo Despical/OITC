@@ -206,6 +206,3 @@ Validator:
   Invalid-Arena-Configuration: "[OITC] Arena %arena% has invalid configuration! Missing node: %error%"
   Instance-Started: "[OITC] Arena %arena% instance successfully started!"
   No-Instances-Created: "[OITC] There are no arena instances created in configuration!"
-
-# Don't edit it. But who's stopping you? It's your server!
-File-Version: 0

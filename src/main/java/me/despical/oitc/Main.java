@@ -84,11 +84,10 @@ public class Main extends JavaPlugin {
 		exceptionLogHandler.addBlacklistedClass("me.despical.oitc.user.data.MysqlManager", "me.despical.commons.database.MysqlDatabase");
 		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official GitHub repo (Repo link: https://github.com/Despical/OITC) with the following error given above!");
 
-		getServer().getLogger().addHandler(exceptionLogHandler);
-
 		saveDefaultConfig();
 
 		if (getConfig().getBoolean("Debug-Messages")) {
+			LogUtils.setLoggerName("OITC");
 			LogUtils.enableLogging();
 			LogUtils.log("Initialization started.");
 		}
@@ -100,7 +99,7 @@ public class Main extends JavaPlugin {
 		initializeClasses();
 		checkUpdate();
 
-		LogUtils.log("Initialization finished took {0} ms", System.currentTimeMillis() - start);
+		LogUtils.log("Initialization finished took {0} ms.", System.currentTimeMillis() - start);
 
 		if (configPreferences.getOption(ConfigPreferences.Option.NAMETAGS_HIDDEN)) {
 			getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
@@ -167,7 +166,7 @@ public class Main extends JavaPlugin {
 			arena.teleportAllToEndLocation();
 		}
 
-		LogUtils.log("System disable finished took {0} ms", System.currentTimeMillis() - start);
+		LogUtils.log("System disable finished took {0} ms.", System.currentTimeMillis() - start);
 	}
 	
 	private void initializeClasses() {
@@ -203,6 +202,7 @@ public class Main extends JavaPlugin {
 		new Events(this);
 		new LobbyEvent(this);
 		new SpectatorItemEvents(this);
+		new LegacyEvents(this);
 
 		registerSoftDependenciesAndServices();
 	}

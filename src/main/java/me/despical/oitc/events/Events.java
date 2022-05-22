@@ -72,13 +72,6 @@ public class Events implements Listener {
 	}
 
 	@EventHandler
-	public void onItemSwap(PlayerSwapHandItemsEvent event) {
-		if (ArenaRegistry.isInArena(event.getPlayer())) {
-			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler
 	public void onDrop(PlayerDropItemEvent event) {
 		if (ArenaRegistry.isInArena(event.getPlayer())) {
 			event.setCancelled(true);
@@ -323,21 +316,6 @@ public class Events implements Listener {
 		Titles.sendTitle(player, null, plugin.getChatManager().message("In-Game.Messages.Death-Subtitle"), 5, 30, 5);
 
 		ItemPosition.giveKit(player);
-	}
-
-	@EventHandler
-	public void onArmorStandDestroy(EntityDamageByEntityEvent event) {
-		if (event.getEntity().getType() != EntityType.ARMOR_STAND) {
-			return;
-		}
-
-		if (event.getDamager() instanceof Player && ArenaRegistry.isInArena((Player) event.getDamager())) {
-			event.setCancelled(true);
-		} else if (event.getDamager() instanceof Arrow) {
-			Arrow arrow = (Arrow) event.getDamager();
-
-			event.setCancelled(arrow.getShooter() instanceof Player && ArenaRegistry.isInArena((Player) arrow.getShooter()));
-		}
 	}
 
 	@EventHandler
