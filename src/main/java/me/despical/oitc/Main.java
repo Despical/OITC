@@ -34,8 +34,8 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaUtils;
 import me.despical.oitc.commands.TabCompletion;
-import me.despical.oitc.commands.admin.AdminCommands;
-import me.despical.oitc.commands.player.PlayerCommands;
+import me.despical.oitc.commands.AdminCommands;
+import me.despical.oitc.commands.PlayerCommands;
 import me.despical.oitc.events.*;
 import me.despical.oitc.events.spectator.SpectatorEvents;
 import me.despical.oitc.events.spectator.SpectatorItemEvents;
@@ -193,7 +193,7 @@ public class Main extends JavaPlugin {
 
 		new AdminCommands(this);
 		new PlayerCommands(this);
-		new TabCompletion(commandFramework);
+		new TabCompletion(this);
 
 		new SpectatorEvents(this);
 		new QuitEvent(this);

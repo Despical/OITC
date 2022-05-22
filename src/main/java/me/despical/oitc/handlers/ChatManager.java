@@ -30,6 +30,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Despical
@@ -126,7 +127,7 @@ public class ChatManager {
 
 	public void broadcastAction(Arena arena, User user, ActionType action) {
 		if (!user.isSpectator()) {
-			arena.broadcastMessage(prefix + formatMessage(arena, message("In-Game.Messages." + StringUtils.capitalize(action.name())), user.getPlayer()));
+			arena.broadcastMessage(prefix + formatMessage(arena, message("In-Game.Messages." + StringUtils.capitalize(action.name().toLowerCase(Locale.ENGLISH))), user.getPlayer()));
 		}
 	}
 	

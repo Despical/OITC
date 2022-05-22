@@ -5,11 +5,6 @@ version: ${project.version}
 api-version: 1.13
 softdepend: [PlaceholderAPI, Multiverse-Core]
 
-commands:
-  OneInTheChamber:
-    description: One in the chamber commands
-    aliases: [oitc]
-
 permissions:
   oitc.admin.*:
     default: op

@@ -79,14 +79,6 @@ public class BungeeManager implements Listener {
 		player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
 	}
 
-	public void shutdownIfEnabled() {
-		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) return;
-
-		if (config.getBoolean("Shutdown-When-Game-Ends")) {
-			plugin.getServer().shutdown();
-		}
-	}
-
 	private String getHubServerName() {
 		return hubName;
 	}

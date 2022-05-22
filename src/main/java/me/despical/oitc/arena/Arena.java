@@ -484,7 +484,6 @@ public class Arena extends BukkitRunnable {
 					broadcastMessage(plugin.getChatManager().prefixedMessage("Commands.Teleported-To-The-Lobby"));
 
 					plugin.getRewardsFactory().performReward(this, Reward.RewardType.END_GAME);
-					plugin.getBungeeManager().shutdownIfEnabled();
 
 					setArenaState(ArenaState.RESTARTING);
 				}

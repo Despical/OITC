@@ -185,8 +185,8 @@ Signs:
   Lines:
     - "&4&lOITC"
     - "%state%"
-    - "%mapname%"
-    - "&5[%players%/%maxplayers%]"
+    - "%map_name%"
+    - "&5[%players%/%max_players%]"
 
 Arena-Selector:
   Inventory-Title: "Arena selector"
