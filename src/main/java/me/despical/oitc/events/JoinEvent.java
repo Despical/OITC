@@ -51,7 +51,7 @@ public class JoinEvent implements Listener {
 			return;
 		}
 
-		if (e.getPlayer().hasPermission(plugin.getPermissionsManager().joinFullPerm)) {
+		if (e.getPlayer().hasPermission(plugin.getPermissionsManager().getJoinPerm())) {
 			e.setResult(PlayerLoginEvent.Result.ALLOWED);
 		}
 	}

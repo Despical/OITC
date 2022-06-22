@@ -215,7 +215,7 @@ public class ArenaManager {
 		AttributeUtils.healPlayer(player);
 
 		user.setSpectator(false);
-		user.removeScoreboard(arena);
+		arena.getScoreboardManager().removeScoreboard(player);
 		arena.doBarAction(Arena.BarAction.REMOVE, player);
 
 		player.getInventory().clear();
@@ -278,6 +278,8 @@ public class ArenaManager {
 		String topPlayerName = arena.getScoreboardManager().getTopPlayerName(0);
 
 		for (Player player : arena.getPlayers()) {
+			arena.getScoreboardManager().stopAllScoreboards();
+
 			User user = plugin.getUserManager().getUser(player);
 
 			if (topPlayerName.equals(player.getName())) {
@@ -301,8 +303,6 @@ public class ArenaManager {
 			for (String msg : chatManager.getStringList("In-Game.Messages.Game-End-Messages.Summary-Message")) {
 				MiscUtils.sendCenteredMessage(player, formatSummaryPlaceholders(msg, arena, player));
 			}
-
-			user.removeScoreboard(arena);
 
 			if (plugin.getConfig().getBoolean("Firework-When-Game-Ends", true)) {
 				new BukkitRunnable() {

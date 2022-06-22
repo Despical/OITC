@@ -28,7 +28,6 @@ import me.despical.inventoryframework.pane.StaticPane;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.handlers.setup.SetupInventory;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -126,7 +125,7 @@ public class MiscComponents implements SetupComponent {
 					config.set("instances." + arena.getId() + ".mapname", arena.getMapName());
 					ConfigUtils.saveConfig(plugin, config, "arenas");
 
-					new SetupInventory(arena, player).openInventory();
+					new SetupInventory(plugin, arena, player).openInventory();
 					return Prompt.END_OF_CONVERSATION;
 				}
 			}).buildFor(player);

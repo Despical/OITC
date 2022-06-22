@@ -98,10 +98,6 @@ public class Arena extends BukkitRunnable {
 		this.ready = ready;
 	}
 
-	public int getComplementProgress() {
-		return ready ? 100 : 0;
-	}
-
 	public void setForceStart(boolean forceStart) {
 		this.forceStart = forceStart;
 	}

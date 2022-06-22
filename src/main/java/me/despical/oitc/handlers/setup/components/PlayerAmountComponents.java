@@ -71,7 +71,7 @@ public class PlayerAmountComponents implements SetupComponent {
 
 			config.set("instances." + arena.getId() + ".minimumplayers", amount);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
-			new SetupInventory(arena, player).openInventory();
+			new SetupInventory(plugin, arena, player).openInventory();
 		}), 4, 1);
 
 		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.REDSTONE)
@@ -102,7 +102,7 @@ public class PlayerAmountComponents implements SetupComponent {
 
 			config.set("instances." + arena.getId() + ".maximumplayers", amount);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
-			new SetupInventory(arena, player).openInventory();
+			new SetupInventory(plugin, arena, player).openInventory();
 		}), 5, 1);
 	}
 }

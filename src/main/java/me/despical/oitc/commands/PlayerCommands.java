@@ -75,19 +75,6 @@ public class PlayerCommands {
 	}
 
 	@Command(
-		name = "oitc"
-	)
-	public void oitcCommand(CommandArguments arguments) {
-		if (arguments.isArgumentsEmpty()) {
-			arguments.sendMessage(chatManager.coloredRawMessage("&3This server is running &bOne in the Chamber &3v" + plugin.getDescription().getVersion() + " by &bDespical"));
-
-			if (arguments.hasPermission("oitc.admin")) {
-				arguments.sendMessage(chatManager.coloredRawMessage("&3Commands: &b/" + arguments.getLabel() + " help"));
-			}
-		}
-	}
-
-	@Command(
 		name = "oitc.join",
 		desc = "Attemps player to join specified arena",
 		usage = "/oitc join <arena>",

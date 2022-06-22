@@ -20,7 +20,6 @@ package me.despical.oitc;
 
 import me.despical.commandframework.CommandFramework;
 import me.despical.commons.compat.VersionResolver;
-import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.database.MysqlDatabase;
 import me.despical.commons.exception.ExceptionLogHandler;
 import me.despical.commons.scoreboard.ScoreboardLib;
@@ -80,9 +79,9 @@ public class Main extends JavaPlugin {
 		}
 
 		exceptionLogHandler = new ExceptionLogHandler(this);
-		exceptionLogHandler.setMainPackage("me.despical.oitc");
+		exceptionLogHandler.setMainPackage("me.despical");
 		exceptionLogHandler.addBlacklistedClass("me.despical.oitc.user.data.MysqlManager", "me.despical.commons.database.MysqlDatabase");
-		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official GitHub repo (Repo link: https://github.com/Despical/OITC) with the following error given above!");
+		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official Discord server (link: https://discord.gg/rVkaGmyszE) with the following error given above!");
 
 		saveDefaultConfig();
 
@@ -107,15 +106,15 @@ public class Main extends JavaPlugin {
 	}
 	
 	private boolean validateIfPluginShouldStart() {
-		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_9_R1, VersionResolver.ServerVersion.v1_18_R1)) {
+		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_9_R1, VersionResolver.ServerVersion.v1_19_R1)) {
 			LogUtils.sendConsoleMessage("&cYour server version is not supported by One in the Chamber!");
 			LogUtils.sendConsoleMessage("&cSadly, we must shut off. Maybe you consider changing your server version?");
 			return false;
 		}
 
-		if (JavaVersion.getCurrentVersion().isAt(JavaVersion.JAVA_8)) {
-			LogUtils.sendConsoleMessage("&cThis plugin won't support Java 8 in future updates.");
-			LogUtils.sendConsoleMessage("&cSo, maybe consider to update your version, right?");
+		if (!configPreferences.getOption(ConfigPreferences.Option.IGNORE_WARNING_MESSAGES) && JavaVersion.getCurrentVersion().isAt(JavaVersion.JAVA_8)) {
+			LogUtils.sendConsoleMessage("[OITC] &cThis plugin won't support Java 8 in future updates.");
+			LogUtils.sendConsoleMessage("[OITC] &cSo, maybe consider to update your version, right?");
 		}
 
 		try {
@@ -139,7 +138,7 @@ public class Main extends JavaPlugin {
 		getServer().getLogger().removeHandler(exceptionLogHandler);
 		saveAllUserStatistics();
 		
-		if (configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
+		if (database != null) {
 			database.shutdownConnPool();
 		}
 
@@ -178,7 +177,7 @@ public class Main extends JavaPlugin {
 		}
 
 		if (configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
-			database = new MysqlDatabase(ConfigUtils.getConfig(this, "mysql"));
+			database = new MysqlDatabase(this, "mysql");
 		}
 
 		SpecialItem.init(this);
@@ -230,17 +229,11 @@ public class Main extends JavaPlugin {
 
 		metrics.addCustomChart(new Metrics.SimplePie("database_enabled", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED))));
 		metrics.addCustomChart(new Metrics.SimplePie("bungeecord_hooked", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED))));
-		metrics.addCustomChart(new Metrics.SimplePie("update_notifier", () -> {
-			if (getConfig().getBoolean("Update-Notifier.Enabled", true)) {
-				return getConfig().getBoolean("Update-Notifier.Notify-Beta-Versions", true) ? "Enabled with beta notifier" : "Enabled";
-			}
-
-			return getConfig().getBoolean("Update-Notifier.Notify-Beta-Versions", true) ? "Beta notifier only" : "Disabled";
-		}));
+		metrics.addCustomChart(new Metrics.SimplePie("update_notifier", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED))));
 	}
 	
 	private void checkUpdate() {
-		if (!getConfig().getBoolean("Update-Notifier.Enabled", true)) {
+		if (!configPreferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED)) {
 			return;
 		}
 

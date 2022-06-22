@@ -217,7 +217,7 @@ public class AdminCommands {
 			return;
 		}
 
-		new SetupInventory(arena, arguments.getSender()).openInventory();
+		new SetupInventory(plugin, arena, arguments.getSender()).openInventory();
 	}
 
 	@Command(

@@ -82,10 +82,6 @@ public class User {
 		return statistic;
 	}
 	
-	public void removeScoreboard(Arena arena) {
-		arena.getScoreboardManager().removeScoreboard(player);
-	}
-
 	public void setStat(StatsStorage.StatisticType stat, int value) {
 		stats.put(stat, value);
 

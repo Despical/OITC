@@ -10,6 +10,10 @@ or killing other players. When a player reaches 25 points the game ends and winn
 ## Documentation
 More information can be found on the [wiki page](https://github.com/Despical/OITC/wiki).
 The [Javadoc](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html) can be browsed.
+Also you can join our small [Discord community](https://www.discord.gg/rVkaGmyszE) to get support and news early.
+
+## Donations
+You like the OITC? Then [donate](https://www.patreon.com/despical) back me to support the development.
 
 ## Using One in the Chamber API
 The project isn't in the Central Repository yet, so specifying a repository is needed.<br>
@@ -27,7 +31,7 @@ To add this project as a dependency to your project, add the following to your p
 <dependency>
     <groupId>com.github.Despical</groupId>
     <artifactId>OITC</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -40,17 +44,9 @@ repositories {
 ```
 ```
 dependencies {
-    compileOnly group: "com.github.Despical", name: "OITC", version: "2.0.0";
+    compileOnly group: "com.github.Despical", name: "OITC", version: "2.0.1";
 }
 ```
-
-## License
-This code is under [GPL-3.0 License](http://www.gnu.org/licenses/gpl-3.0.html)
-
-See the [LICENSE](https://github.com/Despical/OITC/blob/master/LICENSE) file for required notices and attributions.
-
-## Donations
-You like the OITC? Then [donate](https://www.patreon.com/despical) back me to support the development.
 
 ## Contributing
 
@@ -62,10 +58,19 @@ I accept Pull Requests via GitHub. There are some guidelines which will make app
 
 You can learn more about contributing via GitHub in [contribution guidelines](CONTRIBUTING.md).
 
+## Translations
+We are supporting multiple languages such as English, Turkish and German for now.<br>
+If you want to help us with translating take a look at our [language repository](https://github.com/Despical/LocaleStorage).
+
+## License
+This code is under [GPL-3.0 License](http://www.gnu.org/licenses/gpl-3.0.html)
+
+See the [LICENSE](https://github.com/Despical/OITC/blob/master/LICENSE) file for required notices and attributions.
+
 ## Building from source
 If you want to build this project from source code, run the following from Git Bash:
 ```
 git clone https://www.github.com/Despical/OITC.git && cd OITC
-mvn clean package
+mvn clean package -Dmaven.javadoc.skip=true (this option does not allow to generate docs and make compiling faster)
 ```
 Also don't forget to install Maven before building.

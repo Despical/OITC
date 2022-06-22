@@ -1,6 +1,9 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # +---------------------------------------------------------+ #
-# |     One in the Chamber by Despical (Version 2.0.0)      | #
+# |     One in the Chamber by Despical (Version 2.0.1)      | #
+# |                                                         | #
+# |            https://www.patreon.com/despical             | #
+# | Support us with becoming Patron and use Patron benefits | #
 # +---------------------------------------------------------+ #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -85,11 +88,13 @@ Nametags-Hidden: true
 #   - red (inactive) stained glass
 Signs-Block-States-Enabled: true
 
-Update-Notifier:
-  # Should we check for updates on plugin start/after admin join?
-  Enabled: true
-  # Should we inform you when beta version is out?
-  # Also note that BETA IS NOT ALWAYS AS STABLE AS NORMAL RELEASE!
-  Notify-Beta-Versions: true
+# Should we send random pro tips when the setup menu opens.
+Send-Setup-Tips: true
+
+# Should we check for updates on plugin start/after admin join?
+Update-Notifier-Enabled: true
+
+# Should we send warning messages if server is running a old Java version such as JAVA 8?
+Ignore-Warning-Messages: false
 
 # No way! You've reached the end! But... where's the dragon!?

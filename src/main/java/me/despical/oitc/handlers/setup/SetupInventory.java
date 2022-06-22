@@ -23,6 +23,7 @@ import me.despical.commons.configuration.ConfigUtils;
 import me.despical.inventoryframework.Gui;
 import me.despical.inventoryframework.GuiItem;
 import me.despical.inventoryframework.pane.StaticPane;
+import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.handlers.ChatManager;
@@ -43,14 +44,17 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class SetupInventory {
 
-	private final Main plugin = JavaPlugin.getPlugin(Main.class);
-	private final FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
+	private Gui gui;
+
+	private final Main plugin;
+	private final FileConfiguration config;
 	private final Arena arena;
 	private final Player player;
-	private Gui gui;
 	private final SetupUtilities setupUtilities;
 
-	public SetupInventory(Arena arena, Player player) {
+	public SetupInventory(Main plugin, Arena arena, Player player) {
+		this.plugin = plugin;
+		this.config = ConfigUtils.getConfig(plugin, "arenas");
 		this.arena = arena;
 		this.player = player;
 		this.setupUtilities = new SetupUtilities(config, arena);
@@ -59,11 +63,11 @@ public class SetupInventory {
 	}
 
 	private void prepareGui() {
-		gui = new Gui(plugin, 5, "OITC Arena Editor");
+		gui = new Gui(plugin, 5, "Arena Setup Menu");
 		gui.setOnGlobalClick(e -> e.setCancelled(true));
 
 		StaticPane pane = new StaticPane(9, 5);
-		pane.fillProgressBorder(GuiItem.of(XMaterial.GREEN_STAINED_GLASS_PANE.parseItem()), GuiItem.of(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()), arena.getComplementProgress());
+		pane.fillProgressBorder(GuiItem.of(XMaterial.GREEN_STAINED_GLASS_PANE.parseItem()), GuiItem.of(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()), arena.isReady() ? 100 : 0);
 
 		gui.addPane(pane);
 
@@ -86,20 +90,36 @@ public class SetupInventory {
 	}
 
 	private void sendProTip(Player player) {
-		ChatManager chatManager = plugin.getChatManager();
+		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.SEND_SETUP_TIPS)) return;
 
-		switch (ThreadLocalRandom.current().nextInt(9 + 1)) {
+		ChatManager chatManager = plugin.getChatManager();
+		String tip = "";
+
+		switch (ThreadLocalRandom.current().nextInt(12)) {
 			case 0:
-				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7We are open source! You can always help us by contributing! Check https://github.com/Despical/OITC"));
+				tip = "Need help? You can join our small Discord community. Check out https://discord.gg/rVkaGmyszE";
 				break;
 			case 1:
-				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7Need help? Check our wiki: https://github.com/Despical/OITC/wiki"));
+				tip = "Need help? Check our wiki: https://github.com/Despical/OITC/wiki";
 				break;
 			case 2:
-				player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7Help us translating plugin to your language here: https://github.com/Despical/LocaleStorage"));
+				tip = "We are open source! You can always help us by contributing! Check https://github.com/Despical/OITC";
+				break;
+			case 3:
+				tip = "Help us translating our plugin to your language here: https://github.com/Despical/LocaleStorage/";
+				break;
+			case 4:
+				tip = "You have suggestions to improve the plugin? Use our issue tracker or join our Discord server.";
+				break;
+			case 5:
+				tip = "You can support us with becoming Patron on https://www.patreon.com/despical to make updates better and sooner.";
 				break;
 			default:
 				break;
+		}
+
+		if (!tip.isEmpty()) {
+			player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7" + tip));
 		}
 	}
 
