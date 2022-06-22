@@ -75,9 +75,9 @@ public class ConfigPreferences {
 		BLOCK_COMMANDS("Block-Commands-In-Game"), BOSS_BAR_ENABLED("Boss-Bar-Enabled"),
 		BUNGEE_ENABLED("BungeeActivated", false), CHAT_FORMAT_ENABLED("ChatFormat-Enabled"),
 		DATABASE_ENABLED("DatabaseActivated", false), DISABLE_FALL_DAMAGE("Disable-Fall-Damage", false),
-		DISABLE_LEAVE_COMMAND("Disable-Leave-Command"), DISABLE_SEPARATE_CHAT("Disable-Separate-Chat", false),
+		DISABLE_LEAVE_COMMAND("Disable-Leave-Command", false), DISABLE_SEPARATE_CHAT("Disable-Separate-Chat", false),
 		ENABLE_SHORT_COMMANDS("Enable-Short-Commands", false), IGNORE_WARNING_MESSAGES("Ignore-Warning-Messages", false),
-		INVENTORY_MANAGER_ENABLED("InventoryManager"), NAMETAGS_HIDDEN("Nametags-Hidden"),
+		INVENTORY_MANAGER_ENABLED("InventoryManager"), NAMETAGS_HIDDEN("Nametags-Hidden"), DEBUG_MESSAGES("Debug-Messages", false),
 		REWARDS_ENABLED("Rewards-Enabled", false), SEND_SETUP_TIPS("Send-Setup-Tips"),
 		SIGNS_BLOCK_STATES_ENABLED("Signs-Block-States-Enabled"), UPDATE_NOTIFIER_ENABLED("Update-Notifier-Enabled");
 

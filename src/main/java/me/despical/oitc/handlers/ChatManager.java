@@ -39,15 +39,15 @@ import java.util.Locale;
  */
 public class ChatManager {
 
-	private String prefix;
-	
-	private final Main plugin;
 	private FileConfiguration config;
-	
+
+	private final Main plugin;
+	private final String prefix;
+
 	public ChatManager(Main plugin) {
 		this.plugin = plugin;
 		this.config = ConfigUtils.getConfig(plugin, "messages");
-		this.prefix = message("In-Game.Plugin-Prefix");
+		this.prefix = message("in_game.plugin_prefix");
 	}
 	
 	public String coloredRawMessage(String message) {
@@ -58,8 +58,9 @@ public class ChatManager {
 		return prefix + coloredRawMessage(message);
 	}
 
-	public String message(String message) {
-		return coloredRawMessage(config.getString(message));
+	public String message(String path) {
+		path = me.despical.commons.string.StringUtils.capitalize(path.replace('_', '-'), '-', '.');
+		return coloredRawMessage(config.getString(path));
 	}
 
 	public String prefixedMessage(String path) {
@@ -67,7 +68,7 @@ public class ChatManager {
 	}
 	
 	public String message(String message, Player player) {
-		String returnString = config.getString(message);
+		String returnString = message(message);
 
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 			returnString = PlaceholderAPI.setPlaceholders(player, returnString);
@@ -122,20 +123,18 @@ public class ChatManager {
 	}
 
 	public List<String> getStringList(String path) {
+		path = me.despical.commons.string.StringUtils.capitalize(path.replace('_', '-'), '-', '.');
 		return config.getStringList(path);
 	}
 
 	public void broadcastAction(Arena arena, User user, ActionType action) {
 		if (!user.isSpectator()) {
-			arena.broadcastMessage(prefix + formatMessage(arena, message("In-Game.Messages." + StringUtils.capitalize(action.name().toLowerCase(Locale.ENGLISH))), user.getPlayer()));
+			arena.broadcastMessage(prefix + formatMessage(arena, message("in_game.messages." + StringUtils.capitalize(action.name().toLowerCase(Locale.ENGLISH))), user.getPlayer()));
 		}
 	}
 	
 	public void reloadConfig() {
-		plugin.reloadConfig();
-
 		config = ConfigUtils.getConfig(plugin, "messages");
-		prefix = message("In-Game.Plugin-Prefix");
 	}
 
 	public enum ActionType {

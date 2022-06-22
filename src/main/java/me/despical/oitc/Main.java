@@ -73,6 +73,8 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
+		this.configPreferences = new ConfigPreferences(this);
+
 		if (forceDisable = !validateIfPluginShouldStart()) {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
@@ -85,14 +87,13 @@ public class Main extends JavaPlugin {
 
 		saveDefaultConfig();
 
-		if (getConfig().getBoolean("Debug-Messages")) {
+		if (configPreferences.getOption(ConfigPreferences.Option.DEBUG_MESSAGES)) {
 			LogUtils.setLoggerName("OITC");
 			LogUtils.enableLogging();
 			LogUtils.log("Initialization started.");
 		}
 
 		long start = System.currentTimeMillis();
-		configPreferences = new ConfigPreferences(this);
 
 		setupFiles();
 		initializeClasses();

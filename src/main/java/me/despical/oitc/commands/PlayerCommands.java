@@ -121,8 +121,6 @@ public class PlayerCommands {
 
 	@Command(
 		name = "oitc.leave",
-		desc = "Attemps player to leave arena that player in",
-		usage = "/oitc leave",
 		senderType = Command.SenderType.PLAYER
 	)
 	public void leaveCommand(CommandArguments arguments) {
@@ -131,15 +129,15 @@ public class PlayerCommands {
 			Arena arena = ArenaRegistry.getArena(player);
 
 			if (arena == null) {
-				player.sendMessage(chatManager.prefixedMessage("Commands.Not-Playing", player));
+				player.sendMessage(chatManager.prefixedMessage("commands.not_playing", player));
 				return;
 			}
 
-			player.sendMessage(chatManager.prefixedMessage("Commands.Teleported-To-The-Lobby", player));
+			player.sendMessage(chatManager.prefixedMessage("commands.teleported_to_the_lobby", player));
 
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				plugin.getBungeeManager().connectToHub(player);
-				LogUtils.log("{0} was teleported to the Hub server", player.getName());
+				LogUtils.log("{0} was teleported to the hub server", player.getName());
 				return;
 			}
 
@@ -150,8 +148,6 @@ public class PlayerCommands {
 
 	@Command(
 		name = "oitc.stats",
-		desc = "Shows player's or specified player's statistics",
-		usage = "/oitc stats [<player>]",
 		senderType = Command.SenderType.PLAYER
 	)
 	public void statsCommand(CommandArguments arguments) {
@@ -181,10 +177,7 @@ public class PlayerCommands {
 	}
 
 	@Command(
-		name = "oitc.top",
-		desc = "Shows top 10 players in specified statistic.",
-		usage = "/oitc top <statistic>",
-		senderType = Command.SenderType.PLAYER
+		name = "oitc.top"
 	)
 	public void leaderBoardCommand(CommandArguments arguments) {
 		if (arguments.isArgumentsEmpty()) {
@@ -208,18 +201,20 @@ public class PlayerCommands {
 
 	private void printLeaderboard(CommandSender sender, StatsStorage.StatisticType statisticType) {
 		Map<UUID, Integer> stats = StatsStorage.getStats(statisticType);
-		sender.sendMessage(chatManager.message("Commands.Statistics.Header"));
-		String statistic = StringUtils.capitalize(statisticType.name().toLowerCase(java.util.Locale.ENGLISH).replace("_", " "));
+		sender.sendMessage(plugin.getChatManager().message("commands.statistics.header"));
 
-		Object[] array = stats.keySet().toArray();
-		UUID current = (UUID) array[array.length - 1];
+		String statistic = StringUtils.capitalize(statisticType.name().toLowerCase(java.util.Locale.ENGLISH).replace("_", " "));
 
 		for (int i = 0; i < 10; i++) {
 			try {
-				sender.sendMessage(formatMessage(statistic, plugin.getServer().getOfflinePlayer(current).getName(), i + 1, stats.remove(current)));
+				UUID current = (UUID) stats.keySet().toArray()[stats.keySet().toArray().length - 1];
+				sender.sendMessage(formatMessage(statistic, plugin.getServer().getOfflinePlayer(current).getName(), i + 1, stats.get(current)));
+				stats.remove(current);
 			} catch (IndexOutOfBoundsException ex) {
 				sender.sendMessage(formatMessage(statistic, "Empty", i + 1, 0));
 			} catch (NullPointerException ex) {
+				UUID current = (UUID) stats.keySet().toArray()[stats.keySet().toArray().length - 1];
+
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
 					try (Connection connection = plugin.getMysqlDatabase().getConnection()) {
 						Statement statement = connection.createStatement();
@@ -229,9 +224,7 @@ public class PlayerCommands {
 							sender.sendMessage(formatMessage(statistic, set.getString(1), i + 1, stats.get(current)));
 							continue;
 						}
-					} catch (SQLException ignored) {
-						// Ignore exception
-					}
+					} catch (SQLException ignored) {}
 				}
 
 				sender.sendMessage(formatMessage(statistic, "Unknown Player", i + 1, stats.get(current)));
@@ -240,7 +233,7 @@ public class PlayerCommands {
 	}
 
 	private String formatMessage(String statisticName, String playerName, int position, int value) {
-		String message = chatManager.message("Commands.Statistics.Format");
+		String message = chatManager.message("commands.statistics.format");
 
 		message = StringUtils.replace(message, "%position%", Integer.toString(position));
 		message = StringUtils.replace(message, "%name%", playerName);
