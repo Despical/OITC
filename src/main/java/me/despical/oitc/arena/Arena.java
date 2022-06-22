@@ -392,8 +392,6 @@ public class Arena extends BukkitRunnable {
 						ItemPosition.giveKit(player);
 
 						setTimer(plugin.getConfigPreferences().getIntOption(ConfigPreferences.IntOption.CLASSIC_GAMEPLAY_TIME));
-
-						player.setInvulnerable(false);
 					}
 				}
 
