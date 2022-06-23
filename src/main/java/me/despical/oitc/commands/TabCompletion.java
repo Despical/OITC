@@ -18,17 +18,16 @@
 
 package me.despical.oitc.commands;
 
-import me.despical.commandframework.CommandArguments;
-import me.despical.commandframework.CommandFramework;
-import me.despical.commandframework.Completer;
 import me.despical.commons.util.Collections;
 import me.despical.oitc.Main;
-import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
-import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,42 +37,37 @@ import java.util.stream.Collectors;
  * <p>
  * Created at 02.07.2020
  */
-public class TabCompletion {
+public class TabCompletion implements TabCompleter {
 
-	public Main plugin;
-	
+	private final Main plugin;
+
 	public TabCompletion(Main plugin) {
 		this.plugin = plugin;
-		this.plugin.getCommandFramework().registerCommands(this);
 	}
 
-	@Completer(
-		name = "oitc"
-	)
-	public List<String> onTabComplete(CommandArguments arguments) {
-		List<String> completions = new ArrayList<>(), commands = plugin.getCommandFramework().getCommands().stream().map(cmd -> cmd.name().replace(arguments.getLabel() + '.', "")).collect(Collectors.toList());
-		String[] args = arguments.getArguments();
+	@Override
+	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+		List<String> completions = new ArrayList<>(), commands = plugin.getCommandHandler().getSubCommands().stream().map(SubCommand::getName).collect(Collectors.toList());
+		commands.remove("oitc");
+
+		String arg = args[0];
 
 		if (args.length == 1) {
-			StringUtil.copyPartialMatches(args[0], commands, completions);
-		} 
+			StringUtil.copyPartialMatches(arg, commands, completions);
+		}
 
 		if (args.length == 2) {
-			if (Collections.contains(args[0], "create", "help", "list", "reload", "randomjoin", "stop", "forcestart", "stats", "arenas")) {
-				return null;
+			if (arg.equalsIgnoreCase("top")) {
+				return Collections.listOf("kills", "deaths", "games_played", "highest_score", "loses", "wins");
 			}
 
-			if (args[0].equalsIgnoreCase("top")) {
-				return Collections.streamOf(StatsStorage.StatisticType.values()).filter(StatsStorage.StatisticType::isPersistent).map(statistic -> statistic.name().toLowerCase(Locale.ENGLISH)).collect(Collectors.toList());
-			}
-
-			if (args[0].equalsIgnoreCase("stats")) {
-				return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+			if (arg.equalsIgnoreCase("stats")) {
+				return plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
 			}
 
 			List<String> arenas = ArenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());
-
 			StringUtil.copyPartialMatches(args[1], arenas, completions);
+
 			arenas.sort(null);
 			return arenas;
 		}

@@ -43,13 +43,13 @@ public class PlayerAmountComponents implements SetupComponent {
 		String error = chatManager.coloredRawMessage("&c&l✖ &cWarning | Please do not set amount lower than 2! Game is designed for 2 or more players!");
 
 		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.COAL)
-			.amount(setupInventory.getSetupUtilities().getMinimumValueHigherThanZero("minimumplayers"))
-			.name("&e&lSet Minimum Players Amount")
+			.amount(setupInventory.getSetupUtilities().getMinimumValueHigherThanZero("minimumPlayers"))
+			.name("&e&lSet Minimum Players")
 			.lore("&7LEFT click to decrease")
 			.lore("&7RIGHT click to increase")
 			.lore("&8(how many players are needed")
 			.lore("&8for game to start lobby countdown)")
-			.lore("", setupInventory.getSetupUtilities().isOptionDone("minimumplayers"))
+			.lore("", setupInventory.getSetupUtilities().isOptionDone("minimumPlayers"))
 			.build(), e -> {
 
 			int amount = e.getCurrentItem().getAmount();
@@ -69,18 +69,18 @@ public class PlayerAmountComponents implements SetupComponent {
 
 			arena.setMinimumPlayers(amount);
 
-			config.set("instances." + arena.getId() + ".minimumplayers", amount);
+			config.set("instances." + arena.getId() + ".minimumPlayers", amount);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
-			new SetupInventory(plugin, arena, player).openInventory();
+			new SetupInventory(plugin, arena, player).openInventory(false);
 		}), 4, 1);
 
 		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.REDSTONE)
-			.amount(setupInventory.getSetupUtilities().getMinimumValueHigherThanZero("maximumplayers"))
-			.name("&e&lSet Maximum Players Amount")
+			.amount(setupInventory.getSetupUtilities().getMinimumValueHigherThanZero("maximumPlayers"))
+			.name("&e&lSet Maximum Players")
 			.lore("&7LEFT click to decrease")
 			.lore("&7RIGHT click to increase")
 			.lore("&8(how many players arena can hold)")
-			.lore("", setupInventory.getSetupUtilities().isOptionDone("maximumplayers"))
+			.lore("", setupInventory.getSetupUtilities().isOptionDone("maximumPlayers"))
 			.build(), e -> {
 
 			int amount = e.getCurrentItem().getAmount();
@@ -100,9 +100,10 @@ public class PlayerAmountComponents implements SetupComponent {
 
 			arena.setMaximumPlayers(amount);
 
-			config.set("instances." + arena.getId() + ".maximumplayers", amount);
+			config.set("instances." + arena.getId() + ".maximumPlayers", amount);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
-			new SetupInventory(plugin, arena, player).openInventory();
+
+			new SetupInventory(plugin, arena, player).openInventory(false);
 		}), 5, 1);
 	}
 }

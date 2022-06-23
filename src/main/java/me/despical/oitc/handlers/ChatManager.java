@@ -81,6 +81,14 @@ public class ChatManager {
 		return prefix + message(message, player);
 	}
 
+	public String prefixedMessage(String message, int value) {
+		return prefix + message(message, value);
+	}
+
+	public String message(String path, int integer) {
+		return formatMessage(null, message(path), integer);
+	}
+
 	public String formatMessage(Arena arena, String message, Player player) {
 		String returnString = message;
 
@@ -98,6 +106,11 @@ public class ChatManager {
 		return prefix + formatMessage(arena, message, player);
 	}
 
+	public String prefixedFormattedMessage(Arena arena, String path, int value) {
+		return prefix + formatMessage(arena, message(path), value);
+	}
+
+
 	private String formatPlaceholders(String message, Arena arena) {
 		String returnString = message;
 
@@ -109,13 +122,12 @@ public class ChatManager {
 		returnString = StringUtils.replace(returnString, "%minplayers%", Integer.toString(arena.getMinimumPlayers()));
 		return returnString;
 	}
-	
-	public String formatMessage(Arena arena, String message, int value) {
+
+	public String formatMessage(Arena arena, String message, int integer) {
 		String returnString = message;
 
-		returnString = StringUtils.replace(returnString, "%number%", Integer.toString(value));
-		returnString = formatPlaceholders(returnString, arena);
-		return coloredRawMessage(returnString);
+		returnString = StringUtils.replace(returnString, "%number%", Integer.toString(integer));
+		return arena != null ? formatPlaceholders(returnString, arena) : returnString;
 	}
 
 	public String prefixedFormattedPathMessage(Arena arena, String path, int value) {

@@ -58,8 +58,19 @@ public class ArenaUtils {
 		}
 	}
 
+	public static void showPlayersOutsideTheGame(Player player, Arena arena) {
+		for (Player players : plugin.getServer().getOnlinePlayers()) {
+			if (arena.getPlayers().contains(players)) {
+				continue;
+			}
+
+			player.showPlayer(plugin, players);
+			players.showPlayer(plugin, player);
+		}
+	}
+
 	public static void updateNameTagsVisibility(Player p) {
-		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.NAMETAGS_HIDDEN)) {
+		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
 			return;
 		}
 

@@ -93,30 +93,27 @@ public class ArenaRegistry {
 		}
 
 		for (String id : section.getKeys(false)) {
-			String s = "instances." + id + ".";
+			String path = "instances." + id + ".";
 
-			if (s.contains("default")) {
-				continue;
-			}
+			if (path.contains("default")) 	continue;
 
 			Arena arena = new Arena(id);
 			arena.setReady(true);
-			arena.setMinimumPlayers(config.getInt(s + "minimumplayers", 2));
-			arena.setMaximumPlayers(config.getInt(s + "maximumplayers", 10));
-			arena.setMapName(config.getString(s + "mapname", "undefined"));
-			arena.setPlayerSpawnPoints(config.getStringList(s + "playerspawnpoints").stream().map(LocationSerializer::fromString).collect(Collectors.toList()));
-			arena.setLobbyLocation(LocationSerializer.fromString(config.getString(s + "lobbylocation")));
-			arena.setEndLocation(LocationSerializer.fromString(config.getString(s + "Endlocation")));
+			arena.setMinimumPlayers(config.getInt(path + "minimumPlayers", 2));
+			arena.setMaximumPlayers(config.getInt(path + "maximumPlayers", 10));
+			arena.setMapName(config.getString(path + "mapName", "undefined"));
+			arena.setPlayerSpawnPoints(config.getStringList(path + "playersSpawnPoints").stream().map(LocationSerializer::fromString).collect(Collectors.toList()));
+			arena.setLobbyLocation(LocationSerializer.fromString(config.getString(path + "lobbyLocation")));
+			arena.setEndLocation(LocationSerializer.fromString(config.getString(path + "endLocation")));
 
-			if (!config.getBoolean(s + "isdone")) {
+			registerArena(arena);
+
+			if (!config.getBoolean(path + "ready")) {
 				LogUtils.sendConsoleMessage(chatManager.message("Validator.Invalid-Arena-Configuration").replace("%arena%", id).replace("%error%", "NOT VALIDATED"));
 				arena.setReady(false);
-				registerArena(arena);
 				continue;
 			}
 
-			arena.setArenaState(ArenaState.WAITING_FOR_PLAYERS);
-			registerArena(arena);
 			arena.start();
 		}
 

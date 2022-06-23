@@ -25,7 +25,6 @@ import me.despical.commons.serializer.LocationSerializer;
 import me.despical.inventoryframework.GuiItem;
 import me.despical.inventoryframework.pane.StaticPane;
 import me.despical.oitc.arena.Arena;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.setup.SetupInventory;
 import me.despical.oitc.handlers.sign.ArenaSign;
@@ -76,7 +75,7 @@ public class ArenaRegisterComponent implements SetupComponent {
 				return;
 			}
 
-			String path = "instances." + arena.getId() + ".", locations[] = {"lobbylocation", "Endlocation"}, spawns[] = {"playerspawnpoints"};
+			String path = "instances." + arena.getId() + ".", locations[] = {"lobbyLocation", "endLocation"}, spawns[] = {"playersSpawnPoints"};
 
 			for (String location : locations) {
 				if (!config.isSet(path + location) || LocationSerializer.isDefaultLocation(config.getString(path + location))) {
@@ -94,17 +93,17 @@ public class ArenaRegisterComponent implements SetupComponent {
 
 			player.sendMessage(chatManager.coloredRawMessage("&a&l✔ &aValidation succeeded! Registering new arena instance: " + arena.getId()));
 
-			config.set(path + "isdone", true);
+			config.set(path + "ready", true);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
 
 			arena.setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 			arena.setReady(true);
-			arena.setPlayerSpawnPoints(config.getStringList(path + "playerspawnpoints").stream().map(LocationSerializer::fromString).collect(Collectors.toList()));
-			arena.setMinimumPlayers(config.getInt(path + "minimumplayers"));
-			arena.setMaximumPlayers(config.getInt(path + "maximumplayers"));
-			arena.setMapName(config.getString(path + "mapname"));
-			arena.setLobbyLocation(LocationSerializer.fromString(config.getString(path + "lobbylocation")));
-			arena.setEndLocation(LocationSerializer.fromString(config.getString(path + "Endlocation")));
+			arena.setPlayerSpawnPoints(config.getStringList(path + "playersSpawnPoints").stream().map(LocationSerializer::fromString).collect(Collectors.toList()));
+			arena.setMinimumPlayers(config.getInt(path + "minimumPlayers"));
+			arena.setMaximumPlayers(config.getInt(path + "maximumPlayers"));
+			arena.setMapName(config.getString(path + "mapName"));
+			arena.setLobbyLocation(LocationSerializer.fromString(config.getString(path + "lobbyLocation")));
+			arena.setEndLocation(LocationSerializer.fromString(config.getString(path + "endLocation")));
 			arena.start();
 
 			plugin.getSignManager().getArenaSigns().stream().filter(arenaSign -> arenaSign.getArena().equals(arena)).map(ArenaSign::getSign)

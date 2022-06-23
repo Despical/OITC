@@ -11,10 +11,10 @@
 Boss-Bar-Enabled: true
 
 # How many seconds game should take to start.
-Starting-Waiting-Time: 60
+Waiting-Time: 60
 
 # Lobby waiting time set when lobby max players number is reached, used to start game quicker.
-Start-Time-On-Full-Lobby: 15
+Starting-Time: 15
 
 # How many seconds classic game should play.
 Classic-Gameplay-Time: 600
@@ -22,21 +22,21 @@ Classic-Gameplay-Time: 600
 # Should we hook into bungee cord? (If you wanna use arena per server option)
 # You STILL need to use external addon for HUB server game signs
 # One in the Chamber doesn't offer that addon.
-BungeeActivated: false
+Bungee-Enabled: false
 
 # Enable this option when you're using MySQL, otherwise it won't work.
 # Be careful when changing this because there is NO migrator between
 # flat file and MySQL for player stats.
-DatabaseActivated: false
+Database-Enabled: false
 
 # Enable Inventory Manager for your games? (VERY USEFUL feature for MULTI ARENA)
 # This saves inventory of players and restores it after player leaves arena.
 # Saved elements: max health, health, food, experience, full inventory, armor contents, fire ticks, active potions, gamemode and more
-InventoryManager: true
+Inventory-Manager-Enabled: true
 
 # Should in-game chat format be enabled?
 # You can edit the formatting in messages.yml
-ChatFormat-Enabled: true
+Chat-Format-Enabled: true
 
 # Should we disable all chat related stuff?
 # It will disable the separated chat.
@@ -50,7 +50,7 @@ Basic-Permissions:
   Join-Permission: "oitc.join.<arena>"
 
 # Should we enable short commands such as /start and /leave
-Enable-Short-Commands: false
+Enable-Short-Commands: true
 
 # Should /oitc leave command be blocked?
 Disable-Leave-Command: false
@@ -69,14 +69,14 @@ Rewards-Enabled: false
 # First player to reach this score wins.
 Winning-Score: 25
 
-# Should we block every not One in the Chamber associated commands in game?
-Block-Commands-In-Game: true
+# If this option is enabled, players will only be allowed to execute OITC associated commands.
+Block-Commands: true
 
 # Should we fire some cool fireworks at location of every player after the game ends?
 Firework-When-Game-Ends: true
 
 # Should players' name tags in game be hidden?
-Nametags-Hidden: true
+Name-Tags-Hidden: true
 
 # Should blocks behind game signs change their color based on game state?
 # They will change color to:

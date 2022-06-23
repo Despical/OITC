@@ -18,7 +18,6 @@
 
 package me.despical.oitc;
 
-import me.despical.commandframework.CommandFramework;
 import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.database.MysqlDatabase;
 import me.despical.commons.exception.ExceptionLogHandler;
@@ -32,9 +31,7 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaUtils;
-import me.despical.oitc.commands.TabCompletion;
-import me.despical.oitc.commands.AdminCommands;
-import me.despical.oitc.commands.PlayerCommands;
+import me.despical.oitc.commands.CommandHandler;
 import me.despical.oitc.events.*;
 import me.despical.oitc.events.spectator.SpectatorEvents;
 import me.despical.oitc.events.spectator.SpectatorItemEvents;
@@ -66,7 +63,7 @@ public class Main extends JavaPlugin {
 	private MysqlDatabase database;
 	private SignManager signManager;
 	private ConfigPreferences configPreferences;
-	private CommandFramework commandFramework;
+	private CommandHandler commandHandler;
 	private ChatManager chatManager;
 	private UserManager userManager;
 	private PermissionsManager permissionsManager;
@@ -101,7 +98,7 @@ public class Main extends JavaPlugin {
 
 		LogUtils.log("Initialization finished took {0} ms.", System.currentTimeMillis() - start);
 
-		if (configPreferences.getOption(ConfigPreferences.Option.NAMETAGS_HIDDEN)) {
+		if (configPreferences.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
 			getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
 		}
 	}
@@ -188,12 +185,8 @@ public class Main extends JavaPlugin {
 		ArenaRegistry.registerArenas();
 		signManager.loadSigns();
 		rewardsFactory = new RewardsFactory(this);
-		commandFramework = new CommandFramework(this);
+		commandHandler = new CommandHandler(this);
 		permissionsManager = new PermissionsManager(this);
-
-		new AdminCommands(this);
-		new PlayerCommands(this);
-		new TabCompletion(this);
 
 		new SpectatorEvents(this);
 		new QuitEvent(this);
@@ -275,8 +268,8 @@ public class Main extends JavaPlugin {
 		return chatManager;
 	}
 	
-	public CommandFramework getCommandFramework() {
-		return commandFramework;
+	public CommandHandler getCommandHandler() {
+		return commandHandler;
 	}
 
 	public UserManager getUserManager() {

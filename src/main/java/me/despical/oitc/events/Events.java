@@ -33,6 +33,7 @@ import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.util.ItemPosition;
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -128,8 +129,9 @@ public class Events implements Listener {
 			return;
 		}
 
-		Arena arena = ArenaRegistry.getArena(event.getPlayer());
-		ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
+		Player player = event.getPlayer();
+		Arena arena = ArenaRegistry.getArena(player);
+		ItemStack itemStack = player.getInventory().getItemInMainHand();
 
 		if (arena == null || !ItemUtils.isNamed(itemStack)) {
 			return;
@@ -145,9 +147,10 @@ public class Events implements Listener {
 			event.setCancelled(true);
 
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-				plugin.getBungeeManager().connectToHub(event.getPlayer());
+				plugin.getBungeeManager().connectToHub(player);
 			} else {
-				ArenaManager.leaveAttempt(event.getPlayer(), arena);
+				ArenaManager.leaveAttempt(player, arena);
+				player.sendMessage(plugin.getChatManager().prefixedMessage("commands.teleported_to_the_lobby", player));
 			}
 		}
 	}
@@ -245,17 +248,25 @@ public class Events implements Listener {
 	public void onDamageEntity(EntityDamageByEntityEvent e) {
 		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Arrow)) {
 			return;
+		} else {
+			Bukkit.broadcastMessage(e.getEntity().getName() + " , " + e.getDamager().getName());
 		}
 
 		Arrow arrow = (Arrow) e.getDamager();
 
-		if (arrow.getShooter() instanceof Player) {
-			if (ArenaRegistry.isInArena((Player) e.getEntity()) && ArenaRegistry.isInArena((Player) arrow.getShooter())) {
-				if (!e.getEntity().getName().equals(((Player) arrow.getShooter()).getName())) {
-					e.setDamage(100.0);
-					plugin.getRewardsFactory().performReward((Player) e.getEntity(), Reward.RewardType.DEATH);
-				}
-			}
+		if (!(arrow.getShooter() instanceof Player)) {
+			return;
+		} else {
+			Bukkit.broadcastMessage("test1");
+		}
+
+		if (ArenaRegistry.isInArena((Player) e.getEntity()) && ArenaRegistry.isInArena((Player) arrow.getShooter())) {
+			if (!e.getEntity().getName().equals(((Player) arrow.getShooter()).getName())) {
+				e.setDamage(100.0);
+				plugin.getRewardsFactory().performReward((Player) e.getEntity(), Reward.RewardType.DEATH);
+			} else Bukkit.broadcastMessage("!e.getEntity().getName().equals(((Player) arrow.getShooter()).getName())");
+		} else {
+			Bukkit.broadcastMessage("ArenaRegistry.isInArena((Player) e.getEntity()) && ArenaRegistry.isInArena((Player) arrow.getShooter()))");
 		}
 	}
 	
@@ -292,7 +303,7 @@ public class Events implements Listener {
 			arena.broadcastMessage(plugin.getChatManager().prefixedFormattedMessage(arena, plugin.getChatManager().message("In-Game.Messages.Kill-Streak").replace("%kill_streak%", String.valueOf(killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
 		}
 
-		ItemPosition.addItem(victim.getKiller(), ItemPosition.ARROW, new ItemStack(Material.ARROW, 1));
+		ItemPosition.addItem(victim.getKiller(), ItemPosition.ARROW, ItemPosition.ARROW.getItem());
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> victim.spigot().respawn(), 5);
 
 		plugin.getRewardsFactory().performReward(victim.getKiller(), Reward.RewardType.KILL);
@@ -307,9 +318,7 @@ public class Events implements Listener {
 		Player player = event.getPlayer();
 		Arena arena = ArenaRegistry.getArena(player);
 
-		if (arena == null) {
-			return;
-		}
+		if (arena == null) return;
 
 		event.setRespawnLocation(arena.getRandomSpawnPoint());
 

@@ -24,7 +24,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -72,7 +71,6 @@ public class ArenaSign {
 		return sign;
 	}
 
-	@Nullable
 	public Block getBehind() {
 		return behind;
 	}

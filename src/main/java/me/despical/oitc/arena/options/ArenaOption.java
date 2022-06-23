@@ -18,6 +18,9 @@
 
 package me.despical.oitc.arena.options;
 
+import me.despical.oitc.Main;
+import org.bukkit.plugin.java.JavaPlugin;
+
 /**
  * @author Despical
  * <p>
@@ -25,12 +28,28 @@ package me.despical.oitc.arena.options;
  */
 public enum ArenaOption {
 
-	TIMER(0), MINIMUM_PLAYERS(2), MAXIMUM_PLAYERS(10);
+	TIMER(15),
+
+	MINIMUM_PLAYERS(2),
+
+	MAXIMUM_PLAYERS(10),
+
+	CLASSIC_GAMEPLAY_TIME("Classic-Gameplay-Time", 600),
+
+	WAITING_TIME("Waiting-Time", 60),
+
+	START_TIME("Starting-Time", 15);
 
 	int defaultValue;
 
 	ArenaOption(int defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+
+	ArenaOption(String path, int defaultValue) {
+		final Main plugin = JavaPlugin.getPlugin(Main.class);
+
+		this.defaultValue = plugin.getConfig().getInt(path, defaultValue);
 	}
 
 	public int getDefaultValue() {

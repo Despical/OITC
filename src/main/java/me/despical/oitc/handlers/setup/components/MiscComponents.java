@@ -79,7 +79,7 @@ public class MiscComponents implements SetupComponent {
 			Block block = player.getTargetBlock(null, 10);
 
 			if (!(block.getState() instanceof Sign)) {
-				player.sendMessage(chatManager.prefixedMessage("Commands.Look-Sign"));
+				player.sendMessage(chatManager.prefixedMessage("commands.look_sign"));
 				return;
 			}
 
@@ -91,7 +91,7 @@ public class MiscComponents implements SetupComponent {
 
 			plugin.getSignManager().addArenaSign(block, arena);
 
-			player.sendMessage(chatManager.prefixedMessage("Signs.Sign-Created"));
+			player.sendMessage(chatManager.prefixedMessage("signs.sign_created"));
 
 			List<String> locations = config.getStringList("instances." + arena.getId() + ".signs");
 			locations.add(LocationSerializer.toString(block.getLocation()));
@@ -103,7 +103,7 @@ public class MiscComponents implements SetupComponent {
 		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.NAME_TAG)
 			.name("&e&lSet Map Name")
 			.lore("&7Click to set arena map name")
-			.lore("", "&a&lCurrently: &e" + config.getString("instances." + arena.getId() + ".mapname"))
+			.lore("", "&a&lCurrently: &e" + config.getString("instances." + arena.getId() + ".mapName"))
 			.build(), e -> {
 
 			player.closeInventory();
@@ -113,19 +113,19 @@ public class MiscComponents implements SetupComponent {
 				@Override
 				@NotNull
 				public String getPromptText(@NotNull ConversationContext context) {
-					return chatManager.prefixedRawMessage("&ePlease type in chat arena name! You can use color codes.");
+					return chatManager.prefixedRawMessage("&ePlease type in chat arena name. You can use color codes.");
 				}
 
 				@Override
 				public Prompt acceptInput(@NotNull ConversationContext context, String input) {
 					String name = chatManager.coloredRawMessage(input);
-					player.sendMessage(chatManager.coloredRawMessage("&e✔ Completed | &aName of arena " + arena.getId() + " set to " + name));
+					player.sendMessage(chatManager.coloredRawMessage("&e✔ Completed | &aName of arena &e" + arena.getId() + " &aset to &e" + name));
 					arena.setMapName(name);
 
-					config.set("instances." + arena.getId() + ".mapname", arena.getMapName());
+					config.set("instances." + arena.getId() + ".mapName", arena.getMapName());
 					ConfigUtils.saveConfig(plugin, config, "arenas");
 
-					new SetupInventory(plugin, arena, player).openInventory();
+					new SetupInventory(plugin, arena, player).openInventory(false);
 					return Prompt.END_OF_CONVERSATION;
 				}
 			}).buildFor(player);

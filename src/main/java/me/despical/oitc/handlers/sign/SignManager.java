@@ -109,16 +109,18 @@ public class SignManager implements Listener {
 
 	private String formatSign(String msg, Arena arena) {
 		String formatted = msg;
+		int size = arena.getPlayers().size(), max = arena.getMaximumPlayers();
+
 		formatted = StringUtils.replace(formatted, "%map_name%", arena.getMapName());
 
-		if (arena.getPlayers().size() >= arena.getMaximumPlayers()) {
+		if (size >= max) {
 			formatted = StringUtils.replace(formatted, "%state%", plugin.getChatManager().message("Signs.Game-States.Full-Game"));
 		} else {
 			formatted = StringUtils.replace(formatted, "%state%", gameStateToString.get(arena.getArenaState()));
 		}
 
-		formatted = StringUtils.replace(formatted, "%players%", Integer.toString(arena.getPlayers().size()));
-		formatted = StringUtils.replace(formatted, "%max_players%", Integer.toString(arena.getMaximumPlayers()));
+		formatted = StringUtils.replace(formatted, "%players%", Integer.toString(size));
+		formatted = StringUtils.replace(formatted, "%max_players%", Integer.toString(max));
 		return plugin.getChatManager().coloredRawMessage(formatted);
 	}
 
@@ -271,9 +273,5 @@ public class SignManager implements Listener {
 
 	public Set<ArenaSign> getArenaSigns() {
 		return new HashSet<>(arenaSigns);
-	}
-
-	public Map<ArenaState, String> getGameStateToString() {
-		return gameStateToString;
 	}
 }

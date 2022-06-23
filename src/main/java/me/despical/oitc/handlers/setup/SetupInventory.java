@@ -20,6 +20,7 @@ package me.despical.oitc.handlers.setup;
 
 import me.despical.commons.compat.XMaterial;
 import me.despical.commons.configuration.ConfigUtils;
+import me.despical.commons.item.ItemBuilder;
 import me.despical.inventoryframework.Gui;
 import me.despical.inventoryframework.GuiItem;
 import me.despical.inventoryframework.pane.StaticPane;
@@ -33,7 +34,6 @@ import me.despical.oitc.handlers.setup.components.PlayerAmountComponents;
 import me.despical.oitc.handlers.setup.components.SpawnComponents;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -67,8 +67,9 @@ public class SetupInventory {
 		gui.setOnGlobalClick(e -> e.setCancelled(true));
 
 		StaticPane pane = new StaticPane(9, 5);
-		pane.fillProgressBorder(GuiItem.of(XMaterial.GREEN_STAINED_GLASS_PANE.parseItem()), GuiItem.of(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()), arena.isReady() ? 100 : 0);
-
+		ItemBuilder registeredItem = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE).name("&aArena Validation Successful"),
+			notRegisteredItem = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&cArena Validation Not Finished Yet");
+		pane.fillProgressBorder(GuiItem.of(registeredItem.build()), GuiItem.of(notRegisteredItem.build()), arena.isReady() ? 100 : 0);
 		gui.addPane(pane);
 
 		prepareComponents(pane);
@@ -123,8 +124,9 @@ public class SetupInventory {
 		}
 	}
 
-	public void openInventory() {
-		sendProTip(player);
+	public void openInventory(boolean proTips) {
+		if (proTips) sendProTip(player);
+
 		gui.show(player);
 	}
 

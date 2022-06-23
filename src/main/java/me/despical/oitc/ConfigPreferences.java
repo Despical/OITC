@@ -18,7 +18,10 @@
 
 package me.despical.oitc;
 
+import me.despical.commons.string.StringUtils;
+
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -30,12 +33,10 @@ public class ConfigPreferences {
 
 	private final Main plugin;
 	private final Map<Option, Boolean> options;
-	private final Map<IntOption, Integer> intOptions;
 
 	public ConfigPreferences(Main plugin) {
 		this.plugin = plugin;
 		this.options = new HashMap<>();
-		this.intOptions = new HashMap<>();
 
 		loadOptions();
 	}
@@ -44,53 +45,28 @@ public class ConfigPreferences {
 		return options.get(option);
 	}
 
-	public int getIntOption(IntOption option) {
-		return intOptions.get(option);
-	}
-
 	private void loadOptions() {
 		for (Option option : Option.values()) {
 			options.put(option, plugin.getConfig().getBoolean(option.path, option.def));
 		}
-
-		for (IntOption option : IntOption.values()) {
-			intOptions.put(option, plugin.getConfig().getInt(option.path, option.def));
-		}
-	}
-
-	public enum IntOption {
-		CLASSIC_GAMEPLAY_TIME("Classic-Gameplay-Time", 600), STARTING_WAITING_TIME("Starting-Waiting-Time", 60),
-		STARTING_TIME_ON_FULL_LOBBY("Start-Time-On-Full-Lobby", 15);
-
-		String path;
-		int def;
-
-		IntOption(String path, int def) {
-			this.path = path;
-			this.def = def;
-		}
 	}
 
 	public enum Option {
-		BLOCK_COMMANDS("Block-Commands-In-Game"), BOSS_BAR_ENABLED("Boss-Bar-Enabled"),
-		BUNGEE_ENABLED("BungeeActivated", false), CHAT_FORMAT_ENABLED("ChatFormat-Enabled"),
-		DATABASE_ENABLED("DatabaseActivated", false), DISABLE_FALL_DAMAGE("Disable-Fall-Damage", false),
-		DISABLE_LEAVE_COMMAND("Disable-Leave-Command", false), DISABLE_SEPARATE_CHAT("Disable-Separate-Chat", false),
-		ENABLE_SHORT_COMMANDS("Enable-Short-Commands", false), IGNORE_WARNING_MESSAGES("Ignore-Warning-Messages", false),
-		INVENTORY_MANAGER_ENABLED("InventoryManager"), NAMETAGS_HIDDEN("Nametags-Hidden"), DEBUG_MESSAGES("Debug-Messages", false),
-		REWARDS_ENABLED("Rewards-Enabled", false), SEND_SETUP_TIPS("Send-Setup-Tips"),
-		SIGNS_BLOCK_STATES_ENABLED("Signs-Block-States-Enabled"), UPDATE_NOTIFIER_ENABLED("Update-Notifier-Enabled");
+		BLOCK_COMMANDS, BOSS_BAR_ENABLED, BUNGEE_ENABLED(false), CHAT_FORMAT_ENABLED, DATABASE_ENABLED(false),
+		DEBUG_MESSAGES(false), DISABLE_FALL_DAMAGE, DISABLE_LEAVE_COMMAND(false), DISABLE_SEPARATE_CHAT(false),
+		ENABLE_SHORT_COMMANDS, IGNORE_WARNING_MESSAGES(false), INVENTORY_MANAGER_ENABLED, NAME_TAGS_HIDDEN,
+		REWARDS_ENABLED(false), SEND_SETUP_TIPS, SIGNS_BLOCK_STATES_ENABLED, UPDATE_NOTIFIER_ENABLED;
 
 		String path;
 		boolean def;
 
-		Option(String path) {
-			this(path, true);
+		Option() {
+			this(true);
 		}
 
-		Option(String path, boolean def) {
-			this.path = path;
+		Option(boolean def) {
 			this.def = def;
+			this.path = StringUtils.capitalize(name().replace('_', '-').toLowerCase(Locale.ENGLISH), '-', '.');
 		}
 	}
 }

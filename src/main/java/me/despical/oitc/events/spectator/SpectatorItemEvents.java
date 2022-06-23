@@ -47,14 +47,14 @@ import java.util.Set;
  * <p>
  * Created at 02.07.2020
  */
-public class SpectatorItemEvents implements Listener {
+public class SpectatorItemEvents {
 
 	private final Main plugin;
 
 	public SpectatorItemEvents(Main plugin) {
 		this.plugin = plugin;
 
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+//		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)

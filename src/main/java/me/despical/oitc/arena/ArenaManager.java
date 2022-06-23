@@ -133,6 +133,7 @@ public class ArenaManager {
 		player.setExp(1);
 		player.setFoodLevel(20);
 		player.getInventory().clear();
+		player.getInventory().setHeldItemSlot(0);
 		player.getInventory().setArmorContents(null);
 		player.setGameMode(GameMode.ADVENTURE);
 

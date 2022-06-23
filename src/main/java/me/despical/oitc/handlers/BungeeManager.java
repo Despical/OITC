@@ -21,6 +21,7 @@ package me.despical.oitc.handlers;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import me.despical.commons.configuration.ConfigUtils;
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
@@ -76,6 +77,8 @@ public class BungeeManager implements Listener {
 		out.writeUTF(getHubServerName());
 
 		player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
+
+		LogUtils.log("{0} was teleported to the hub server", player.getName());
 	}
 
 	private String getHubServerName() {

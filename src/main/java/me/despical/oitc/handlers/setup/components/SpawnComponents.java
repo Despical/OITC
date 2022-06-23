@@ -54,29 +54,31 @@ public class SpawnComponents implements SetupComponent {
 			.lore("&7on the place where you are standing.")
 			.lore("&8(location where players will be")
 			.lore("&8teleported after the game)")
-			.lore("", setupInventory.getSetupUtilities().isOptionDoneBool("Endlocation"))
+			.lore("", setupInventory.getSetupUtilities().isOptionDoneBool("endLocation"))
 			.build(), e -> {
 
 			player.closeInventory();
 
-			config.set("instances." + arena.getId() + ".Endlocation", serializedLocation);
+			config.set("instances." + arena.getId() + ".endLocation", serializedLocation);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
 
 			arena.setEndLocation(player.getLocation());
-			player.sendMessage(chatManager.coloredRawMessage("&e✔ Completed | &aEnding location for arena " + arena.getId() + " set at your location!"));
+			player.sendMessage(chatManager.coloredRawMessage("&e✔ Completed | &aEnding location for arena &e" + arena.getId() + " &aset at your location!"));
 		}), 1, 1);
 
 		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.LAPIS_BLOCK)
 			.name(chatManager.coloredRawMessage("&e&lSet Lobby Location"))
-			.lore("&7Click to set the lobby location")
-			.lore("&7on the place where you are standing")
-			.lore("", setupInventory.getSetupUtilities().isOptionDoneBool("lobbylocation"))
+			.lore("&7Click to set the lobby location on the")
+			.lore("&7 place where you are standing")
+			.lore("&8(location when players will be")
+			.lore("&8teleported while waiting for others")
+			.lore("", setupInventory.getSetupUtilities().isOptionDoneBool("lobbyLocation"))
 			.build(), e -> {
 
 			player.closeInventory();
-			config.set("instances." + arena.getId() + ".lobbylocation", serializedLocation);
+			config.set("instances." + arena.getId() + ".lobbyLocation", serializedLocation);
 			arena.setLobbyLocation(player.getLocation());
-			player.sendMessage(chatManager.coloredRawMessage("&e✔ Completed | &aLobby location for arena " + arena.getId() + " set at your location!"));
+			player.sendMessage(chatManager.coloredRawMessage("&e✔ Completed | &aLobby location for arena &e" + arena.getId() + " &aset at your location!"));
 			ConfigUtils.saveConfig(plugin, config, "arenas");
 		}), 2, 1);
 
@@ -86,34 +88,34 @@ public class SpawnComponents implements SetupComponent {
 			.lore("&7on the place where you are standing.")
 			.lore("&8(locations where players will be")
 			.lore("&8teleported when game starts)")
-			.lore("", setupInventory.getSetupUtilities().isOptionDoneList("playerspawnpoints", arena.getMaximumPlayers()))
+			.lore("", setupInventory.getSetupUtilities().isOptionDoneList("playersSpawnPoints", arena.getMaximumPlayers()))
 			.lore("", "&8Shift + Right Click to remove all spawns")
 			.build(), e -> {
 
 			player.closeInventory();
 
 			if (e.getClick() == ClickType.SHIFT_RIGHT) {
-				player.sendMessage(chatManager.coloredRawMessage("&eDone | &aPlayer spawn points deleted, you can add them again now!"));
+				player.sendMessage(chatManager.coloredRawMessage("&e✔ Completed | &aPlayer spawn points deleted, you can add them again now!"));
 
 				arena.setPlayerSpawnPoints(new ArrayList<>());
 				arena.setReady(false);
 
-				config.set("instances." + arena.getId() + ".playerspawnpoints", new ArrayList<>());
+				config.set("instances." + arena.getId() + ".playersSpawnPoints", new ArrayList<>());
 				ConfigUtils.saveConfig(plugin, config, "arenas");
 				return;
 			}
 
-			List<String> startingSpawns = config.getStringList("instances." + arena.getId() + ".playerspawnpoints");
+			List<String> startingSpawns = config.getStringList("instances." + arena.getId() + ".playersSpawnPoints");
 			startingSpawns.add(LocationSerializer.toString(player.getLocation()));
 
-			config.set("instances." + arena.getId() + ".playerspawnpoints", startingSpawns);
+			config.set("instances." + arena.getId() + ".playersSpawnPoints", startingSpawns);
 
 			String startingProgress = startingSpawns.size() >= arena.getMaximumPlayers() ? "&e✔ Completed | " : "&c✘ Not completed | ";
 			player.sendMessage(chatManager.coloredRawMessage(
 			startingProgress + "&aPlayer spawn added! &8(&7" + startingSpawns.size() + "/" + arena.getMaximumPlayers() + "&8)"));
 
 			if (startingSpawns.size() == arena.getMaximumPlayers()) {
-				player.sendMessage(chatManager.coloredRawMessage("&eInfo | &aYou can add more than " + arena.getMaximumPlayers() + " player spawns! " + arena.getMaximumPlayers() + " is just a minimum!"));
+				player.sendMessage(chatManager.coloredRawMessage("&eInfo | &aYou can add more than &e" + arena.getMaximumPlayers() + " &aplayer spawns! &e" + arena.getMaximumPlayers() + " &ais just a minimum!"));
 			}
 
 			List<Location> spawns = new ArrayList<>(arena.getPlayerSpawnPoints());
