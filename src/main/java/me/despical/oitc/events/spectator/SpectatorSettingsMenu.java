@@ -44,7 +44,7 @@ public class SpectatorSettingsMenu implements Listener {
 	}
 
 	private void prepareGui(Main plugin) {
-		gui = new Gui(plugin, 4, plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Inventory-Name"));
+		gui = new Gui(plugin, 4, plugin.getChatManager().message("in_game.spectator.settings_menu.inventory_name"));
 		gui.setOnGlobalClick(e -> {
 			e.setCancelled(true);
 			e.getWhoClicked().closeInventory();

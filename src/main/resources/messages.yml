@@ -92,7 +92,7 @@ Boss-Bar:
   In-Game-Info: "&e&lPlaying &f&lONE IN THE CHAMBER &e&lby &b&lDESPICAL"
   Game-Ended: "&c&lGame has ended! You were playing &b&lOITC"
 
-#Used in most game messages.
+# Used in most game messages.
 In-Game:
   Plugin-Prefix: "&8[&6OITC&8] "
   Already-Playing: "&cYou are already queued for a game! You can leave a game with /oitc leave."
@@ -143,7 +143,7 @@ In-Game:
     Seconds-Left-Title: "&c%time% &eseconds left!"
     Seconds-Left-Subtitle: "&eAfter %time%s the game will be finished"
     Score-Subtitle: "&a&l+&6&l1"
-    Death-Subtitle: ""
+    Death-Subtitle: "&c&lYou have died!"
     Game-End-Messages:
       Titles:
         Win: "&fWinner"

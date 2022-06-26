@@ -138,7 +138,6 @@ public class ArenaManager {
 		player.setGameMode(GameMode.ADVENTURE);
 
 		AttributeUtils.healPlayer(player);
-		PlayerUtils.setCollidable(player, false);
 		PlayerUtils.setGlowing(player, false);
 
 		User user = plugin.getUserManager().getUser(player);
@@ -212,7 +211,6 @@ public class ArenaManager {
 		chatManager.broadcastAction(arena, user, ActionType.LEAVE);
 
 		PlayerUtils.setGlowing(player, false);
-		PlayerUtils.setCollidable(player, false);
 		AttributeUtils.healPlayer(player);
 
 		user.setSpectator(false);
@@ -268,7 +266,7 @@ public class ArenaManager {
 
 		if (quickStop) {
 			arena.setTimer(2);
-			arena.broadcastMessage(chatManager.prefixedMessage("In-Game.Messages.Admin-Messages.Stopped-Game"));
+			arena.broadcastMessage(chatManager.prefixedMessage("in_game.messages.admin_messages.stopped_game"));
 			return;
 		} else {
 			arena.setTimer(12);
@@ -286,13 +284,13 @@ public class ArenaManager {
 			if (topPlayerName.equals(player.getName())) {
 				user.addStat(StatsStorage.StatisticType.WINS, 1);
 
-				Titles.sendTitle(player, chatManager.message("In-Game.Messages.Game-End-Messages.Titles.Win"), chatManager.message("In-Game.Messages.Game-End-Messages.Subtitles.Win").replace("%winner%", topPlayerName), 5, 40, 5);
+				Titles.sendTitle(player, 5, 40, 5, chatManager.message("in_game.messages.game_end_messages.titles.win"), chatManager.message("In-Game.Messages.Game-End-Messages.Subtitles.Win").replace("%winner%", topPlayerName));
 
 				plugin.getRewardsFactory().performReward(player, Reward.RewardType.WIN);
 			} else if (!user.isSpectator()) {
 				user.addStat(StatsStorage.StatisticType.LOSES, 1);
 
-				Titles.sendTitle(player, chatManager.message("In-Game.Messages.Game-End-Messages.Titles.Lose"), chatManager.message("In-Game.Messages.Game-End-Messages.Subtitles.Lose").replace("%winner%", topPlayerName), 5, 40, 5);
+				Titles.sendTitle(player, 5, 40, 5, chatManager.message("in_game.messages.game_end_messages.titles.lose"), chatManager.message("In-Game.Messages.Game-End-Messages.Subtitles.Lose").replace("%winner%", topPlayerName));
 
 				plugin.getRewardsFactory().performReward(player, Reward.RewardType.LOSE);
 			}
@@ -301,7 +299,7 @@ public class ArenaManager {
 
 			SpecialItemManager.giveItem(player, "Teleporter", "Spectator-Settings", "Leave", "Play-Again");
 
-			for (String msg : chatManager.getStringList("In-Game.Messages.Game-End-Messages.Summary-Message")) {
+			for (String msg : chatManager.getStringList("in_game.messages.game_end_messages.summary_message")) {
 				MiscUtils.sendCenteredMessage(player, formatSummaryPlaceholders(msg, arena, player));
 			}
 
@@ -327,8 +325,9 @@ public class ArenaManager {
 	private static String formatSummaryPlaceholders(String msg, Arena arena, Player player) {
 		String formatted = msg, topPlayerName = arena.getScoreboardManager().getTopPlayerName(0);
 
-		formatted = StringUtils.replace(formatted, "%score%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS)));
-		formatted = StringUtils.replace(formatted, "%deaths%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_DEATHS)));
+		User user = plugin.getUserManager().getUser(player);
+		formatted = StringUtils.replace(formatted, "%score%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILLS)));
+		formatted = StringUtils.replace(formatted, "%deaths%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_DEATHS)));
 		formatted = StringUtils.replace(formatted, "%rank%", Integer.toString(arena.getScoreboardManager().getRank(player)));
 		formatted = StringUtils.replace(formatted, "%winner%", topPlayerName);
 		formatted = StringUtils.replace(formatted, "%winner_score%", Integer.toString(StatsStorage.getUserStats(plugin.getServer().getPlayerExact(topPlayerName), StatsStorage.StatisticType.LOCAL_KILLS)));

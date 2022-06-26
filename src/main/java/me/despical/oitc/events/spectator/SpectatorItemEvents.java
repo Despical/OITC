@@ -29,7 +29,6 @@ import org.bukkit.SkullType;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -47,17 +46,17 @@ import java.util.Set;
  * <p>
  * Created at 02.07.2020
  */
-public class SpectatorItemEvents {
+public class SpectatorItemEvents implements Listener {
 
 	private final Main plugin;
 
 	public SpectatorItemEvents(Main plugin) {
 		this.plugin = plugin;
 
-//		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onSpectatorItemClick(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() != Action.PHYSICAL) {
 			if (!ArenaRegistry.isInArena(e.getPlayer())) {
@@ -103,7 +102,7 @@ public class SpectatorItemEvents {
 		p.openInventory(inventory);
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onSpectatorInventoryClick(InventoryClickEvent e) {
 		Player p = (Player) e.getWhoClicked();
 

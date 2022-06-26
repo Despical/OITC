@@ -411,7 +411,7 @@ public class Arena extends BukkitRunnable {
 					String title = plugin.getChatManager().message("in_game.messages.seconds_left_title").replace("%time%", Integer.toString(getTimer()));
 					String subtitle = plugin.getChatManager().message("in_game.messages.seconds_left_subtitle").replace("%time%", Integer.toString(getTimer()));
 
-					players.forEach(p -> Titles.sendTitle(p, title, subtitle, 5, 40, 5));
+					players.forEach(p -> Titles.sendTitle(p, 5, 40, 5, title, subtitle));
 				}
 
 				setTimer(getTimer() - 1);
@@ -431,7 +431,6 @@ public class Arena extends BukkitRunnable {
 					player.setWalkSpeed(.2f);
 					player.setFlying(false);
 					player.setAllowFlight(false);
-					player.setCollidable(true);
 					player.getInventory().clear();
 					player.getInventory().setArmorContents(null);
 					player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));

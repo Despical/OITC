@@ -34,14 +34,14 @@ import org.bukkit.event.player.*;
  * <p>
  * Created at 02.07.2020
  */
-public class SpectatorEvents {
+public class SpectatorEvents implements Listener {
 
 	private final Main plugin;
 
 	public SpectatorEvents(Main plugin) {
 		this.plugin = plugin;
 
-//		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)

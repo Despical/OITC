@@ -33,7 +33,6 @@ import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.util.ItemPosition;
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -198,7 +197,7 @@ public class Events implements Listener {
 				}
 			}
 
-			player.sendMessage(plugin.getChatManager().prefixedMessage("Commands.No-Free-Arenas"));
+			player.sendMessage(plugin.getChatManager().prefixedMessage("commands.no_free_arenas"));
 		}
 	}
 
@@ -248,25 +247,21 @@ public class Events implements Listener {
 	public void onDamageEntity(EntityDamageByEntityEvent e) {
 		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Arrow)) {
 			return;
-		} else {
-			Bukkit.broadcastMessage(e.getEntity().getName() + " , " + e.getDamager().getName());
 		}
 
 		Arrow arrow = (Arrow) e.getDamager();
 
 		if (!(arrow.getShooter() instanceof Player)) {
 			return;
-		} else {
-			Bukkit.broadcastMessage("test1");
 		}
 
 		if (ArenaRegistry.isInArena((Player) e.getEntity()) && ArenaRegistry.isInArena((Player) arrow.getShooter())) {
 			if (!e.getEntity().getName().equals(((Player) arrow.getShooter()).getName())) {
 				e.setDamage(100.0);
 				plugin.getRewardsFactory().performReward((Player) e.getEntity(), Reward.RewardType.DEATH);
-			} else Bukkit.broadcastMessage("!e.getEntity().getName().equals(((Player) arrow.getShooter()).getName())");
-		} else {
-			Bukkit.broadcastMessage("ArenaRegistry.isInArena((Player) e.getEntity()) && ArenaRegistry.isInArena((Player) arrow.getShooter()))");
+			} else {
+				e.setCancelled(true);
+			}
 		}
 	}
 	
@@ -285,7 +280,7 @@ public class Events implements Listener {
 		e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 		e.getEntity().playEffect(org.bukkit.EntityEffect.HURT);
 
-		Titles.sendTitle(victim.getKiller(), null, plugin.getChatManager().message("In-Game.Messages.Score-Subtitle"), 5, 30, 5);
+		Titles.sendTitle(victim.getKiller(), 5, 30, 5, null, plugin.getChatManager().message("in_game.messages.score_subtitle"));
 
 		User victimUser = plugin.getUserManager().getUser(victim);
 		victimUser.setStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 0);
@@ -298,9 +293,9 @@ public class Events implements Listener {
 		killerUser.addStat(StatsStorage.StatisticType.KILLS, 1);
 
 		if (killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK) == 1){
-			arena.broadcastMessage(plugin.getChatManager().prefixedFormattedMessage(arena, plugin.getChatManager().message("In-Game.Messages.Death").replace("%killer%", victim.getKiller().getName()), victim));
+			arena.broadcastMessage(plugin.getChatManager().prefixedFormattedMessage(arena, plugin.getChatManager().message("in_game.messages.death").replace("%killer%", victim.getKiller().getName()), victim));
 		} else {
-			arena.broadcastMessage(plugin.getChatManager().prefixedFormattedMessage(arena, plugin.getChatManager().message("In-Game.Messages.Kill-Streak").replace("%kill_streak%", String.valueOf(killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
+			arena.broadcastMessage(plugin.getChatManager().prefixedFormattedMessage(arena, plugin.getChatManager().message("in_game.messages.kill_streak").replace("%kill_streak%", Integer.toString(killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
 		}
 
 		ItemPosition.addItem(victim.getKiller(), ItemPosition.ARROW, ItemPosition.ARROW.getItem());
@@ -308,12 +303,12 @@ public class Events implements Listener {
 
 		plugin.getRewardsFactory().performReward(victim.getKiller(), Reward.RewardType.KILL);
 
-		if (StatsStorage.getUserStats(victim.getKiller(), StatsStorage.StatisticType.LOCAL_KILLS) == plugin.getConfig().getInt("Winning-Score", 25)) {
+		if (StatsStorage.getUserStats(victim.getKiller(), StatsStorage.StatisticType.LOCAL_KILLS) == plugin.getConfig().getInt("winning_score", 25)) {
 			ArenaManager.stopGame(false, arena);
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
 		Arena arena = ArenaRegistry.getArena(player);
@@ -322,7 +317,7 @@ public class Events implements Listener {
 
 		event.setRespawnLocation(arena.getRandomSpawnPoint());
 
-		Titles.sendTitle(player, null, plugin.getChatManager().message("In-Game.Messages.Death-Subtitle"), 5, 30, 5);
+		Titles.sendTitle(player, null, plugin.getChatManager().message("in_game.messages.death_subtitle"));
 
 		ItemPosition.giveKit(player);
 	}

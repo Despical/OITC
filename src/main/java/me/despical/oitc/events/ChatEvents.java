@@ -67,7 +67,7 @@ public class ChatEvents implements Listener {
 			if (!disabledSeparateChat) {
 				event.setCancelled(true);
 
-				boolean dead = !arena.getPlayersLeft().contains(player);
+				boolean dead = plugin.getUserManager().getUser(player).isSpectator();
 
 				for (Player p : arena.getPlayers()) {
 					if (dead && arena.getPlayersLeft().contains(p)) {
