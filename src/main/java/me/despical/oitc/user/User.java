@@ -94,7 +94,7 @@ public class User {
 
 	public void resetStats() {
 		for (StatsStorage.StatisticType statistic : StatsStorage.StatisticType.values()) {
-			if (!statistic.isPersistent()) continue;
+			if (statistic.isPersistent()) continue;
 
 			setStat(statistic, 0);
 		}

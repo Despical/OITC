@@ -34,6 +34,7 @@ public class ReloadCommand extends SubCommand {
 		LogUtils.log("Initiated plugin reload by {0}", sender.getName());
 		long start = System.currentTimeMillis();
 
+		plugin.reloadConfig();
 		chatManager.reloadConfig();
 
 		ArenaRegistry.getArenas().forEach(arena -> ArenaManager.stopGame(true, arena));

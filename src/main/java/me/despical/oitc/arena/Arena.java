@@ -298,6 +298,7 @@ public class Arena extends BukkitRunnable {
 				PlayerUtils.showPlayer(p, player, plugin);
 			}
 		}
+
 	}
 
 	@Override
@@ -411,12 +412,17 @@ public class Arena extends BukkitRunnable {
 					String title = plugin.getChatManager().message("in_game.messages.seconds_left_title").replace("%time%", Integer.toString(getTimer()));
 					String subtitle = plugin.getChatManager().message("in_game.messages.seconds_left_subtitle").replace("%time%", Integer.toString(getTimer()));
 
-					players.forEach(p -> Titles.sendTitle(p, 5, 40, 5, title, subtitle));
+					players.forEach(p -> Titles.sendTitle(p, title, subtitle));
 				}
 
 				setTimer(getTimer() - 1);
 				break;
 			case ENDING:
+				if (getTimer() != 0) {
+					setTimer(getTimer() - 1);
+					return;
+				}
+
 				scoreboardManager.stopAllScoreboards();
 
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {

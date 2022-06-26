@@ -175,8 +175,8 @@ public class ArenaManager {
 
 		arena.teleportToLobby(player);
 		arena.doBarAction(Arena.BarAction.ADD, player);
-		arena.getPlayers().forEach(p -> ArenaUtils.showPlayer(p, arena));
 		arena.showPlayers();
+		ArenaUtils.showPlayer(player, arena);
 
 		chatManager.broadcastAction(arena, user, ActionType.JOIN);
 		plugin.getSignManager().updateSigns();
@@ -197,6 +197,8 @@ public class ArenaManager {
 		if (user.getStat(StatsStorage.StatisticType.LOCAL_KILLS) > user.getStat(StatsStorage.StatisticType.HIGHEST_SCORE)) {
 			user.setStat(StatsStorage.StatisticType.HIGHEST_SCORE, user.getStat(StatsStorage.StatisticType.LOCAL_KILLS));
 		}
+
+		plugin.getUserManager().saveAllStatistic(user);
 
 		if (arena.getArenaState() == ArenaState.IN_GAME && !user.isSpectator()) {
 			if (arena.getPlayersLeft().size() - 1 == 1) {
@@ -229,6 +231,7 @@ public class ArenaManager {
 		player.setWalkSpeed(0.2f);
 		player.setFireTicks(0);
 		player.setGameMode(GameMode.SURVIVAL);
+		player.getInventory().setHeldItemSlot(4); // change slot to not trigger something else
 
 		if (arena.getArenaState() != ArenaState.WAITING_FOR_PLAYERS && arena.getArenaState() != ArenaState.STARTING && arena.getPlayers().isEmpty()) {
 			arena.setArenaState(ArenaState.ENDING);
@@ -269,10 +272,8 @@ public class ArenaManager {
 			arena.broadcastMessage(chatManager.prefixedMessage("in_game.messages.admin_messages.stopped_game"));
 			return;
 		} else {
-			arena.setTimer(12);
+			arena.setTimer(6);
 		}
-
-		arena.getScoreboardManager().stopAllScoreboards();
 
 		String topPlayerName = arena.getScoreboardManager().getTopPlayerName(0);
 
@@ -284,20 +285,18 @@ public class ArenaManager {
 			if (topPlayerName.equals(player.getName())) {
 				user.addStat(StatsStorage.StatisticType.WINS, 1);
 
-				Titles.sendTitle(player, 5, 40, 5, chatManager.message("in_game.messages.game_end_messages.titles.win"), chatManager.message("In-Game.Messages.Game-End-Messages.Subtitles.Win").replace("%winner%", topPlayerName));
+				Titles.sendTitle(player, chatManager.message("in_game.messages.game_end_messages.titles.win"), chatManager.message("in_game.messages.game_end_messages.subtitles.win").replace("%winner%", topPlayerName));
 
 				plugin.getRewardsFactory().performReward(player, Reward.RewardType.WIN);
 			} else if (!user.isSpectator()) {
 				user.addStat(StatsStorage.StatisticType.LOSES, 1);
 
-				Titles.sendTitle(player, 5, 40, 5, chatManager.message("in_game.messages.game_end_messages.titles.lose"), chatManager.message("In-Game.Messages.Game-End-Messages.Subtitles.Lose").replace("%winner%", topPlayerName));
+				Titles.sendTitle(player, chatManager.message("in_game.messages.game_end_messages.titles.lose"), chatManager.message("in_game.messages.game_end_messages.subtitles.lose").replace("%winner%", topPlayerName));
 
 				plugin.getRewardsFactory().performReward(player, Reward.RewardType.LOSE);
 			}
 
 			player.getInventory().clear();
-
-			SpecialItemManager.giveItem(player, "Teleporter", "Spectator-Settings", "Leave", "Play-Again");
 
 			for (String msg : chatManager.getStringList("in_game.messages.game_end_messages.summary_message")) {
 				MiscUtils.sendCenteredMessage(player, formatSummaryPlaceholders(msg, arena, player));

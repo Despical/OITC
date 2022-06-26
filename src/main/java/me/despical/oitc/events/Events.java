@@ -33,6 +33,7 @@ import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.util.ItemPosition;
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -147,7 +148,7 @@ public class Events implements Listener {
 
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				plugin.getBungeeManager().connectToHub(player);
-			} else {
+			} else {//
 				ArenaManager.leaveAttempt(player, arena);
 				player.sendMessage(plugin.getChatManager().prefixedMessage("commands.teleported_to_the_lobby", player));
 			}
@@ -280,7 +281,7 @@ public class Events implements Listener {
 		e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 		e.getEntity().playEffect(org.bukkit.EntityEffect.HURT);
 
-		Titles.sendTitle(victim.getKiller(), 5, 30, 5, null, plugin.getChatManager().message("in_game.messages.score_subtitle"));
+		Titles.sendTitle(victim.getKiller(), null, plugin.getChatManager().message("in_game.messages.score_subtitle"));
 
 		User victimUser = plugin.getUserManager().getUser(victim);
 		victimUser.setStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 0);
@@ -303,7 +304,7 @@ public class Events implements Listener {
 
 		plugin.getRewardsFactory().performReward(victim.getKiller(), Reward.RewardType.KILL);
 
-		if (StatsStorage.getUserStats(victim.getKiller(), StatsStorage.StatisticType.LOCAL_KILLS) == plugin.getConfig().getInt("winning_score", 25)) {
+		if (StatsStorage.getUserStats(victim.getKiller(), StatsStorage.StatisticType.LOCAL_KILLS) == plugin.getConfig().getInt("Winning-Score", 25)) {
 			ArenaManager.stopGame(false, arena);
 		}
 	}
