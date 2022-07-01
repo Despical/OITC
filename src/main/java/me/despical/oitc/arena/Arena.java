@@ -229,7 +229,6 @@ public class Arena extends BukkitRunnable {
 		int i = 0;
 
 		for (Player player : getPlayersLeft()) {
-			AttributeUtils.setAttackCooldown(player, 16.0); // TEST
 			player.teleport(playerSpawnPoints.get(i++));
 		}
 	}
@@ -431,6 +430,7 @@ public class Arena extends BukkitRunnable {
 
 				for (Player player : players) {
 					ArenaUtils.showPlayersOutsideTheGame(player, this);
+					AttributeUtils.resetAttackCooldown(player);
 
 					player.setGameMode(GameMode.SURVIVAL);
 					player.setFlySpeed(.1f);

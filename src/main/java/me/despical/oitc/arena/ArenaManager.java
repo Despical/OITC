@@ -171,6 +171,7 @@ public class ArenaManager {
 			return;
 		}
 
+		AttributeUtils.setAttackCooldown(player, plugin.getConfig().getDouble("Hit-Cooldown-Delay", 4));
 		SpecialItemManager.giveItem(player, "Leave");
 
 		arena.teleportToLobby(player);
@@ -214,6 +215,7 @@ public class ArenaManager {
 
 		PlayerUtils.setGlowing(player, false);
 		AttributeUtils.healPlayer(player);
+		AttributeUtils.resetAttackCooldown(player);
 
 		user.setSpectator(false);
 		arena.getScoreboardManager().removeScoreboard(player);

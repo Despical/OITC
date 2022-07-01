@@ -1,6 +1,6 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # +---------------------------------------------------------+ #
-# |     One in the Chamber by Despical (Version 2.1.1)      | #
+# |     One in the Chamber by Despical (Version 2.1.2)      | #
 # |                                                         | #
 # |            https://www.patreon.com/despical             | #
 # | Support us with becoming Patron and use Patron benefits | #
@@ -41,6 +41,9 @@ Chat-Format-Enabled: true
 # Should we disable all chat related stuff?
 # It will disable the separated chat.
 Disable-Separate-Chat: false
+
+# The delay between hitting players. ONLY EFFECTED in Minecraft 1.9+
+Hit-Cooldown-Delay: 16
 
 # Basic permissions for game, permissions explained here: https://github.com/Despical/OITC/wiki/Commands-and-permissions#basic-permissions
 Basic-Permissions:
