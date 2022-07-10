@@ -1,16 +1,17 @@
 # One in the Chamber
 [![](https://jitpack.io/v/Despical/OITC.svg)](https://jitpack.io/#Despical/OITC)
 [![](https://img.shields.io/badge/JavaDocs-latest-lime.svg)](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Despical/OITC/OITC%20Build)
+![](https://img.shields.io/github/workflow/status/Despical/OITC/OITC%20Build)
+[![Discord](https://img.shields.io/discord/719922452259668000.svg?color=lime&label=Discord)](https://discord.gg/rVkaGmyszE)
 
-One in the Chamber is an old Minecraft mini game. Each player is equipped with a sword, bow and arrow.
-The arrows do one hit one kill damage and if player missed the shot they can't receive a new arrow until die
+One in the Chamber is an old Minecraft minigame. Each player is equipped with a sword, bow and arrow.
+The arrows do one hit one kill damage and if player missed the shot they can't receive a new arrow until they die
 or killing other players. When a player reaches 25 points the game ends and winner is the player who reached first.
 
 ## Documentation
 More information can be found on the [wiki page](https://github.com/Despical/OITC/wiki).
 The [Javadoc](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html) can be browsed.
-Also you can join our small [Discord community](https://www.discord.gg/rVkaGmyszE) to get support and news early.
+Also you can join our [Discord community](https://www.discord.gg/rVkaGmyszE) to get support and news early.
 
 ## Donations
 You like the OITC? Then [donate](https://www.patreon.com/despical) back me to support the development.
@@ -71,6 +72,6 @@ See the [LICENSE](https://github.com/Despical/OITC/blob/master/LICENSE) file for
 If you want to build this project from source code, run the following from Git Bash:
 ```
 git clone https://www.github.com/Despical/OITC.git && cd OITC
-mvn clean package -Dmaven.javadoc.skip=true (this option does not allow to generate docs and make compiling faster)
+mvn clean package -Dmaven.javadoc.skip=true
 ```
 Also don't forget to install Maven before building.
