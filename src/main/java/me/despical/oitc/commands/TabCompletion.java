@@ -48,8 +48,6 @@ public class TabCompletion implements TabCompleter {
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
 		List<String> completions = new ArrayList<>(), commands = plugin.getCommandHandler().getSubCommands().stream().map(SubCommand::getName).collect(Collectors.toList());
-		commands.remove("oitc");
-
 		String arg = args[0];
 
 		if (args.length == 1) {
@@ -63,6 +61,10 @@ public class TabCompletion implements TabCompleter {
 
 			if (arg.equalsIgnoreCase("stats")) {
 				return plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+			}
+
+			if (!commands.contains(arg)) {
+				return null;
 			}
 
 			List<String> arenas = ArenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());

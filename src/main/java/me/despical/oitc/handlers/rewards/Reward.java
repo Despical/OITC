@@ -89,14 +89,10 @@ public class Reward {
 	public enum RewardType {
 		KILL("kill"), DEATH("death"), END_GAME("endgame"), LOSE("lose"), WIN("win");
 
-		private final String path;
+		final String path;
 
 		RewardType(String path) {
-			this.path = path;
-		}
-
-		public String getPath() {
-			return "rewards." + path;
+			this.path = "rewards." + path;
 		}
 	}
 

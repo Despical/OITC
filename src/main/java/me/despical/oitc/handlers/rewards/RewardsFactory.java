@@ -115,7 +115,7 @@ public class RewardsFactory {
 		FileConfiguration config = ConfigUtils.getConfig(plugin, "rewards");
 
 		for (Reward.RewardType rewardType : Reward.RewardType.values()) {
-			for (String reward : config.getStringList(rewardType.getPath())) {
+			for (String reward : config.getStringList(rewardType.path)) {
 				rewards.add(new Reward(rewardType, reward));
 			}
 		}

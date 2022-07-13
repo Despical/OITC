@@ -66,7 +66,7 @@ public enum ItemPosition {
 		}
 
 		for (ItemPosition itemPosition : itemPositions) {
-			player.getInventory().setItem(itemPosition.getItemPosition(), itemPosition.itemStack);
+			player.getInventory().setItem(itemPosition.itemPosition, itemPosition.itemStack);
 		}
 	}
 

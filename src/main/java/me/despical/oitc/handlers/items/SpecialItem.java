@@ -36,11 +36,12 @@ import java.util.stream.Collectors;
 public class SpecialItem {
 
 	private static Main plugin;
-	private ItemStack itemStack;
-	private int slot;
 	private final String name;
 
-	public SpecialItem(String name) {
+	ItemStack itemStack;
+	int slot;
+
+	SpecialItem(String name) {
 		this.name = name;
 	}
 

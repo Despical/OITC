@@ -45,7 +45,7 @@ public class SpecialItemManager {
 		for (String key : specialItems.keySet()) {
 			SpecialItem entityItem = getSpecialItem(key);
 
-			if (entityItem.getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase(itemStack.getItemMeta().getDisplayName())) {
+			if (entityItem.itemStack.getItemMeta().getDisplayName().equalsIgnoreCase(itemStack.getItemMeta().getDisplayName())) {
 				return key;
 			}
 		}
@@ -59,7 +59,7 @@ public class SpecialItemManager {
 
 			if (item == null) continue;
 
-			player.getInventory().setItem(item.getSlot(), item.getItemStack());
+			player.getInventory().setItem(item.slot, item.itemStack);
 		}
 
 		player.updateInventory();

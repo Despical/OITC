@@ -56,7 +56,7 @@ import java.io.File;
  */
 public class Main extends JavaPlugin {
 
-	private boolean forceDisable = false;
+	private boolean forceDisable;
 
 	private ExceptionLogHandler exceptionLogHandler;
 	private BungeeManager bungeeManager;
@@ -73,7 +73,7 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		this.configPreferences = new ConfigPreferences(this);
 
-		if (forceDisable = !validateIfPluginShouldStart()) {
+		if (!(forceDisable = validateIfPluginShouldStart())) {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -83,13 +83,12 @@ public class Main extends JavaPlugin {
 		exceptionLogHandler.addBlacklistedClass("me.despical.oitc.user.data.MysqlManager", "me.despical.commons.database.MysqlDatabase");
 		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official Discord server (link: https://discord.gg/rVkaGmyszE) with the following error given above!");
 
-		saveDefaultConfig();
-
 		if (configPreferences.getOption(ConfigPreferences.Option.DEBUG_MESSAGES)) {
 			LogUtils.setLoggerName("OITC");
 			LogUtils.enableLogging();
-			LogUtils.log("Initialization started.");
 		}
+
+		LogUtils.log("Initialization started.");
 
 		long start = System.currentTimeMillis();
 
@@ -97,6 +96,7 @@ public class Main extends JavaPlugin {
 		initializeClasses();
 		checkUpdate();
 
+		LogUtils.sendConsoleMessage("Initialization finished. Join our Discord server to get support and news about OITC. (https://discord.gg/rVkaGmyszE)");
 		LogUtils.log("Initialization finished took {0} ms.", System.currentTimeMillis() - start);
 
 		if (configPreferences.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
@@ -220,9 +220,7 @@ public class Main extends JavaPlugin {
 	private void startPluginMetrics() {
 		Metrics metrics = new Metrics(this, 8118);
 
-		if (!metrics.isEnabled()) {
-			return;
-		}
+		if (!metrics.isEnabled()) return;
 
 		metrics.addCustomChart(new Metrics.SimplePie("database_enabled", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED))));
 		metrics.addCustomChart(new Metrics.SimplePie("bungeecord_hooked", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED))));
@@ -230,9 +228,7 @@ public class Main extends JavaPlugin {
 	}
 	
 	private void checkUpdate() {
-		if (!configPreferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED)) {
-			return;
-		}
+		if (!configPreferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED)) return;
 
 		UpdateChecker.init(this, 81185).requestUpdateCheck().whenComplete((result, exception) -> {
 			if (result.requiresUpdate()) {

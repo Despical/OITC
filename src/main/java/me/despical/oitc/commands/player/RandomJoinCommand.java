@@ -11,7 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +44,7 @@ public class RandomJoinCommand extends SubCommand {
 			&& arena.getPlayers().size() < arena.getMaximumPlayers()).collect(Collectors.toList());
 
 		if (!arenas.isEmpty()) {
-			Arena arena = arenas.get(ThreadLocalRandom.current().nextInt(arenas.size()));
+			Arena arena = arenas.get(0);
 			ArenaManager.joinAttempt((Player) sender, arena);
 			return;
 		}

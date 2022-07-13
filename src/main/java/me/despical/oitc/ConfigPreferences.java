@@ -38,6 +38,8 @@ public class ConfigPreferences {
 		this.plugin = plugin;
 		this.options = new HashMap<>();
 
+		plugin.saveDefaultConfig();
+
 		loadOptions();
 	}
 
