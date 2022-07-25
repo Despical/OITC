@@ -33,7 +33,6 @@ import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.util.ItemPosition;
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -148,7 +147,7 @@ public class Events implements Listener {
 
 			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				plugin.getBungeeManager().connectToHub(player);
-			} else {//
+			} else {
 				ArenaManager.leaveAttempt(player, arena);
 				player.sendMessage(plugin.getChatManager().prefixedMessage("commands.teleported_to_the_lobby", player));
 			}
@@ -370,7 +369,7 @@ public class Events implements Listener {
 		}
 
 		if (e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
-			if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_FALL_DAMAGE)) {
+			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_FALL_DAMAGE)) {
 				return;
 			}
 
