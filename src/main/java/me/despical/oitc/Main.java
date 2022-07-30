@@ -18,6 +18,7 @@
 
 package me.despical.oitc;
 
+import org.bstats.bukkit.Metrics;
 import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.database.MysqlDatabase;
 import me.despical.commons.exception.ExceptionLogHandler;
@@ -43,7 +44,7 @@ import me.despical.oitc.handlers.sign.SignManager;
 import me.despical.oitc.user.User;
 import me.despical.oitc.user.UserManager;
 import me.despical.oitc.user.data.MysqlManager;
-import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -220,11 +221,9 @@ public class Main extends JavaPlugin {
 	private void startPluginMetrics() {
 		Metrics metrics = new Metrics(this, 8118);
 
-		if (!metrics.isEnabled()) return;
-
-		metrics.addCustomChart(new Metrics.SimplePie("database_enabled", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED))));
-		metrics.addCustomChart(new Metrics.SimplePie("bungeecord_hooked", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED))));
-		metrics.addCustomChart(new Metrics.SimplePie("update_notifier", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED))));
+		metrics.addCustomChart(new SimplePie("database_enabled", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED))));
+		metrics.addCustomChart(new SimplePie("bungeecord_hooked", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED))));
+		metrics.addCustomChart(new SimplePie("update_notifier", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED))));
 	}
 	
 	private void checkUpdate() {
