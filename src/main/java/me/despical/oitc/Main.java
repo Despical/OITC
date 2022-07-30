@@ -87,9 +87,8 @@ public class Main extends JavaPlugin {
 		if (configPreferences.getOption(ConfigPreferences.Option.DEBUG_MESSAGES)) {
 			LogUtils.setLoggerName("OITC");
 			LogUtils.enableLogging();
+			LogUtils.log("Initialization started.");
 		}
-
-		LogUtils.log("Initialization started.");
 
 		long start = System.currentTimeMillis();
 
@@ -107,8 +106,8 @@ public class Main extends JavaPlugin {
 	
 	private boolean validateIfPluginShouldStart() {
 		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_9_R1, VersionResolver.ServerVersion.v1_19_R1)) {
-			LogUtils.sendConsoleMessage("&cYour server version is not supported by One in the Chamber!");
-			LogUtils.sendConsoleMessage("&cSadly, we must shut off. Maybe you consider changing your server version?");
+			LogUtils.sendConsoleMessage("[OITC] &cYour server version is not supported by One in the Chamber!");
+			LogUtils.sendConsoleMessage("[OITC] &cSadly, we must shut off. Maybe you consider changing your server version?");
 			return false;
 		}
 
@@ -120,8 +119,8 @@ public class Main extends JavaPlugin {
 		try {
 			Class.forName("org.spigotmc.SpigotConfig");
 		} catch (Exception exception) {
-			LogUtils.sendConsoleMessage("&cYour server software is not supported by One in the Chamber!");
-			LogUtils.sendConsoleMessage("&cWe support only Spigot and Spigot forks only! Shutting off...");
+			LogUtils.sendConsoleMessage("[OITC] &cYour server software is not supported by One in the Chamber!");
+			LogUtils.sendConsoleMessage("[OITC] &cWe support only Spigot and Spigot forks only! Shutting off...");
 			return false;
 		}
 
