@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.regex.Pattern;
@@ -37,44 +36,43 @@ import java.util.regex.Pattern;
  * <p>
  * Created at 02.07.2020
  */
-public class ChatEvents implements Listener {
-
-	private final Main plugin;
+public class ChatEvents extends ListenerAdapter {
+	
+	private final boolean disableSeparateChat, chatFormatEnabled;
 
 	public ChatEvents(Main plugin) {
-		this.plugin = plugin;
-
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		super (plugin);
+		this.disableSeparateChat = preferences.getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT);
+		this.chatFormatEnabled = preferences.getOption(ConfigPreferences.Option.CHAT_FORMAT_ENABLED);
 	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onChatInGame(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 		Arena arena = ArenaRegistry.getArena(player);
-		boolean disabledSeparateChat = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT);
 
 		if (arena == null) {
-			if (!disabledSeparateChat) {
+			if (!disableSeparateChat) {
 				ArenaRegistry.getArenas().forEach(loopArena -> loopArena.getPlayers().forEach(p -> event.getRecipients().remove(p)));
 			}
 
 			return;
 		}
 
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.CHAT_FORMAT_ENABLED)) {
-			String message = formatChatPlaceholders(plugin.getChatManager().message("In-Game.Game-Chat-Format"), player, event.getMessage().replaceAll(Pattern.quote("[$\\]"), ""));
+		if (chatFormatEnabled) {
+			String message = formatChatPlaceholders(chatManager.message("In-Game.Game-Chat-Format"), player, event.getMessage().replaceAll(Pattern.quote("[$\\]"), ""));
 
-			if (!disabledSeparateChat) {
+			if (!disableSeparateChat) {
 				event.setCancelled(true);
 
-				boolean dead = plugin.getUserManager().getUser(player).isSpectator();
+				final boolean dead = userManager.getUser(player).isSpectator();
 
 				for (Player p : arena.getPlayers()) {
 					if (dead && arena.getPlayersLeft().contains(p)) {
 						continue;
 					}
 
-					p.sendMessage(dead ? formatChatPlaceholders(plugin.getChatManager().message("In-Game.Game-Death-Format"), player, null) + message : message);
+					p.sendMessage(dead ? formatChatPlaceholders(chatManager.message("In-Game.Game-Death-Format"), player, null) + message : message);
 				}
 
 				plugin.getServer().getConsoleSender().sendMessage(message);
@@ -90,10 +88,10 @@ public class ChatEvents implements Listener {
 		formatted = StringUtils.replace(formatted, "%player%", player.getName());
 		formatted = StringUtils.replace(formatted, "%message%", ChatColor.stripColor(saidMessage));
 
-		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+		if (chatManager.isPapiEnabled()) {
 			formatted = PlaceholderAPI.setPlaceholders(player, formatted);
 		}
 
-		return plugin.getChatManager().coloredRawMessage(formatted);
+		return chatManager.coloredRawMessage(formatted);
 	}
 }

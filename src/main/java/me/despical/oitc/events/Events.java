@@ -19,9 +19,14 @@
 package me.despical.oitc.events;
 
 import me.despical.commons.compat.Titles;
+import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.compat.XMaterial;
 import me.despical.commons.item.ItemUtils;
+import me.despical.commons.miscellaneous.AttributeUtils;
+import me.despical.commons.miscellaneous.PlayerUtils;
+import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
+import me.despical.commons.util.UpdateChecker;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
@@ -61,21 +66,101 @@ import java.util.stream.Stream;
  * <p>
  * Created at 02.07.2020
  */
-public class Events implements Listener {
-
-	private final Main plugin;
+public class Events extends ListenerAdapter {
 
 	public Events(Main plugin) {
-		this.plugin = plugin;
-
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		super (plugin);
+		
+		registerLegacyEvents();
 	}
 
 	@EventHandler
-	public void onDrop(PlayerDropItemEvent event) {
-		if (ArenaRegistry.isInArena(event.getPlayer())) {
-			event.setCancelled(true);
+	public void onLogin(PlayerLoginEvent e) {
+		if (!preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED) || e.getResult() != PlayerLoginEvent.Result.KICK_WHITELIST) {
+			return;
 		}
+
+		if (e.getPlayer().hasPermission(plugin.getPermissionsManager().getJoinPerm())) {
+			e.setResult(PlayerLoginEvent.Result.ALLOWED);
+		}
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		Player eventPlayer = event.getPlayer();
+		userManager.loadStatistics(eventPlayer);
+
+		if (preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+			ArenaRegistry.getBungeeArena().teleportToLobby(eventPlayer);
+			return;
+		}
+
+		for (Player player : plugin.getServer().getOnlinePlayers()) {
+			if (!ArenaRegistry.isInArena(player)) {
+				continue;
+			}
+
+			PlayerUtils.hidePlayer(player, eventPlayer, plugin);
+			PlayerUtils.hidePlayer(eventPlayer, player, plugin);
+		}
+
+		if (preferences.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
+			InventorySerializer.loadInventory(plugin, eventPlayer);
+		}
+	}
+
+	@EventHandler
+	public void onJoinCheckVersion(PlayerJoinEvent event) {
+		if (!preferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED) || !event.getPlayer().hasPermission("oitc.updatenotify")) {
+			return;
+		}
+
+		plugin.getServer().getScheduler().runTaskLater(plugin, () -> UpdateChecker.init(plugin, 81185).requestUpdateCheck().whenComplete((result, exception) -> {
+			if (result.requiresUpdate()) {
+				final Player player = event.getPlayer();
+
+				player.sendMessage(chatManager.coloredRawMessage("&3[OITC] &bFound an update: v" + result.getNewestVersion() + " Download:"));
+				player.sendMessage(chatManager.coloredRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber.81185/"));
+			}
+		}), 25);
+	}
+
+	@EventHandler
+	public void onLobbyDamage(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player)) {
+			return;
+		}
+
+		final Player player = (Player) event.getEntity();
+		final Arena arena = ArenaRegistry.getArena(player);
+
+		if (arena == null || arena.getArenaState() == ArenaState.IN_GAME) {
+			return;
+		}
+
+		event.setCancelled(true);
+		player.setFireTicks(0);
+		AttributeUtils.healPlayer(player);
+	}
+
+	@EventHandler
+	public void onQuit(PlayerQuitEvent event) {
+		handleQuit(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onKick(PlayerKickEvent event) {
+		handleQuit(event.getPlayer());
+	}
+
+	private void handleQuit(Player player) {
+		final Arena arena = ArenaRegistry.getArena(player);
+
+		if (arena != null) {
+			ArenaManager.leaveAttempt(player, arena);
+		}
+
+		userManager.removeUser(player);
 	}
 
 	@EventHandler
@@ -84,7 +169,7 @@ public class Events implements Listener {
 			return;
 		}
 
-		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BLOCK_COMMANDS)) {
+		if (!preferences.getOption(ConfigPreferences.Option.BLOCK_COMMANDS)) {
 			return;
 		}
 
@@ -103,7 +188,7 @@ public class Events implements Listener {
 		}
 
 		event.setCancelled(true);
-		event.getPlayer().sendMessage(plugin.getChatManager().prefixedMessage("In-Game.Only-Command-Ingame-Is-Leave"));
+		event.getPlayer().sendMessage(chatManager.prefixedMessage("In-Game.Only-Command-Ingame-Is-Leave"));
 	}
 
 	@EventHandler
@@ -145,11 +230,11 @@ public class Events implements Listener {
 		if (SpecialItemManager.getRelatedSpecialItem(itemStack).equals("Leave")) {
 			event.setCancelled(true);
 
-			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+			if (preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				plugin.getBungeeManager().connectToHub(player);
 			} else {
 				ArenaManager.leaveAttempt(player, arena);
-				player.sendMessage(plugin.getChatManager().prefixedMessage("commands.teleported_to_the_lobby", player));
+				player.sendMessage(chatManager.prefixedMessage("commands.teleported_to_the_lobby", player));
 			}
 		}
 	}
@@ -197,7 +282,7 @@ public class Events implements Listener {
 				}
 			}
 
-			player.sendMessage(plugin.getChatManager().prefixedMessage("commands.no_free_arenas"));
+			player.sendMessage(chatManager.prefixedMessage("commands.no_free_arenas"));
 		}
 	}
 
@@ -280,22 +365,22 @@ public class Events implements Listener {
 		e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 		e.getEntity().playEffect(org.bukkit.EntityEffect.HURT);
 
-		Titles.sendTitle(victim.getKiller(), null, plugin.getChatManager().message("in_game.messages.score_subtitle"));
+		Titles.sendTitle(victim.getKiller(), null, chatManager.message("in_game.messages.score_subtitle"));
 
-		User victimUser = plugin.getUserManager().getUser(victim);
+		User victimUser = userManager.getUser(victim);
 		victimUser.setStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 0);
 		victimUser.addStat(StatsStorage.StatisticType.LOCAL_DEATHS, 1);
 		victimUser.addStat(StatsStorage.StatisticType.DEATHS, 1);
 
-		User killerUser = plugin.getUserManager().getUser(victim.getKiller());
+		User killerUser = userManager.getUser(victim.getKiller());
 		killerUser.addStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 1);
 		killerUser.addStat(StatsStorage.StatisticType.LOCAL_KILLS, 1);
 		killerUser.addStat(StatsStorage.StatisticType.KILLS, 1);
 
 		if (killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK) == 1){
-			arena.broadcastMessage(plugin.getChatManager().prefixedFormattedMessage(arena, plugin.getChatManager().message("in_game.messages.death").replace("%killer%", victim.getKiller().getName()), victim));
+			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.message("in_game.messages.death").replace("%killer%", victim.getKiller().getName()), victim));
 		} else {
-			arena.broadcastMessage(plugin.getChatManager().prefixedFormattedMessage(arena, plugin.getChatManager().message("in_game.messages.kill_streak").replace("%kill_streak%", Integer.toString(killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
+			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.message("in_game.messages.kill_streak").replace("%kill_streak%", Integer.toString(killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
 		}
 
 		ItemPosition.addItem(victim.getKiller(), ItemPosition.ARROW, ItemPosition.ARROW.getItem());
@@ -317,7 +402,7 @@ public class Events implements Listener {
 
 		event.setRespawnLocation(arena.getRandomSpawnPoint());
 
-		Titles.sendTitle(player, null, plugin.getChatManager().message("in_game.messages.death_subtitle"));
+		Titles.sendTitle(player, null, chatManager.message("in_game.messages.death_subtitle"));
 
 		ItemPosition.giveKit(player);
 	}
@@ -340,7 +425,7 @@ public class Events implements Listener {
 
 	@EventHandler
 	public void playerCommandExecution(PlayerCommandPreprocessEvent e) {
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.ENABLE_SHORT_COMMANDS)) {
+		if (preferences.getOption(ConfigPreferences.Option.ENABLE_SHORT_COMMANDS)) {
 			Player player = e.getPlayer();
 
 			if (e.getMessage().equalsIgnoreCase("/start")) {
@@ -357,23 +442,23 @@ public class Events implements Listener {
 	}
 
 	@EventHandler
-	public void onFallDamage(EntityDamageEvent e) {
-		if (!(e.getEntity() instanceof Player)) {
+	public void onFallDamage(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player)) {
 			return;
 		}
 
-		Player victim = (Player) e.getEntity();
+		Player victim = (Player) event.getEntity();
 
 		if (!ArenaRegistry.isInArena(victim)) {
 			return;
 		}
 
-		if (e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
-			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_FALL_DAMAGE)) {
+		if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
+			if (preferences.getOption(ConfigPreferences.Option.DISABLE_FALL_DAMAGE)) {
 				return;
 			}
 
-			e.setCancelled(true);
+			event.setCancelled(true);
 		}
 	}
 
@@ -393,5 +478,24 @@ public class Events implements Listener {
 
 		event.setCancelled(true);
 		event.getItem().remove();
+	}
+
+	@EventHandler
+	public void onDrop(PlayerDropItemEvent event) {
+		if (ArenaRegistry.isInArena(event.getPlayer())) {
+			event.setCancelled(true);
+		}
+	}
+	
+	private void registerLegacyEvents() {
+		registerIf((bool) -> VersionResolver.isCurrentHigher(VersionResolver.ServerVersion.v1_9_R2), () -> new Listener() {
+
+			@EventHandler
+			public void onItemSwap(PlayerSwapHandItemsEvent event) {
+				if (ArenaRegistry.isInArena(event.getPlayer())) {
+					event.setCancelled(true);
+				}
+			}
+		});
 	}
 }

@@ -192,13 +192,9 @@ public class Main extends JavaPlugin {
 		permissionsManager = new PermissionsManager(this);
 
 		new SpectatorEvents(this);
-		new QuitEvent(this);
-		new JoinEvent(this);
 		new ChatEvents(this);
 		new Events(this);
-		new LobbyEvent(this);
 		new SpectatorItemEvents(this);
-		new LegacyEvents(this);
 
 		registerSoftDependenciesAndServices();
 	}
@@ -279,23 +275,26 @@ public class Main extends JavaPlugin {
 
 	private void saveAllUserStatistics() {
 		for (Player player : getServer().getOnlinePlayers()) {
-			User user = userManager.getUser(player);
+			final User user = userManager.getUser(player);
 
 			if (userManager.getDatabase() instanceof MysqlManager) {
-				StringBuilder update = new StringBuilder(" SET ");
+				final StringBuilder builder = new StringBuilder(" SET ");
 
 				for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 					if (!stat.isPersistent()) continue;
-					if (update.toString().equalsIgnoreCase(" SET ")) {
-						update.append(stat.getName()).append("'='").append(user.getStat(stat));
+
+					final int value = user.getStat(stat);
+
+					if (builder.toString().equalsIgnoreCase(" SET ")) {
+						builder.append(stat.getName()).append("'='").append(value);
 					}
 
-					update.append(", ").append(stat.getName()).append("'='").append(user.getStat(stat));
+					builder.append(", ").append(stat.getName()).append("'='").append(value);
 				}
 
-				MysqlManager database = (MysqlManager) userManager.getDatabase();
-				String finalUpdate = update.toString();
-				database.getDatabase().executeUpdate("UPDATE " + database.getTableName() + finalUpdate + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';");
+				final MysqlManager database = (MysqlManager) userManager.getDatabase();
+				final String update = builder.toString();
+				database.getDatabase().executeUpdate("UPDATE " + database.getTableName() + update + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';");
 				continue;
 			}
 

@@ -24,12 +24,12 @@ import me.despical.commons.number.NumberUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
+import me.despical.oitc.events.ListenerAdapter;
 import org.bukkit.ChatColor;
 import org.bukkit.SkullType;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -46,14 +46,10 @@ import java.util.Set;
  * <p>
  * Created at 02.07.2020
  */
-public class SpectatorItemEvents implements Listener {
-
-	private final Main plugin;
+public class SpectatorItemEvents extends ListenerAdapter {
 
 	public SpectatorItemEvents(Main plugin) {
-		this.plugin = plugin;
-
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		super (plugin);
 	}
 
 	@EventHandler
@@ -71,9 +67,9 @@ public class SpectatorItemEvents implements Listener {
 
 			e.setCancelled(true);
 
-			if (stack.getItemMeta().getDisplayName().equalsIgnoreCase(plugin.getChatManager().message("In-Game.Spectator.Spectator-Item-Name"))) {
+			if (stack.getItemMeta().getDisplayName().equalsIgnoreCase(chatManager.message("In-Game.Spectator.Spectator-Item-Name"))) {
 				openSpectatorMenu(e.getPlayer().getWorld(), e.getPlayer());
-			} else if (stack.getItemMeta().getDisplayName().equalsIgnoreCase(plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Item-Name"))) {
+			} else if (stack.getItemMeta().getDisplayName().equalsIgnoreCase(chatManager.message("In-Game.Spectator.Settings-Menu.Item-Name"))) {
 				new SpectatorSettingsMenu(e.getPlayer(), plugin).openInventory();
 			}
 		}
@@ -81,16 +77,16 @@ public class SpectatorItemEvents implements Listener {
 
 	private void openSpectatorMenu(World world, Player p) {
 		Set<Player> players = ArenaRegistry.getArena(p).getPlayers();
-		Inventory inventory = plugin.getServer().createInventory(null, NumberUtils.roundInteger(players.size(), 9), plugin.getChatManager().message("In-Game.Spectator.Spectator-Menu-Name"));
+		Inventory inventory = plugin.getServer().createInventory(null, NumberUtils.roundInteger(players.size(), 9), chatManager.message("In-Game.Spectator.Spectator-Menu-Name"));
 
 		for (Player player : world.getPlayers()) {
-			if (players.contains(player) && !plugin.getUserManager().getUser(player).isSpectator()) {
+			if (players.contains(player) && !userManager.getUser(player).isSpectator()) {
 				ItemStack skull = XMaterial.PLAYER_HEAD.parseItem();
 				SkullMeta meta = (SkullMeta) skull.getItemMeta();
 				meta = ItemUtils.setPlayerHead(player, meta);
 				meta.setDisplayName(player.getName());
 
-				String score = plugin.getChatManager().message("In-Game.Spectator.Target-Player-Score", p).replace("%score%", String.valueOf(ArenaRegistry.getArena(p).getScoreboardManager().getRank(p)));
+				String score = chatManager.message("In-Game.Spectator.Target-Player-Score", p).replace("%score%", String.valueOf(ArenaRegistry.getArena(p).getScoreboardManager().getRank(p)));
 
 				meta.setLore(Collections.singletonList(score));
 				skull.setDurability((short) SkullType.PLAYER.ordinal());
@@ -116,7 +112,7 @@ public class SpectatorItemEvents implements Listener {
 			return;
 		}
 
-		if (!e.getView().getTitle().equalsIgnoreCase(plugin.getChatManager().message("In-Game.Spectator.Spectator-Menu-Name", p))) {
+		if (!e.getView().getTitle().equalsIgnoreCase(chatManager.message("In-Game.Spectator.Spectator-Menu-Name", p))) {
 			return;
 		}
 
@@ -125,13 +121,13 @@ public class SpectatorItemEvents implements Listener {
 
 		for (Player player : arena.getPlayers()) {
 			if (player.getName().equalsIgnoreCase(meta.getDisplayName()) || ChatColor.stripColor(meta.getDisplayName()).contains(player.getName())) {
-				p.sendMessage(plugin.getChatManager().formatMessage(arena, plugin.getChatManager().message("Commands.Admin-Commands.Teleported-To-Player"), player));
+				p.sendMessage(chatManager.formatMessage(arena, chatManager.message("Commands.Admin-Commands.Teleported-To-Player"), player));
 				p.teleport(player);
 				p.closeInventory();
 				return;
 			}
 		}
 
-		p.sendMessage(plugin.getChatManager().message("Commands.Admin-Commands.Player-Not-Found"));
+		p.sendMessage(chatManager.message("Commands.Admin-Commands.Player-Not-Found"));
 	}
 }

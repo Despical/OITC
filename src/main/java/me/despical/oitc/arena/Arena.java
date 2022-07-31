@@ -297,7 +297,6 @@ public class Arena extends BukkitRunnable {
 				PlayerUtils.showPlayer(p, player, plugin);
 			}
 		}
-
 	}
 
 	@Override

@@ -43,13 +43,19 @@ public class ChatManager {
 
 	private final Main plugin;
 	private final String prefix;
+	private final boolean papiEnabled;
 
 	public ChatManager(Main plugin) {
 		this.plugin = plugin;
 		this.config = ConfigUtils.getConfig(plugin, "messages");
 		this.prefix = message("in_game.plugin_prefix");
+		this.papiEnabled = plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
 	}
-	
+
+	public boolean isPapiEnabled() {
+		return papiEnabled;
+	}
+
 	public String coloredRawMessage(String message) {
 		return Strings.format(message);
 	}
@@ -141,7 +147,7 @@ public class ChatManager {
 
 	public void broadcastAction(Arena arena, User user, ActionType action) {
 		if (!user.isSpectator()) {
-			arena.broadcastMessage(prefix + formatMessage(arena, message("in_game.messages." + StringUtils.capitalize(action.name().toLowerCase(Locale.ENGLISH))), user.getPlayer()));
+			arena.broadcastMessage(formatMessage(arena, message("in_game.messages." + StringUtils.capitalize(action.name().toLowerCase(Locale.ENGLISH))), user.getPlayer()));
 		}
 	}
 	

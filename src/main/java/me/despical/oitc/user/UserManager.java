@@ -75,8 +75,8 @@ public class UserManager {
 		database.saveAllStatistic(user);
 	}
 
-	public void loadStatistics(User user) {
-		database.loadStatistics(user);
+	public void loadStatistics(Player player) {
+		database.loadStatistics(getUser(player));
 	}
 
 	public void removeUser(Player player) {

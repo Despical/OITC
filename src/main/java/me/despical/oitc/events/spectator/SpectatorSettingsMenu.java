@@ -57,10 +57,10 @@ public class SpectatorSettingsMenu implements Listener {
 	}
 
 	private void prepareComponents(StaticPane pane) {
-		SpeedComponents speedComponents = new SpeedComponents();
+		final SpeedComponents speedComponents = new SpeedComponents();
 		speedComponents.registerComponent(this, pane);
 
-		MiscComponents miscComponents = new MiscComponents();
+		final MiscComponents miscComponents = new MiscComponents();
 		miscComponents.registerComponent(this, pane);
 	}
 
