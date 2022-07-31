@@ -31,29 +31,24 @@ import java.util.Map;
  */
 public class ConfigPreferences {
 
-	private final Main plugin;
 	private final Map<Option, Boolean> options;
 
 	public ConfigPreferences(Main plugin) {
-		this.plugin = plugin;
 		this.options = new HashMap<>();
 
 		plugin.saveDefaultConfig();
 
-		loadOptions();
+		for (Option option : Option.values()) {
+			options.put(option, plugin.getConfig().getBoolean(option.path, option.def));
+		}
 	}
 
 	public boolean getOption(Option option) {
 		return options.get(option);
 	}
 
-	private void loadOptions() {
-		for (Option option : Option.values()) {
-			options.put(option, plugin.getConfig().getBoolean(option.path, option.def));
-		}
-	}
-
 	public enum Option {
+
 		BLOCK_COMMANDS, BOSS_BAR_ENABLED, BUNGEE_ENABLED(false), CHAT_FORMAT_ENABLED, DATABASE_ENABLED(false),
 		DEBUG_MESSAGES(false), DISABLE_FALL_DAMAGE(false), DISABLE_LEAVE_COMMAND(false), DISABLE_SEPARATE_CHAT(false),
 		ENABLE_SHORT_COMMANDS, IGNORE_WARNING_MESSAGES(false), INVENTORY_MANAGER_ENABLED, NAME_TAGS_HIDDEN,
