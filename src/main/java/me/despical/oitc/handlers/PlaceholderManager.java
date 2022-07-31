@@ -25,6 +25,7 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.user.User;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Despical
@@ -44,22 +45,27 @@ public class PlaceholderManager extends PlaceholderExpansion {
 		return true;
 	}
 
+	@NotNull
+	@Override
 	public String getIdentifier() {
 		return "oitc";
 	}
 
+	@NotNull
+	@Override
 	public String getAuthor() {
 		return "Despical";
 	}
 
+	@NotNull
+	@Override
 	public String getVersion() {
 		return plugin.getDescription().getVersion();
 	}
 
-	public String onPlaceholderRequest(Player player, String id) {
-		if (player == null) {
-			return null;
-		}
+	@Override
+	public String onPlaceholderRequest(Player player, @NotNull String id) {
+		if (player == null) return null;
 
 		final User user = plugin.getUserManager().getUser(player);
 
@@ -85,9 +91,7 @@ public class PlaceholderManager extends PlaceholderExpansion {
 		final String[] data = id.split(":");
 		final Arena arena = ArenaRegistry.getArena(data[0]);
 
-		if (arena == null) {
-			return null;
-		}
+		if (arena == null) return null;
 
 		switch (data[1].toLowerCase()) {
 			case "players":
