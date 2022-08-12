@@ -306,7 +306,8 @@ public class ArenaManager {
 
 			if (plugin.getConfig().getBoolean("Firework-When-Game-Ends", true)) {
 				new BukkitRunnable() {
-					int i = 0;
+
+					private int i = 0;
 
 					public void run() {
 						if (i == 4 || !arena.getPlayers().contains(player)) {
@@ -333,7 +334,7 @@ public class ArenaManager {
 		formatted = StringUtils.replace(formatted, "%winner%", topPlayerName);
 		formatted = StringUtils.replace(formatted, "%winner_score%", Integer.toString(StatsStorage.getUserStats(plugin.getServer().getPlayerExact(topPlayerName), StatsStorage.StatisticType.LOCAL_KILLS)));
 
-		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+		if (chatManager.isPapiEnabled()) {
 			formatted = PlaceholderAPI.setPlaceholders(player, formatted);
 		}
 

@@ -31,9 +31,7 @@ public class CommandHandler implements CommandExecutor {
 		SubCommand[] cmds = {new CreateCommand(), new DeleteCommand(), new EditCommand(), new ListCommand(), new ForceStartCommand(), new StopCommand(),
 		new ReloadCommand(), new HelpCommand(), new JoinCommand(), new LeaveCommand(), new RandomJoinCommand(), new StatsCommand(), new TopPlayersCommand()};
 
-		for (SubCommand cmd : cmds) {
-			registerSubCommand(cmd);
-		}
+		for (SubCommand cmd : cmds) registerSubCommand(cmd);
 
 		Optional.ofNullable(plugin.getCommand("oitc")).ifPresent(command -> {
 			command.setExecutor(this);
@@ -68,7 +66,7 @@ public class CommandHandler implements CommandExecutor {
 					return true;
 				}
 
-				if (subCommand.getSenderType() == SubCommand.SenderType.PLAYER && !(sender instanceof Player)) {
+				if (subCommand.getSenderType() == 0 && !(sender instanceof Player)) {
 					sender.sendMessage(plugin.getChatManager().prefixedMessage("commands.only_by_player"));
 					return true;
 				}
@@ -79,7 +77,7 @@ public class CommandHandler implements CommandExecutor {
 					} catch (CommandException exception) {
 						sender.sendMessage(plugin.getChatManager().coloredRawMessage("&c" + exception.getMessage()));
 					}
-				} else if (subCommand.getType() == SubCommand.CommandType.GENERIC) {
+				} else if (subCommand.getType() == 0) {
 					sender.sendMessage(plugin.getChatManager().coloredRawMessage("&cUsage: /" + label + " " + subCommand.getName() + " " + (subCommand.getPossibleArguments().length() > 0 ? subCommand.getPossibleArguments() : "")));
 				}
 

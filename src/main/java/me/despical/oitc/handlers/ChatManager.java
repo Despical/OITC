@@ -76,7 +76,7 @@ public class ChatManager {
 	public String message(String message, Player player) {
 		String returnString = message(message);
 
-		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+		if (papiEnabled) {
 			returnString = PlaceholderAPI.setPlaceholders(player, returnString);
 		}
 
