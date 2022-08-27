@@ -72,9 +72,7 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-		this.configPreferences = new ConfigPreferences(this);
-
-		if (!(forceDisable = validateIfPluginShouldStart())) {
+		if ((forceDisable = !validateIfPluginShouldStart())) {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -111,7 +109,7 @@ public class Main extends JavaPlugin {
 			return false;
 		}
 
-		if (!configPreferences.getOption(ConfigPreferences.Option.IGNORE_WARNING_MESSAGES) && JavaVersion.getCurrentVersion().isAt(JavaVersion.JAVA_8)) {
+		if (!(configPreferences = new ConfigPreferences(this)).getOption(ConfigPreferences.Option.IGNORE_WARNING_MESSAGES) && JavaVersion.getCurrentVersion().isAt(JavaVersion.JAVA_8)) {
 			LogUtils.sendConsoleMessage("[OITC] &cThis plugin won't support Java 8 in future updates.");
 			LogUtils.sendConsoleMessage("[OITC] &cSo, maybe consider to update your version, right?");
 		}
@@ -279,6 +277,7 @@ public class Main extends JavaPlugin {
 
 			if (userManager.getDatabase() instanceof MysqlManager) {
 				final StringBuilder builder = new StringBuilder(" SET ");
+				final MysqlManager database = (MysqlManager) userManager.getDatabase();
 
 				for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 					if (!stat.isPersistent()) continue;
@@ -292,7 +291,6 @@ public class Main extends JavaPlugin {
 					builder.append(", ").append(stat.getName()).append("'='").append(value);
 				}
 
-				final MysqlManager database = (MysqlManager) userManager.getDatabase();
 				final String update = builder.toString();
 				database.getDatabase().executeUpdate("UPDATE " + database.getTableName() + update + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';");
 				continue;

@@ -5,7 +5,7 @@
 
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>2.1.7</version>
+	<version>2.1.8</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -87,6 +87,8 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+
+		<defaultGoal>clean package -Dmaven.javadoc.skip=true</defaultGoal>
 
 		<plugins>
 			<plugin>
