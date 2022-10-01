@@ -18,6 +18,9 @@
 
 package me.despical.oitc.arena;
 
+import me.despical.oitc.Main;
+import org.bukkit.plugin.java.JavaPlugin;
+
 /**
  * @author Despical
  * <p>
@@ -25,13 +28,15 @@ package me.despical.oitc.arena;
  */
 public enum ArenaState {
 
-	WAITING_FOR_PLAYERS("Waiting"), STARTING("Starting"), IN_GAME("Playing"),
-	ENDING("Ending"), RESTARTING("Restarting"), INACTIVE("Inactive");
+	WAITING_FOR_PLAYERS ("Waiting"), STARTING ("Starting"), IN_GAME("Playing"),
+	ENDING ("Ending"), RESTARTING ("Restarting"), INACTIVE ("Inactive");
 
 	String formattedName;
 
-	ArenaState(String formattedName) {
-		this.formattedName = formattedName;
+	ArenaState(String name) {
+		final Main plugin = JavaPlugin.getPlugin(Main.class);
+
+		this.formattedName = plugin.getChatManager().message("formatted_arena_states." + name);
 	}
 
 	public String getFormattedName() {

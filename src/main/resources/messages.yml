@@ -186,6 +186,14 @@ Signs:
     - "%map_name%"
     - "&5[%players%/%max_players%]"
 
+Formatted-Arena-States:
+  Waiting: "Waiting"
+  Starting: "Starting"
+  Playing: "Playing"
+  Ending: "Ending"
+  Restarting: "Restarting"
+  Inactive: "Inactive"
+
 Arena-Selector:
   Inventory-Title: "Arena selector"
   Item:
