@@ -189,10 +189,7 @@ public class Main extends JavaPlugin {
 		commandHandler = new CommandHandler(this);
 		permissionsManager = new PermissionsManager(this);
 
-		new SpectatorEvents(this);
-		new ChatEvents(this);
-		new Events(this);
-		new SpectatorItemEvents(this);
+		ListenerAdapter.registerEvents(this, SpectatorEvents.class, ChatEvents.class, Events.class, SpectatorItemEvents.class);
 
 		registerSoftDependenciesAndServices();
 	}

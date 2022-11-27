@@ -1,5 +1,6 @@
 package me.despical.oitc.events;
 
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.handlers.ChatManager;
@@ -33,5 +34,16 @@ public abstract class ListenerAdapter implements Listener {
 		if (predicate.test(false)) return;
 
 		plugin.getServer().getPluginManager().registerEvents(supplier.get(), plugin);
+	}
+
+	@SafeVarargs
+	public static void registerEvents(Main plugin, Class<? extends ListenerAdapter>... listenerAdapters) {
+		try {
+			for (Class<? extends ListenerAdapter> listenerAdapter : listenerAdapters) {
+				listenerAdapter.getConstructor(Main.class).newInstance(plugin);
+			}
+		} catch (Exception ignored) {
+			LogUtils.sendConsoleMessage("&cAn exception occured on event registering.");
+		}
 	}
 }
