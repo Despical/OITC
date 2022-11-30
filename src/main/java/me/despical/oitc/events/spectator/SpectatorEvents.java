@@ -20,6 +20,7 @@ package me.despical.oitc.events.spectator;
 
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.ArenaRegistry;
+import me.despical.oitc.arena.ArenaUtils;
 import me.despical.oitc.events.ListenerAdapter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -142,6 +143,20 @@ public class SpectatorEvents extends ListenerAdapter {
 		}
 
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onDamageToPlayers(EntityDamageByEntityEvent event) {
+		if (!(event.getDamager() instanceof Player) || !(event.getEntity() instanceof Player)) return;
+
+		Player player = (Player) event.getEntity(), damager = (Player) event.getDamager();
+
+		if (!ArenaUtils.isInSameArena(player, damager)) return;
+
+		if (userManager.getUser(damager).isSpectator()) {
+			event.setDamage(0D);
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler
