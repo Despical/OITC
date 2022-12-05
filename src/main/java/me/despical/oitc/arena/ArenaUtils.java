@@ -105,12 +105,4 @@ public class ArenaUtils {
 			players.setScoreboard(scoreboard);
 		}
 	}
-
-	public static boolean isInSameArena(Player firstPlayer, Player secondPlayer) {
-		if (firstPlayer == null || secondPlayer == null) return false;
-
-		Arena firstArena = ArenaRegistry.getArena(firstPlayer), secondArena = ArenaRegistry.getArena(secondPlayer);
-
-		return firstArena != null && firstArena.equals(secondArena);
-	}
 }
