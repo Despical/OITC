@@ -298,6 +298,8 @@ public class ArenaManager {
 				plugin.getRewardsFactory().performReward(player, Reward.RewardType.LOSE);
 			}
 
+			plugin.getUserManager().saveAllStatistic(user);
+
 			player.getInventory().clear();
 
 			for (String msg : chatManager.getStringList("in_game.messages.game_end_messages.summary_message")) {

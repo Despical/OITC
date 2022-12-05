@@ -64,6 +64,7 @@ public class UserManager {
 		users.add(user);
 
 		database.loadStatistics(user);
+		database.saveAllStatistic(user);
 		return user;
 	}
 	
