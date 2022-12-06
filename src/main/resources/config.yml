@@ -47,6 +47,8 @@ Hit-Cooldown-Delay: 16
 
 # Basic permissions for game, permissions explained here: https://github.com/Despical/OITC/wiki/Commands-and-permissions#basic-permissions
 Basic-Permissions:
+  # Set this option to true if you don't use any permission managing plugin.
+  Suppress-Permissions: false
   Full-Games-Permission: "oitc.fullgames"
   # <arena> represents arena name (NOT MAP NAME!), for example: 'oitc.join.OITC02'
   # use 'oitc.join.*' to enable access to all arenas

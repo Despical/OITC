@@ -19,6 +19,7 @@
 package me.despical.oitc.handlers;
 
 import me.despical.oitc.Main;
+import org.bukkit.entity.Player;
 
 /**
  * @author Despical
@@ -27,11 +28,19 @@ import me.despical.oitc.Main;
  */
 public class PermissionsManager {
 
+	private final boolean suppressPerms;
 	private final String joinFullPerm, joinPerm;
 
 	public PermissionsManager(Main plugin) {
+		this.suppressPerms = plugin.getConfig().getBoolean("Basic-Permissions.Suppress-Permissions");
 		this.joinPerm = plugin.getConfig().getString("Basic-Permissions.Join-Permission");
 		this.joinFullPerm = plugin.getConfig().getString("Basic-Permissions.Full-Games-Permission");
+	}
+
+	public boolean hasJoinPerm(Player player, String arena) {
+		if (suppressPerms) return true;
+
+		return player.hasPermission(joinPerm.replace("<arena>", "*")) || !player.hasPermission(joinPerm.replace("<arena>", arena));
 	}
 
 	public String getJoinFullPerm() {
