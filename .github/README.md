@@ -32,7 +32,7 @@ To add this project as a dependency to your project, add the following to your p
 <dependency>
     <groupId>com.github.Despical</groupId>
     <artifactId>OITC</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.3</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -45,7 +45,7 @@ repositories {
 ```
 ```
 dependencies {
-    compileOnly group: "com.github.Despical", name: "OITC", version: "2.2.0";
+    compileOnly group: "com.github.Despical", name: "OITC", version: "2.2.3";
 }
 ```
 
