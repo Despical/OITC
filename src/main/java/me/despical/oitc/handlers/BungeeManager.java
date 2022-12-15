@@ -60,7 +60,7 @@ public class BungeeManager implements Listener {
 		this.hubName = config.getString("Hub");
 
 		for (ArenaState state : ArenaState.values()) {
-			gameStates.put(state, plugin.getChatManager().message("MOTD.Game-States." + state.getFormattedName()));
+			gameStates.put(state, plugin.getChatManager().message("MOTD.Game-States." + state.getDefaultName()));
 		}
 
 		plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, "BungeeCord");

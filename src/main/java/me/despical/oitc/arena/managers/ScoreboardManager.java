@@ -92,7 +92,7 @@ public class ScoreboardManager {
 		if (arena.getArenaState() == ArenaState.IN_GAME || arena.getArenaState() == ArenaState.ENDING) {
 			lines = plugin.getChatManager().getStringList("Scoreboard.Content.Playing");
 		} else {
-			lines = plugin.getChatManager().getStringList("Scoreboard.Content." + arena.getArenaState().getFormattedName());
+			lines = plugin.getChatManager().getStringList("Scoreboard.Content." + arena.getArenaState().getDefaultName());
 		}
 
 		for (String line : lines) {

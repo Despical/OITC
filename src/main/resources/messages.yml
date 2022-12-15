@@ -45,26 +45,14 @@ Commands:
     Highest-Score: "&aHighest score: &e"
     Games-Played: "&aGames played: &e"
   
-# In-game scoreboard messages.
-# Please do not use more than 48 chars here! COLOR CODES INCLUDED.
+# In game scoreboard messages.
+# Don't use more than 48 characters if you use old versions of Minecraft!
+# Can be used up to 144 characters in 1.14 and higher versions.
 Scoreboard:
   Title: "&e&lOITC"
   Top-Player-Format: "&f%score% &6%player%"
   Content:
     # Contents of scoreboard for players
-    Playing:
-      - ""
-      - "%top_player_1%"
-      - "%top_player_2%"
-      - "%top_player_3%"
-      - ""
-      - "&fMap: &e%map_name%"
-      - "&fPlayers: &6%players%"
-      - "&fScore: &6%kills%"
-      - ""
-      - "&fTime Left: &6%formatted_time%"
-      - ""
-      - "&egithub.com/Despical"
     Waiting:
       - ""
       - "&fMap: &a%map_name%"
@@ -81,6 +69,19 @@ Scoreboard:
       - "&fStarting in &a%formatted_time% &fto"
       - "&fallow time for"
       - "&fadditional players"
+      - ""
+      - "&egithub.com/Despical"
+    Playing:
+      - ""
+      - "%top_player_1%"
+      - "%top_player_2%"
+      - "%top_player_3%"
+      - ""
+      - "&fMap: &e%map_name%"
+      - "&fPlayers: &6%players%"
+      - "&fScore: &6%kills%"
+      - ""
+      - "&fTime Left: &6%formatted_time%"
       - ""
       - "&egithub.com/Despical"
 
@@ -176,10 +177,10 @@ Signs:
     Waiting: "&lWaiting..."
     Starting: "&e&lStarting"
     Playing: "&lIn-game"
-    Inactive: "&lInactive..."
     Full-Game: "&c&lFULL"
     Ending: "&lEnding"
     Restarting: "&c&lRestarting"
+    Inactive: "&lInactive..."
   Lines:
     - "&4&lOITC"
     - "%state%"
@@ -193,20 +194,6 @@ Formatted-Arena-States:
   Ending: "Ending"
   Restarting: "Restarting"
   Inactive: "Inactive"
-
-Arena-Selector:
-  Inventory-Title: "Arena selector"
-  Item:
-    Name: "&f%mapname%"
-    Lore:
-      - "&7OITC &f- &e%mapname%"
-      - " "
-      - " "
-      - "  &fOnline: %playersize%/%maxplayers%"
-      - "  &fState: %state%"
-      - " "
-      - " "
-      - "&eClick to join this arena"
 
 Validator:
   Invalid-Arena-Configuration: "[OITC] Arena %arena% has invalid configuration! Missing node: %error%"

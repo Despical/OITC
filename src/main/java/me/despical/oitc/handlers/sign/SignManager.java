@@ -66,7 +66,7 @@ public class SignManager implements Listener {
 		this.config = ConfigUtils.getConfig(plugin, "arenas");
 
 		for (ArenaState state : ArenaState.values()) {
-			gameStateToString.put(state, plugin.getChatManager().message("Signs.Game-States." + state.getFormattedName()));
+			gameStateToString.put(state, plugin.getChatManager().message("Signs.Game-States." + state.getDefaultName()));
 		}
 
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);

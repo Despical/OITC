@@ -20,9 +20,8 @@ MOTD:
   Message: "The actual game state of OITC is %state%"
   Game-States:
     Waiting: "&lWaiting"
-    Inactive: "&lInactive..."
-    In-Game: "&lIn-game"
     Starting: "&e&lStarting"
-    Full-Game: "&4&lFULL"
+    Playing: "&lIn-game"
     Ending: "&lEnding"
     Restarting: "&c&lRestarting"
+    Inactive: "&lInactive..."

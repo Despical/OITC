@@ -31,12 +31,17 @@ public enum ArenaState {
 	WAITING_FOR_PLAYERS ("Waiting"), STARTING ("Starting"), IN_GAME("Playing"),
 	ENDING ("Ending"), RESTARTING ("Restarting"), INACTIVE ("Inactive");
 
-	String formattedName;
+	String formattedName, defaultName;
 
 	ArenaState(String name) {
 		final Main plugin = JavaPlugin.getPlugin(Main.class);
 
+		this.defaultName = name;
 		this.formattedName = plugin.getChatManager().message("formatted_arena_states." + name);
+	}
+
+	public String getDefaultName() {
+		return defaultName;
 	}
 
 	public String getFormattedName() {
