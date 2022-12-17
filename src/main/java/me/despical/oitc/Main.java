@@ -35,8 +35,6 @@ import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaUtils;
 import me.despical.oitc.commands.CommandHandler;
 import me.despical.oitc.events.*;
-import me.despical.oitc.events.spectator.SpectatorEvents;
-import me.despical.oitc.events.spectator.SpectatorItemEvents;
 import me.despical.oitc.handlers.*;
 import me.despical.oitc.handlers.items.SpecialItem;
 import me.despical.oitc.handlers.rewards.RewardsFactory;
@@ -189,7 +187,7 @@ public class Main extends JavaPlugin {
 		commandHandler = new CommandHandler(this);
 		permissionsManager = new PermissionsManager(this);
 
-		ListenerAdapter.registerEvents(this, SpectatorEvents.class, ChatEvents.class, Events.class, SpectatorItemEvents.class);
+		ListenerAdapter.registerEvents(this);
 
 		registerSoftDependenciesAndServices();
 	}
