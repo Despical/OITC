@@ -444,7 +444,6 @@ public class Arena extends BukkitRunnable {
 					doBarAction(BarAction.REMOVE, player);
 				}
 
-				plugin.getUserManager().getUsers(this).forEach(user -> user.setSpectator(false));
 				plugin.getRewardsFactory().performReward(this, Reward.RewardType.END_GAME);
 
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
@@ -455,6 +454,7 @@ public class Arena extends BukkitRunnable {
 				broadcastMessage(plugin.getChatManager().prefixedMessage("commands.teleported-to-the-lobby"));
 				break;
 			case RESTARTING:
+				plugin.getUserManager().getUsers(this).forEach(user -> user.setSpectator(false));
 				players.clear();
 
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {

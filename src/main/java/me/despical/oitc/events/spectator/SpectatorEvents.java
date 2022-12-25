@@ -18,6 +18,7 @@
 
 package me.despical.oitc.events.spectator;
 
+import me.despical.commons.util.LogUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.events.ListenerAdapter;
@@ -146,12 +147,16 @@ public class SpectatorEvents extends ListenerAdapter {
 
 	@EventHandler
 	public void onDamageToPlayers(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Player)) return;
+		if (!(event.getDamager() instanceof Player)) {
+			LogUtils.log("[Event Listener] [EntityDamageByEntityEvent] Damager type: {0}", event.getDamager().getType().name());
+			return;
+		}
 
 		Player player = (Player) event.getDamager();
 
 		if (plugin.getUserManager().getUser(player).isSpectator()) {
 			event.setCancelled(true);
+			LogUtils.log("[Event Listener] [EntityDamageByEntityEvent] " + player.getName() + " is spectator and tried to damage an entity.");
 		}
 	}
 
@@ -162,19 +167,6 @@ public class SpectatorEvents extends ListenerAdapter {
 		}
 
 		Player player = (Player) event.getEntity();
-
-		if (userManager.getUser(player).isSpectator()) {
-			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler
-	public void onDamageByEntity(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Player)) {
-			return;
-		}
-
-		Player player = (Player) event.getDamager();
 
 		if (userManager.getUser(player).isSpectator()) {
 			event.setCancelled(true);

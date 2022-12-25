@@ -24,14 +24,13 @@ import me.despical.oitc.Main;
 import me.despical.oitc.events.spectator.components.MiscComponents;
 import me.despical.oitc.events.spectator.components.SpeedComponents;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 /**
  * @author Despical
  * <p>
  * Created at 02.07.2020
  */
-public class SpectatorSettingsMenu implements Listener {
+public class SpectatorSettingsMenu {
 
 	private Gui gui;
 
