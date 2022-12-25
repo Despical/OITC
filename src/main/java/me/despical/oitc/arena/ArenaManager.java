@@ -118,7 +118,7 @@ public class ArenaManager {
 			}
 		}
 
-		LogUtils.log("[{0}] Checked join attempt for {1} initialized", arena.getId(), player.getName());
+		LogUtils.log("[{0}] Checked join attempt for {1} initialized.", arena.getId(), player.getName());
 
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.saveInventoryToFile(plugin, player);
@@ -142,6 +142,8 @@ public class ArenaManager {
 		user.resetStats();
 
 		if (arena.getArenaState() == ArenaState.IN_GAME || arena.getArenaState() == ArenaState.ENDING) {
+			user.setSpectator(true);
+
 			arena.teleportToStartLocation(player);
 			player.sendMessage(chatManager.prefixedMessage("In-Game.You-Are-Spectator"));
 
@@ -149,10 +151,8 @@ public class ArenaManager {
 
 			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
-			player.setFlying(true);
 			player.setAllowFlight(true);
-
-			user.setSpectator(true);
+			player.setFlying(true);
 
 			ArenaUtils.hidePlayer(player, arena);
 
