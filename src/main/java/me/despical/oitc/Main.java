@@ -76,7 +76,7 @@ public class Main extends JavaPlugin {
 		}
 
 		exceptionLogHandler = new ExceptionLogHandler(this);
-		exceptionLogHandler.setMainPackage("me.despical");
+		exceptionLogHandler.setMainPackage("me.despical.oitc");
 		exceptionLogHandler.addBlacklistedClass("me.despical.oitc.user.data.MysqlManager", "me.despical.commons.database.MysqlDatabase");
 		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official Discord server (link: https://discord.gg/rVkaGmyszE) with the following error given above!");
 
@@ -101,7 +101,7 @@ public class Main extends JavaPlugin {
 	}
 	
 	private boolean validateIfPluginShouldStart() {
-		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_9_R1, VersionResolver.ServerVersion.v1_19_R1)) {
+		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_9_R1, VersionResolver.ServerVersion.v1_19_R2)) {
 			LogUtils.sendConsoleMessage("[OITC] &cYour server version is not supported by One in the Chamber!");
 			LogUtils.sendConsoleMessage("[OITC] &cSadly, we must shut off. Maybe you consider changing your server version?");
 			return false;

@@ -63,8 +63,8 @@ public class SetupUtilities {
 	}
 
 	public int getMinimumValueHigherThanZero(String path) {
-		int amount = config.getInt("instances." + arena.getId() + "." + path);
+		path = String.format("instances.%s.%s", arena.getId(), path);
 
-		return amount == 0 ? 1 : amount;
+		return Math.max(1, config.getInt(path));
 	}
 }

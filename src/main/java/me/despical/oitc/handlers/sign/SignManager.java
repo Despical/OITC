@@ -209,7 +209,7 @@ public class SignManager implements Listener {
 	}
 
 	public void updateSigns() {
-		LogUtils.log("SignUpdate", "[Sign Update] Updating signs.");
+		LogUtils.log("[Sign Update] Updating signs.");
 		long start = System.currentTimeMillis();
 
 		for (ArenaSign arenaSign : arenaSigns) {

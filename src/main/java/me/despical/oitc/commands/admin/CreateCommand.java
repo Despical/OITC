@@ -111,7 +111,6 @@ public class CreateCommand extends SubCommand {
 		ConfigUtils.saveConfig(plugin, config, "arenas");
 
 		Arena arena = new Arena(id);
-		arena.setPlayerSpawnPoints(new ArrayList<>());
 		arena.setMapName(id);
 		arena.setLobbyLocation(LocationSerializer.DEFAULT_LOCATION);
 		arena.setEndLocation(LocationSerializer.DEFAULT_LOCATION);
