@@ -60,7 +60,7 @@ Scoreboard:
       - ""
       - "&fWaiting for players..."
       - ""
-      - "&egithub.com/Despical"
+      - "&epatreon.com/despical"
     Starting:
       - ""
       - "&fMap: &a%map_name%"
@@ -70,7 +70,7 @@ Scoreboard:
       - "&fallow time for"
       - "&fadditional players"
       - ""
-      - "&egithub.com/Despical"
+      - "&epatreon.com/despical"
     Playing:
       - ""
       - "%top_player_1%"
@@ -83,7 +83,7 @@ Scoreboard:
       - ""
       - "&fTime Left: &6%formatted_time%"
       - ""
-      - "&egithub.com/Despical"
+      - "&epatreon.com/despical"
 
 # Has usage only when boss bar is enabled in config.yml
 Boss-Bar:
