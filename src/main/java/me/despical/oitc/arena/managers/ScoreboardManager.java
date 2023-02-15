@@ -98,7 +98,7 @@ public class ScoreboardManager {
 		for (final String line : lines) {
 			final String formattedLine = formatScoreboardLine(line, player);
 
-			if (!formattedLine.equals("%empty%")) continue;
+			if (formattedLine.equals("%empty%")) continue;
 
 			builder.next(formattedLine);
 		}
