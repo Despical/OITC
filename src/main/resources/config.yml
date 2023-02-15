@@ -93,13 +93,13 @@ Name-Tags-Hidden: true
 #   - red (inactive) stained glass
 Signs-Block-States-Enabled: true
 
-# Should we send random pro tips when the setup menu opens.
+# Should we send random tips when the setup menu opens.
 Send-Setup-Tips: true
 
 # Should we check for updates on plugin start/after admin join?
 Update-Notifier-Enabled: true
 
-# Should we send warning messages if server is running a old Java version such as JAVA 8?
-Ignore-Warning-Messages: false
+# Should we enable our debug mode?
+Debug-Messages: false
 
 # No way! You've reached the end! But... where's the dragon!?

@@ -86,19 +86,21 @@ public class ScoreboardManager {
 	}
 
 	private List<Entry> formatScoreboard(Player player) {
-		EntryBuilder builder = new EntryBuilder();
-		List<String> lines;
+		final EntryBuilder builder = new EntryBuilder();
+		final List<String> lines;
 
-		if (arena.getArenaState() == ArenaState.IN_GAME || arena.getArenaState() == ArenaState.ENDING) {
+		if (arena.isArenaState(ArenaState.IN_GAME, ArenaState.ENDING)) {
 			lines = plugin.getChatManager().getStringList("Scoreboard.Content.Playing");
 		} else {
 			lines = plugin.getChatManager().getStringList("Scoreboard.Content." + arena.getArenaState().getDefaultName());
 		}
 
-		for (String line : lines) {
-			if (!formatScoreboardLine(line, player).equals("%empty%")) {
-				builder.next(formatScoreboardLine(line, player));
-			}
+		for (final String line : lines) {
+			final String formattedLine = formatScoreboardLine(line, player);
+
+			if (!formattedLine.equals("%empty%")) continue;
+
+			builder.next(formattedLine);
 		}
 
 		return builder.build();
@@ -117,8 +119,10 @@ public class ScoreboardManager {
 		formattedLine = StringUtils.replace(formattedLine, "%deaths%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_DEATHS)));
 		formattedLine = StringUtils.replace(formattedLine, "%kill_streak%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
 
+		final Map<Player, Integer> leaderboard = getSortedLeaderboard();
+
 		for (int i = 0, size = arena.getPlayersLeft().size(); i <= arena.getMaximumPlayers(); i++) {
-			formattedLine = StringUtils.replace(formattedLine, "%top_player_" + (i + 1) + "%", size > i ? formatTopPlayer(getTopPlayerName(i), i) : "%empty%");
+			formattedLine = StringUtils.replace(formattedLine, "%top_player_" + (i + 1) + "%", size > i ? formatTopPlayer(leaderboard, getTopPlayerName(leaderboard, i), i) : "%empty%");
 		}
 
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -128,31 +132,30 @@ public class ScoreboardManager {
 		return plugin.getChatManager().coloredRawMessage(formattedLine);
 	}
 
-	private Map<Player, Integer> getSortedLeaderboard() {
-		Map<Player, Integer> statistics = new HashMap<>();
-
-		for (Player player : arena.getPlayersLeft()) {
-			statistics.put(player, StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS));
-		}
+	public Map<Player, Integer> getSortedLeaderboard() {
+		Map<Player, Integer> statistics = arena.getPlayersLeft().stream().collect(Collectors.toMap(player -> player, player -> StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS), (a, b) -> b));
 
 		return statistics.entrySet().stream().sorted(Map.Entry.<Player, Integer>comparingByValue().reversed()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 
-	public String getTopPlayerName(int rank) {
-		List<String> names = getSortedLeaderboard().keySet().stream().map(Player::getName).collect(Collectors.toList());
+	public String getTopPlayerName(Map<Player, Integer> leaderboard, int rank) {
+		List<String> names = leaderboard.keySet().stream().map(Player::getName).collect(Collectors.toList());
 
-		return rank < getSortedLeaderboard().size() ? names.get(rank) : "";
+		return rank < leaderboard.size() ? names.get(rank) : "";
 	}
 
-	public int getTopPlayerScore(int rank) {
-		Map<Player, Integer> leaderboard = getSortedLeaderboard();
+	public String getTopPlayerName(int rank) {
+		return this.getTopPlayerName(getSortedLeaderboard(), rank);
+	}
+
+	public int getTopPlayerScore(Map<Player, Integer> leaderboard, int rank) {
 		List<Integer> scores = new ArrayList<>(leaderboard.values());
 
 		return rank < leaderboard.size() ? scores.get(rank) : 0;
 	}
 
-	public int getRank(Player player) {
-		List<Player> ranks = new ArrayList<>(getSortedLeaderboard().keySet());
+	public int getRank(Map<Player, Integer> leaderboard, Player player) {
+		List<Player> ranks = new ArrayList<>(leaderboard.keySet());
 
 		for (int i = 0; i <= ranks.size(); i++) {
 			if (ranks.get(i).equals(player)) {
@@ -163,11 +166,15 @@ public class ScoreboardManager {
 		return 0;
 	}
 
-	private String formatTopPlayer(String player, int rank) {
+	public int getRank(Player player) {
+		return this.getRank(getSortedLeaderboard(), player);
+	}
+
+	private String formatTopPlayer(Map<Player, Integer> leaderboard, String player, int rank) {
 		String formatted = plugin.getChatManager().message("Scoreboard.Top-Player-Format");
 
 		formatted = StringUtils.replace(formatted, "%player%", player);
-		formatted = StringUtils.replace(formatted, "%score%", Integer.toString(getTopPlayerScore(rank)));
+		formatted = StringUtils.replace(formatted, "%score%", Integer.toString(getTopPlayerScore(leaderboard, rank)));
 		return formatted;
 	}
 }

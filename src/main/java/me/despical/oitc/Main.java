@@ -18,6 +18,7 @@
 
 package me.despical.oitc;
 
+import me.despical.oitc.handlers.items.GameItemManager;
 import org.bstats.bukkit.Metrics;
 import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.database.MysqlDatabase;
@@ -26,7 +27,6 @@ import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.scoreboard.ScoreboardLib;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
-import me.despical.commons.util.JavaVersion;
 import me.despical.commons.util.LogUtils;
 import me.despical.commons.util.UpdateChecker;
 import me.despical.oitc.api.StatsStorage;
@@ -36,7 +36,6 @@ import me.despical.oitc.arena.ArenaUtils;
 import me.despical.oitc.commands.CommandHandler;
 import me.despical.oitc.events.*;
 import me.despical.oitc.handlers.*;
-import me.despical.oitc.handlers.items.SpecialItem;
 import me.despical.oitc.handlers.rewards.RewardsFactory;
 import me.despical.oitc.handlers.sign.SignManager;
 import me.despical.oitc.user.User;
@@ -67,10 +66,13 @@ public class Main extends JavaPlugin {
 	private ChatManager chatManager;
 	private UserManager userManager;
 	private PermissionsManager permissionsManager;
-	
+	private GameItemManager gameItemManager;
+
 	@Override
 	public void onEnable() {
-		if ((forceDisable = !validateIfPluginShouldStart())) {
+		this.forceDisable = validateIfPluginShouldStart();
+
+		if (!forceDisable) {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -80,9 +82,10 @@ public class Main extends JavaPlugin {
 		exceptionLogHandler.addBlacklistedClass("me.despical.oitc.user.data.MysqlManager", "me.despical.commons.database.MysqlDatabase");
 		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official Discord server (link: https://discord.gg/rVkaGmyszE) with the following error given above!");
 
+		this.configPreferences = new ConfigPreferences(this);
+
 		if (configPreferences.getOption(ConfigPreferences.Option.DEBUG_MESSAGES)) {
-			LogUtils.setLoggerName("OITC");
-			LogUtils.enableLogging();
+			LogUtils.enableLogging("OITC");
 			LogUtils.log("Initialization started.");
 		}
 
@@ -105,11 +108,6 @@ public class Main extends JavaPlugin {
 			LogUtils.sendConsoleMessage("[OITC] &cYour server version is not supported by One in the Chamber!");
 			LogUtils.sendConsoleMessage("[OITC] &cSadly, we must shut off. Maybe you consider changing your server version?");
 			return false;
-		}
-
-		if (!(configPreferences = new ConfigPreferences(this)).getOption(ConfigPreferences.Option.IGNORE_WARNING_MESSAGES) && JavaVersion.getCurrentVersion().isAt(JavaVersion.JAVA_8)) {
-			LogUtils.sendConsoleMessage("[OITC] &cThis plugin won't support Java 8 in future updates.");
-			LogUtils.sendConsoleMessage("[OITC] &cSo, maybe consider to update your version, right?");
 		}
 
 		try {
@@ -177,8 +175,6 @@ public class Main extends JavaPlugin {
 			database = new MysqlDatabase(this, "mysql");
 		}
 
-		SpecialItem.init(this);
-
 		userManager = new UserManager(this);
 		signManager = new SignManager(this);
 		ArenaRegistry.registerArenas();
@@ -186,6 +182,7 @@ public class Main extends JavaPlugin {
 		rewardsFactory = new RewardsFactory(this);
 		commandHandler = new CommandHandler(this);
 		permissionsManager = new PermissionsManager(this);
+		gameItemManager = new GameItemManager(this);
 
 		ListenerAdapter.registerEvents(this);
 
@@ -266,6 +263,10 @@ public class Main extends JavaPlugin {
 		return permissionsManager;
 	}
 
+	public GameItemManager getGameItemManager() {
+		return gameItemManager;
+	}
+
 	private void saveAllUserStatistics() {
 		for (Player player : getServer().getOnlinePlayers()) {
 			final User user = userManager.getUser(player);
@@ -287,7 +288,7 @@ public class Main extends JavaPlugin {
 				}
 
 				final String update = builder.toString();
-				database.getDatabase().executeUpdate("UPDATE " + database.getTableName() + update + " WHERE UUID='" + user.getPlayer().getUniqueId().toString() + "';");
+				database.getDatabase().executeUpdate("UPDATE " + database.getTableName() + update + " WHERE UUID='" + user.getPlayer().getUniqueId() + "';");
 				continue;
 			}
 

@@ -177,6 +177,10 @@ public class Arena extends BukkitRunnable {
 		plugin.getSignManager().updateSigns();
 	}
 
+	public boolean isArenaState(final ArenaState first, final ArenaState second) {
+		return arenaState == first || arenaState == second;
+	}
+
 	private int getOption(ArenaOption option) {
 		return arenaOptions.get(option);
 	}

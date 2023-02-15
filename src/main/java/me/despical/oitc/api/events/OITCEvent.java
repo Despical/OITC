@@ -24,7 +24,6 @@ import org.bukkit.event.Event;
 /**
  * @author Despical
  * @since 1.0.0
- * <p>
  */
 public abstract class OITCEvent extends Event {
 

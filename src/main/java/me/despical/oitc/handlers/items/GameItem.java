@@ -16,30 +16,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.despical.oitc.api.events.game;
+package me.despical.oitc.handlers.items;
 
-import me.despical.oitc.api.events.OITCEvent;
-import me.despical.oitc.arena.Arena;
-import org.bukkit.event.HandlerList;
+import me.despical.commons.item.ItemBuilder;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 /**
  * @author Despical
- * @since 1.0.0
+ * <p>
+ * Created at 02.07.2020
  */
-public class OITCGameStartEvent extends OITCEvent {
+public class GameItem {
 
-	private static final HandlerList HANDLERS = new HandlerList();
+	private final ItemStack itemStack;
+	private final int slot;
 
-	public OITCGameStartEvent(Arena arena) {
-		super (arena);
+	public GameItem(final String displayName, final Material material, int slot, final List<String> lore) {
+		this.itemStack = new ItemBuilder(material).name(displayName).lore(lore).unbreakable(true).flag(ItemFlag.HIDE_UNBREAKABLE).build();
+		this.slot = slot;
 	}
 
-	public static HandlerList getHandlerList() {
-		return HANDLERS;
+	public ItemStack getItemStack() {
+		return itemStack;
 	}
 
-	@Override
-	public HandlerList getHandlers() {
-		return HANDLERS;
+	public int getSlot() {
+		return slot;
 	}
 }

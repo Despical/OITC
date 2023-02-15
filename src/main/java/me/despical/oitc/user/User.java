@@ -23,6 +23,7 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.api.events.player.OITCPlayerStatisticChangeEvent;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
+import me.despical.oitc.handlers.items.GameItem;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -90,6 +91,32 @@ public class User {
 
 	public void addStat(StatsStorage.StatisticType stat, int value) {
 		setStat(stat, getStat(stat) + value);
+	}
+
+	public void removeGameItem(final String id) {
+		final GameItem gameItem = plugin.getGameItemManager().getGameItem(id);
+
+		if (gameItem == null) return;
+
+		this.player.getInventory().setItem(gameItem.getSlot(), null);
+	}
+
+	public void addGameItems(final String... ids) {
+		this.player.getInventory().clear();
+
+		for (final String id : ids) {
+			this.addGameItem(id);
+		}
+
+		this.player.updateInventory();
+	}
+
+	public void addGameItem(final String id) {
+		final GameItem gameItem = plugin.getGameItemManager().getGameItem(id);
+
+		if (gameItem == null) return;
+
+		this.player.getInventory().setItem(gameItem.getSlot(), gameItem.getItemStack());
 	}
 
 	public void resetStats() {

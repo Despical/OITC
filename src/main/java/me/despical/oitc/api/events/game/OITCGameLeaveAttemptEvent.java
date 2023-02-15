@@ -26,7 +26,6 @@ import org.bukkit.event.HandlerList;
 /**
  * @author Despical
  * @since 1.0.0
- * <p>
  */
 public class OITCGameLeaveAttemptEvent extends OITCEvent {
 

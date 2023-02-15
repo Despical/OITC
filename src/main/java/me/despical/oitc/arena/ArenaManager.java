@@ -33,7 +33,6 @@ import me.despical.oitc.api.events.game.OITCGameLeaveAttemptEvent;
 import me.despical.oitc.api.events.game.OITCGameStopEvent;
 import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.handlers.ChatManager.ActionType;
-import me.despical.oitc.handlers.items.SpecialItemManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import org.apache.commons.lang.StringUtils;
@@ -139,16 +138,16 @@ public class ArenaManager {
 		PlayerUtils.setGlowing(player, false);
 
 		User user = plugin.getUserManager().getUser(player);
+		user.addGameItem("leave-item");
 		user.resetStats();
 
-		if (arena.getArenaState() == ArenaState.IN_GAME || arena.getArenaState() == ArenaState.ENDING) {
+		if (arena.isArenaState(ArenaState.IN_GAME, ArenaState.ENDING)) {
 			user.setSpectator(true);
+			user.addGameItems("teleporter-item", "settings-item", "play-again");
 
 			arena.teleportToStartLocation(player);
+
 			player.sendMessage(chatManager.prefixedMessage("In-Game.You-Are-Spectator"));
-
-			SpecialItemManager.giveItem(player, "Teleporter", "Spectator-Settings", "Leave", "Play-Again");
-
 			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
 			player.setAllowFlight(true);
@@ -170,7 +169,6 @@ public class ArenaManager {
 		}
 
 		AttributeUtils.setAttackCooldown(player, plugin.getConfig().getDouble("Hit-Cooldown-Delay", 4));
-		SpecialItemManager.giveItem(player, "Leave");
 
 		arena.teleportToLobby(player);
 		arena.doBarAction(Arena.BarAction.ADD, player);

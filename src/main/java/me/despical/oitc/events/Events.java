@@ -21,7 +21,6 @@ package me.despical.oitc.events;
 import me.despical.commons.compat.Titles;
 import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.compat.XMaterial;
-import me.despical.commons.item.ItemUtils;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
@@ -34,7 +33,7 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
-import me.despical.oitc.handlers.items.SpecialItemManager;
+import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.util.ItemPosition;
@@ -209,25 +208,19 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onLeave(PlayerInteractEvent event) {
-		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.PHYSICAL) {
-			return;
-		}
+		if (event.getAction() == Action.PHYSICAL) return;
 
-		Player player = event.getPlayer();
-		Arena arena = ArenaRegistry.getArena(player);
-		ItemStack itemStack = player.getInventory().getItemInMainHand();
+		final Player player = event.getPlayer();
+		final Arena arena = ArenaRegistry.getArena(player);
+		final ItemStack eventItem = event.getItem();
 
-		if (arena == null || !ItemUtils.isNamed(itemStack)) {
-			return;
-		}
+		if (arena == null || eventItem == null) return;
 
-		String key = SpecialItemManager.getRelatedSpecialItem(itemStack);
+		final GameItem leaveItem = plugin.getGameItemManager().getGameItem("leave-item");
 
-		if (key == null) {
-			return;
-		}
+		if (leaveItem == null) return;
 
-		if (SpecialItemManager.getRelatedSpecialItem(itemStack).equals("Leave")) {
+		if (leaveItem.getItemStack().equals(eventItem)) {
 			event.setCancelled(true);
 
 			if (preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
@@ -239,27 +232,21 @@ public class Events extends ListenerAdapter {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onPlayAgain(PlayerInteractEvent event) {
-		if (event.getAction() == Action.PHYSICAL) {
-			return;
-		}
+		if (event.getAction() == Action.PHYSICAL) return;
 
 		ItemStack itemStack = event.getItem();
 		Player player = event.getPlayer();
 		Arena currentArena = ArenaRegistry.getArena(player);
 
-		if (currentArena == null || !ItemUtils.isNamed(itemStack)) {
-			return;
-		}
+		if (currentArena == null) return;
 
-		String key = SpecialItemManager.getRelatedSpecialItem(itemStack);
+		final GameItem gameItem = plugin.getGameItemManager().getGameItem("play-again");
+		
+		if (gameItem == null) return;
 
-		if (key == null) {
-			return;
-		}
-
-		if (SpecialItemManager.getRelatedSpecialItem(itemStack).equals("Play-Again")) {
+		if (gameItem.getItemStack().equals(itemStack)) {
 			event.setCancelled(true);
 
 			ArenaManager.leaveAttempt(player, currentArena);
@@ -267,7 +254,7 @@ public class Events extends ListenerAdapter {
 			Map<Arena, Integer> arenas = new HashMap<>();
 
 			for (Arena arena : ArenaRegistry.getArenas()) {
-				if ((arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS || arena.getArenaState() == ArenaState.STARTING) && arena.getPlayers().size() < 2) {
+				if (arena.isArenaState(ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && arena.getPlayers().size() < 2) {
 					arenas.put(arena, arena.getPlayers().size());
 				}
 			}
@@ -328,7 +315,7 @@ public class Events extends ListenerAdapter {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onDamageEntity(EntityDamageByEntityEvent e) {
 		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Arrow)) {
 			return;
@@ -350,7 +337,7 @@ public class Events extends ListenerAdapter {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
 		Player victim = e.getEntity();
 		Arena arena = ArenaRegistry.getArena(e.getEntity());
