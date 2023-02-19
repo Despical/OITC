@@ -177,6 +177,11 @@ public class SignManager implements Listener {
 				return;
 			}
 
+			if (ArenaRegistry.isInArena(e.getPlayer())) {
+				e.getPlayer().sendMessage(plugin.getChatManager().prefixedMessage("In-Game.Already-Playing"));
+				return;
+			}
+
 			ArenaManager.joinAttempt(e.getPlayer(), arena);
 		}
 	}

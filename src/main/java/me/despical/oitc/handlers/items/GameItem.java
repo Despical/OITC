@@ -36,7 +36,7 @@ public class GameItem {
 	private final int slot;
 
 	public GameItem(final String displayName, final Material material, int slot, final List<String> lore) {
-		this.itemStack = new ItemBuilder(material).name(displayName).lore(lore).unbreakable(true).flag(ItemFlag.HIDE_UNBREAKABLE).build();
+		this.itemStack = new ItemBuilder(material).name(displayName).lore(lore).flag(ItemFlag.HIDE_UNBREAKABLE).build();
 		this.slot = slot;
 	}
 

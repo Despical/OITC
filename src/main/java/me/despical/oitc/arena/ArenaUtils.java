@@ -18,6 +18,7 @@
 
 package me.despical.oitc.arena;
 
+import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
@@ -36,18 +37,24 @@ public class ArenaUtils {
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	public static void hidePlayer(Player p, Arena arena) {
+		if (isLegacy) return;
+
 		for (Player player : arena.getPlayers()) {
 			PlayerUtils.hidePlayer(player , p, plugin);
 		}
 	}
 
 	public static void showPlayer(Player p, Arena arena) {
+		if (isLegacy) return;
+
 		for (Player player : arena.getPlayers()) {
 			PlayerUtils.showPlayer(player, p, plugin);
 		}
 	}
 
 	public static void hidePlayersOutsideTheGame(Player player, Arena arena) {
+		if (isLegacy) return;
+
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
 			if (arena.getPlayers().contains(players)) {
 				continue;
@@ -59,6 +66,8 @@ public class ArenaUtils {
 	}
 
 	public static void showPlayersOutsideTheGame(Player player, Arena arena) {
+		if (isLegacy) return;
+
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
 			if (arena.getPlayers().contains(players)) {
 				continue;
@@ -69,10 +78,15 @@ public class ArenaUtils {
 		}
 	}
 
+	private final static boolean isLegacy = VersionResolver.isCurrentEqual(VersionResolver.ServerVersion.v1_8_R3);
+	private final static boolean isNameTagsSupported = !isLegacy && plugin.getConfigPreferences().getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN);
+
+	public static boolean isLegacy() {
+		return isLegacy;
+	}
+
 	public static void updateNameTagsVisibility(Player p) {
-		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
-			return;
-		}
+		if (!isNameTagsSupported) return;
 
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
 			Arena arena = ArenaRegistry.getArena(players);

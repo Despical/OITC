@@ -19,6 +19,7 @@
 package me.despical.oitc.arena;
 
 import me.despical.commons.compat.Titles;
+import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
@@ -79,7 +80,7 @@ public class Arena extends BukkitRunnable {
 			arenaOptions.put(option, option.getDefaultValue());
 		}
 
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
+		if (VersionResolver.isCurrentHigher(VersionResolver.ServerVersion.v1_8_R3) && plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
 			gameBar = plugin.getServer().createBossBar(plugin.getChatManager().message("boss_bar.main_title"), BarColor.BLUE, BarStyle.SOLID);
 		}
 
@@ -190,7 +191,7 @@ public class Arena extends BukkitRunnable {
 	}
 
 	public Set<Player> getPlayers() {
-		return new HashSet<>(players);
+		return players;
 	}
 
 	public void teleportToLobby(Player player) {
@@ -295,6 +296,8 @@ public class Arena extends BukkitRunnable {
 	}
 
 	public void showPlayers() {
+		if (ArenaUtils.isLegacy()) return;
+
 		for (Player player : players) {
 			for (Player p : players) {
 				PlayerUtils.showPlayer(player, p, plugin);
@@ -315,7 +318,7 @@ public class Arena extends BukkitRunnable {
 			case WAITING_FOR_PLAYERS:
 
 				if (size < minPlayers) {
-					if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
+					if (gameBar != null) {
 						gameBar.setTitle(plugin.getChatManager().message("boss_bar.waiting_for_players"));
 					}
 
@@ -334,7 +337,7 @@ public class Arena extends BukkitRunnable {
 				setTimer(getTimer() - 1);
 				break;
 			case STARTING:
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
+				if (gameBar != null) {
 					gameBar.setProgress((double) getTimer() / waitingTime);
 					gameBar.setTitle(plugin.getChatManager().message("boss_bar.starting_in").replace("%time%", Integer.toString(getTimer())));
 				}
@@ -345,7 +348,7 @@ public class Arena extends BukkitRunnable {
 				}
 
 				if (size < minPlayers) {
-					if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
+					if (gameBar != null) {
 						gameBar.setProgress(1D);
 						gameBar.setTitle(plugin.getChatManager().message("boss_bar.waiting_for_players"));
 					}
@@ -375,7 +378,7 @@ public class Arena extends BukkitRunnable {
 
 					plugin.getServer().getPluginManager().callEvent(new OITCGameStartEvent(this));
 
-					if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
+					if (gameBar != null) {
 						gameBar.setProgress(1D);
 						gameBar.setTitle(plugin.getChatManager().message("boss_bar.in_game_info"));
 					}
@@ -427,7 +430,7 @@ public class Arena extends BukkitRunnable {
 
 				scoreboardManager.stopAllScoreboards();
 
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
+				if (gameBar != null) {
 					gameBar.setTitle(plugin.getChatManager().message("boss-bar.game-ended"));
 				}
 
@@ -471,7 +474,7 @@ public class Arena extends BukkitRunnable {
 					}
 				}
 
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
+				if (gameBar != null) {
 					gameBar.setTitle(plugin.getChatManager().message("boss_bar.waiting_for_players"));
 				}
 

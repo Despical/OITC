@@ -59,7 +59,7 @@ public class SpectatorItemEvents extends ListenerAdapter {
 				return;
 			}
 
-			ItemStack stack = e.getPlayer().getInventory().getItemInMainHand();
+			ItemStack stack = e.getPlayer().getInventory().getItem(e.getPlayer().getInventory().getHeldItemSlot());
 
 			if (!ItemUtils.isNamed(stack)) {
 				return;

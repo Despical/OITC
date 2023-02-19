@@ -18,6 +18,7 @@
 
 package me.despical.oitc.util;
 
+import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.compat.XMaterial;
 import me.despical.commons.item.ItemBuilder;
 import org.bukkit.enchantments.Enchantment;
@@ -33,8 +34,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public enum ItemPosition {
 
-	SWORD(0, new ItemBuilder(XMaterial.WOODEN_SWORD).unbreakable(true)),
-	BOW(1, new ItemBuilder(XMaterial.BOW).enchantment(Enchantment.LUCK).flag(ItemFlag.HIDE_ENCHANTS).unbreakable(true)),
+	SWORD(0, new ItemBuilder(XMaterial.WOODEN_SWORD)),
+	BOW(1, new ItemBuilder(XMaterial.BOW).enchantment(Enchantment.LUCK).flag(ItemFlag.HIDE_ENCHANTS)),
 	ARROW(7, new ItemBuilder(XMaterial.ARROW));
 	
 	private final int itemPosition;
@@ -42,6 +43,9 @@ public enum ItemPosition {
 
 	ItemPosition(int itemPosition, ItemBuilder itemBuilder) {
 		this.itemPosition = itemPosition;
+
+		if (VersionResolver.isCurrentHigher(VersionResolver.ServerVersion.v1_8_R3)) itemBuilder.unbreakable(true);
+
 		this.itemStack = itemBuilder.build();
 	}
 

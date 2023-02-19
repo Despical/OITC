@@ -50,8 +50,8 @@ public abstract class ListenerAdapter implements Listener {
 		this.plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
-	protected void registerIf(Predicate<Boolean> predicate, Supplier<Listener> supplier) {
-		if (predicate.test(false)) return;
+	protected void registerIf(boolean cond, Supplier<Listener> supplier) {
+		if (!cond) return;
 
 		plugin.getServer().getPluginManager().registerEvents(supplier.get(), plugin);
 	}

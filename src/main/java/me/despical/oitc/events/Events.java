@@ -450,14 +450,6 @@ public class Events extends ListenerAdapter {
 	}
 
 	@EventHandler
-	public void onArrowPickup(PlayerPickupArrowEvent event) {
-		if (ArenaRegistry.isInArena(event.getPlayer())) {
-			event.getItem().remove();
-			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler
 	public void onPickupItem(PlayerPickupItemEvent event) {
 		if (!ArenaRegistry.isInArena(event.getPlayer())) {
 			return;
@@ -475,11 +467,22 @@ public class Events extends ListenerAdapter {
 	}
 	
 	private void registerLegacyEvents() {
-		registerIf((bool) -> VersionResolver.isCurrentHigher(VersionResolver.ServerVersion.v1_9_R2), () -> new Listener() {
+		registerIf(VersionResolver.isCurrentHigher(VersionResolver.ServerVersion.v1_9_R2), () -> new Listener() {
 
 			@EventHandler
 			public void onItemSwap(PlayerSwapHandItemsEvent event) {
 				if (ArenaRegistry.isInArena(event.getPlayer())) {
+					event.setCancelled(true);
+				}
+			}
+		});
+
+		registerIf(VersionResolver.isCurrentHigher(VersionResolver.ServerVersion.v1_8_R3), () -> new Listener() {
+
+			@EventHandler
+			public void onArrowPickup(PlayerPickupArrowEvent event) {
+				if (ArenaRegistry.isInArena(event.getPlayer())) {
+					event.getItem().remove();
 					event.setCancelled(true);
 				}
 			}

@@ -236,12 +236,14 @@ public class ArenaManager {
 			arena.setTimer(0);
 		}
 
-		for (Player players : plugin.getServer().getOnlinePlayers()) {
-			if (!ArenaRegistry.isInArena(players)) {
-				players.showPlayer(plugin, player);
-			}
+		if (!ArenaUtils.isLegacy()) {
+			for (Player players : plugin.getServer().getOnlinePlayers()) {
+				if (!ArenaRegistry.isInArena(players)) {
+					players.showPlayer(plugin, player);
+				}
 
-			player.showPlayer(plugin, players);
+				player.showPlayer(plugin, players);
+			}
 		}
 
 		arena.teleportToEndLocation(player);
