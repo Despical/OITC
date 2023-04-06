@@ -54,8 +54,8 @@ public class ConfigPreferences {
 		ENABLE_SHORT_COMMANDS, IGNORE_WARNING_MESSAGES(false), INVENTORY_MANAGER_ENABLED, NAME_TAGS_HIDDEN,
 		REWARDS_ENABLED(false), SEND_SETUP_TIPS, SIGNS_BLOCK_STATES_ENABLED, UPDATE_NOTIFIER_ENABLED;
 
-		String path;
-		boolean def;
+		final String path;
+		final boolean def;
 
 		Option() {
 			this(true);
