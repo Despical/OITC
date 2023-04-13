@@ -64,12 +64,12 @@ public class SpawnComponents implements SetupComponent {
 
 			arena.setEndLocation(player.getLocation());
 			player.sendMessage(chatManager.coloredRawMessage("&e✔ Completed | &aEnding location for arena &e" + arena.getId() + " &aset at your location!"));
-		}), 1, 1);
+		}), 1, 2);
 
 		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.LAPIS_BLOCK)
 			.name(chatManager.coloredRawMessage("&e&lSet Lobby Location"))
 			.lore("&7Click to set the lobby location on the")
-			.lore("&7 place where you are standing")
+			.lore("&7place where you are standing")
 			.lore("&8(location when players will be")
 			.lore("&8teleported while waiting for others")
 			.lore("", setupInventory.getSetupUtilities().isOptionDoneBool("lobbyLocation"))
@@ -123,6 +123,6 @@ public class SpawnComponents implements SetupComponent {
 
 			arena.setPlayerSpawnPoints(spawns);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
-		}), 3, 1);
+		}), 3, 2);
 	}
 }

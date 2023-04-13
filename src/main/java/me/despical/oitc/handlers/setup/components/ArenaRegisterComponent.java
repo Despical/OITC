@@ -108,6 +108,6 @@ public class ArenaRegisterComponent implements SetupComponent {
 
 			plugin.getSignManager().getArenaSigns().stream().filter(arenaSign -> arenaSign.getArena().equals(arena)).map(ArenaSign::getSign)
 				.forEach(sign -> plugin.getSignManager().addArenaSign(sign.getBlock(), arena));
-		}), 7, 3);
+		}), 4, 3);
 	}
 }

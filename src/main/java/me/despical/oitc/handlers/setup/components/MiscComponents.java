@@ -98,11 +98,11 @@ public class MiscComponents implements SetupComponent {
 
 			config.set("instances." + arena.getId() + ".signs", locations);
 			ConfigUtils.saveConfig(plugin, config, "arenas");
-		}), 6, 1);
+		}), 4, 1);
 
 		pane.addItem(GuiItem.of(new ItemBuilder(XMaterial.NAME_TAG)
 			.name("&e&lSet Map Name")
-			.lore("&7Click to set arena map name")
+			.lore("&7Click to set arena map name.")
 			.lore("", "&a&lCurrently: &e" + config.getString("instances." + arena.getId() + ".mapName"))
 			.build(), e -> {
 
@@ -129,16 +129,6 @@ public class MiscComponents implements SetupComponent {
 					return Prompt.END_OF_CONVERSATION;
 				}
 			}).buildFor(player);
-		}), 7, 1);
-
-		pane.addItem(new GuiItem(new ItemBuilder(XMaterial.FILLED_MAP)
-			.name("&e&lView Wiki Page")
-			.lore("&7Having problems with setup or wanna")
-			.lore("&7know some useful tips? Click to get wiki link!")
-			.build(), e -> {
-
-			player.closeInventory();
-			player.sendMessage(chatManager.prefixedRawMessage("&7Check out our wiki: https://github.com/Despical/OITC/wiki"));
-		}), 6, 3);
+		}), 6, 1);
 	}
 }
