@@ -61,8 +61,6 @@ public class LeaveCommand extends SubCommand {
 			return;
 		}
 
-		player.sendMessage(chatManager.prefixedMessage("commands.teleported_to_the_lobby", player));
-
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			plugin.getBungeeManager().connectToHub(player);
 			return;

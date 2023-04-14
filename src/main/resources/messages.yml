@@ -13,7 +13,6 @@
 Commands:
   Did-You-Mean: "&3Did you mean &b/%command%&3?"
   Are-You-Sure: "&cAre you sure you want to do this action? Type the command again &6within 10 seconds &cto confirm!"
-  Teleported-To-The-Lobby: "&7Teleported to the lobby!"
   Removed-Game-Instance: "&aSuccessfully removed game instance!"
   No-Arena-Like-That: "&cWe couldn't find any arena with that name matching!"
   Look-Sign: "&cYou have to look at a sign to perform this command!"
@@ -107,6 +106,10 @@ In-Game:
   Arena-Not-Configured: "&cArena is not configured yet! Contact staff!"
   Game-Chat-Format: "&7%player%: &f%message%"
   Game-Death-Format: "&7[&4DEAD CHAT&7] &r"
+  Game-Items:
+    Leave-Item:
+      Returning-Lobby: "&a&lTeleporting you to the lobby in 3 seconds...\n&a&lRight-click again to cancel the teleport!"
+      Teleport-Cancelled: "&c&lTeleport cancelled!"
   Spectator:
     Spectator-Menu-Name: "&8Teleporter"
     Target-Player-Score: "&7Score: %score%"
@@ -132,14 +135,15 @@ In-Game:
   Messages:
     Lobby-Messages:
       Start-In: "&7The game starts in &b%number%&7 seconds!"
-      Waiting-For-Players: "&7Waiting for players... We need at least &b%minplayers%&7 players to start."
+      Waiting-For-Players: "&cWaiting for players... We need at least %minplayers% players to start."
       Enough-Players-To-Start: "&7Now we have enough players. The game is starting soon!"
       Game-Started: "&7Game started! First player to get 25 kills wins!"
       Kicked-For-Premium-Slot: "&c%player% got removed from the game to make a place for premium players!"
       You-Were-Kicked-For-Premium-Slot: "&cYou got kicked out of the game to make a place for a premium player!"
-    Join: "&b%player%&7 joined the game &8(&7%players%/%maxplayers%&8)&7!"
-    Leave: "&b%player% &7left the game &8(&7%players%/%maxplayers%&8)&7!"
+    Join: "&b%player% &ejoined the game &e(&b%players%&e/&b%maxplayers%&e)!"
+    Leave: "&b%player% &eleft the game &e(&b%players%&e/&b%maxplayers%&e)&7!"
     Death: "&9%player% &eis slained by &9%killer%!"
+    Already-Force-Start: "&cThe game is already starting!"
     Kill-Streak: "&9%killer% &eis on &b%kill_streak% &ekill streak!"
     Seconds-Left-Title: "&c%time% &eseconds left!"
     Seconds-Left-Subtitle: "&eAfter %time%s the game will be finished"

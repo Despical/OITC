@@ -108,6 +108,14 @@ public class ChatManager {
 		return coloredRawMessage(returnString);
 	}
 
+	public String formatMessage(Arena arena, String path) {
+		String returnString = message(path);
+
+		returnString = formatPlaceholders(returnString, arena);
+
+		return coloredRawMessage(returnString);
+	}
+
 	public String prefixedFormattedMessage(Arena arena, String message, Player player) {
 		return prefix + formatMessage(arena, message, player);
 	}

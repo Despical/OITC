@@ -27,7 +27,6 @@ import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.user.UserManager;
 import org.bukkit.event.Listener;
 
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -57,7 +56,7 @@ public abstract class ListenerAdapter implements Listener {
 	}
 
 	public static void registerEvents(Main plugin) {
-		final Class<?>[] listenerAdapters = {SpectatorEvents.class, ChatEvents.class, Events.class, SpectatorItemEvents.class};
+		final Class<?>[] listenerAdapters = {SpectatorEvents.class, ChatEvents.class, Events.class, SpectatorItemEvents.class, GameItemEvents.class};
 
 		try {
 			for (Class<?> listenerAdapter : listenerAdapters) {
@@ -66,7 +65,7 @@ public abstract class ListenerAdapter implements Listener {
 				LogUtils.log("[Listener Adapter] Registering new listener class: {0}", listenerAdapter.getSimpleName());
 			}
 		} catch (Exception ignored) {
-			LogUtils.sendConsoleMessage("&cAn exception occured on event registering.");
+			LogUtils.sendConsoleMessage("&cAn exception occurred on event registering.");
 		}
 	}
 }

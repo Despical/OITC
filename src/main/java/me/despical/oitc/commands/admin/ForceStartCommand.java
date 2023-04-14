@@ -59,11 +59,16 @@ public class ForceStartCommand extends SubCommand {
 		}
 
 		if (arena.getPlayers().size() < 2) {
-			arena.broadcastMessage(chatManager.prefixedFormattedPathMessage(arena, "in_game.messages.lobby_messages.waiting_for_players", arena.getMinimumPlayers()));
+			arena.broadcastMessage(chatManager.formatMessage(arena, "in_game.messages.lobby_messages.waiting_for_players"));
 			return;
 		}
 
 		if (arena.isArenaState(ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING)) {
+			if (arena.isForceStart()) {
+				player.sendMessage(chatManager.message("in_game.messages.already-force-start"));
+				return;
+			}
+
 			arena.setTimer(0);
 			arena.setForceStart(true);
 			arena.setArenaState(ArenaState.STARTING);

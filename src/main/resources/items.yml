@@ -20,3 +20,9 @@ items:
     murderer-slot: 7
     lore:
       - "&7Right-click to play another game!"
+  force-start-item:
+    name: "&c&lForce start the Game &7(Right Click)"
+    material: REDSTONE
+    slot: 4
+    lore:
+      - "&7Right-click to force start the game!"

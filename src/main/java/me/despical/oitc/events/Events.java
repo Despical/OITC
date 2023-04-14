@@ -57,7 +57,9 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -68,8 +70,8 @@ import java.util.stream.Stream;
 public class Events extends ListenerAdapter {
 
 	public Events(Main plugin) {
-		super (plugin);
-		
+		super(plugin);
+
 		registerLegacyEvents();
 	}
 
@@ -203,32 +205,6 @@ public class Events extends ListenerAdapter {
 	public void onInGameBedEnter(PlayerBedEnterEvent event) {
 		if (ArenaRegistry.isInArena(event.getPlayer())) {
 			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler
-	public void onLeave(PlayerInteractEvent event) {
-		if (event.getAction() == Action.PHYSICAL) return;
-
-		final Player player = event.getPlayer();
-		final Arena arena = ArenaRegistry.getArena(player);
-		final ItemStack eventItem = event.getItem();
-
-		if (arena == null || eventItem == null) return;
-
-		final GameItem leaveItem = plugin.getGameItemManager().getGameItem("leave-item");
-
-		if (leaveItem == null) return;
-
-		if (leaveItem.getItemStack().equals(eventItem)) {
-			event.setCancelled(true);
-
-			if (preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-				plugin.getBungeeManager().connectToHub(player);
-			} else {
-				ArenaManager.leaveAttempt(player, arena);
-				player.sendMessage(chatManager.prefixedMessage("commands.teleported_to_the_lobby", player));
-			}
 		}
 	}
 

@@ -127,7 +127,7 @@ public class ArenaManager {
 		arena.getScoreboardManager().createScoreboard(player);
 
 		player.setLevel(0);
-		player.setExp(1);
+		player.setExp(0);
 		player.setFoodLevel(20);
 		player.getInventory().clear();
 		player.getInventory().setHeldItemSlot(0);
@@ -141,9 +141,13 @@ public class ArenaManager {
 		user.addGameItem("leave-item");
 		user.resetStats();
 
+		if (arena.isArenaState(ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && player.isOp()) {
+			user.addGameItem("force-start-item");
+		}
+
 		if (arena.isArenaState(ArenaState.IN_GAME, ArenaState.ENDING)) {
 			user.setSpectator(true);
-			user.addGameItems("teleporter-item", "settings-item", "play-again");
+			user.addGameItems("teleporter-item", "settings-item");
 
 			arena.teleportToStartLocation(player);
 
