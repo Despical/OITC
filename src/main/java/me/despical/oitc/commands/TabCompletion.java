@@ -40,9 +40,11 @@ import java.util.stream.Collectors;
 public class TabCompletion implements TabCompleter {
 
 	private final Main plugin;
+	private final Set<String> compatibleArgs;
 
 	public TabCompletion(Main plugin) {
 		this.plugin = plugin;
+		this.compatibleArgs = Collections.immutableSetOf("join", "edit", "delete");
 	}
 
 	@Override
@@ -63,9 +65,8 @@ public class TabCompletion implements TabCompleter {
 				return plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
 			}
 
-			if (!commands.contains(arg)) {
-				return null;
-			}
+			if (!commands.contains(arg)) return null;
+			if (!compatibleArgs.contains(arg)) return null;
 
 			List<String> arenas = ArenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());
 			StringUtil.copyPartialMatches(args[1], arenas, completions);
