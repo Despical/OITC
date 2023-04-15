@@ -38,7 +38,7 @@ The project isn't in the Central Repository yet, so specifying a repository is n
 <dependency>
     <groupId>com.github.Despical</groupId>
     <artifactId>OITC</artifactId>
-    <version>2.2.9</version>
+    <version>2.3.0</version>
     <scope>compile</scope>
 </dependency>
 ```
