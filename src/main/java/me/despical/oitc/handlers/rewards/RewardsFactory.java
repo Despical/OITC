@@ -20,7 +20,6 @@ package me.despical.oitc.handlers.rewards;
 
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.engine.ScriptEngine;
-import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
@@ -109,9 +108,6 @@ public class RewardsFactory {
 			return;
 		}
 
-		LogUtils.log("[Rewards Factory] Starting rewards registration.");
-		long start = System.currentTimeMillis();
-
 		FileConfiguration config = ConfigUtils.getConfig(plugin, "rewards");
 
 		for (Reward.RewardType rewardType : Reward.RewardType.values()) {
@@ -119,7 +115,5 @@ public class RewardsFactory {
 				rewards.add(new Reward(rewardType, reward));
 			}
 		}
-
-		LogUtils.log("[Rewards Factory] Registered all rewards took {0} ms.", System.currentTimeMillis() - start);
 	}
 }

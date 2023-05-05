@@ -18,8 +18,9 @@
 
 package me.despical.oitc.handlers.rewards;
 
-import me.despical.commons.util.LogUtils;
+import me.despical.commons.util.Strings;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 
 /**
  * @author Despical
@@ -54,7 +55,7 @@ public class Reward {
 			int loc = processedCode.indexOf(")");
 
 			if (loc == -1) {
-				LogUtils.sendConsoleMessage("&cRewards configuration is broken! Make sure you don't forget using ')' character in chance condition! Command: " + rawCode);
+				Bukkit.getConsoleSender().sendMessage(Strings.format("&cRewards configuration is broken! Make sure you don't forget using ')' character in chance condition! Command: " + rawCode));
 				this.chance = 101;
 				return;
 			}

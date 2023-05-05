@@ -23,7 +23,6 @@ import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
-import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
@@ -211,7 +210,7 @@ public class Arena extends BukkitRunnable {
 		Location location = getLobbyLocation();
 
 		if (location == null) {
-			LogUtils.sendConsoleMessage("&cLobby location isn't initialized for arena " + id);
+			plugin.getLogger().warning("Lobby location isn't initialized for arena " + id);
 			return;
 		}
 
@@ -266,7 +265,7 @@ public class Arena extends BukkitRunnable {
 
 		if (location == null) {
 			location = getLobbyLocation();
-			LogUtils.sendConsoleMessage(String.format("&cCouldn't teleport %s to end location for arena %s because it isn't initialized!", player.getName(), id));
+			plugin.getLogger().warning(String.format("Couldn't teleport %s to end location for arena %s because it isn't initialized!", player.getName(), id));
 		}
 
 		if (location != null) {
@@ -285,8 +284,6 @@ public class Arena extends BukkitRunnable {
 	public void start() {
 		this.runTaskTimer(plugin, 20L, 20L);
 		this.setArenaState(ArenaState.RESTARTING);
-
-		LogUtils.log("[{0}] Game instance started.", id);
 	}
 
 	public void addPlayer(Player player) {

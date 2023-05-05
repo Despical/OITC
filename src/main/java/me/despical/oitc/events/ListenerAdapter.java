@@ -18,7 +18,6 @@
 
 package me.despical.oitc.events;
 
-import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.events.spectator.SpectatorEvents;
@@ -59,13 +58,11 @@ public abstract class ListenerAdapter implements Listener {
 		final Class<?>[] listenerAdapters = {SpectatorEvents.class, ChatEvents.class, Events.class, SpectatorItemEvents.class, GameItemEvents.class};
 
 		try {
-			for (Class<?> listenerAdapter : listenerAdapters) {
+			for (final Class<?> listenerAdapter : listenerAdapters) {
 				listenerAdapter.getConstructor(Main.class).newInstance(plugin);
-
-				LogUtils.log("[Listener Adapter] Registering new listener class: {0}", listenerAdapter.getSimpleName());
 			}
 		} catch (Exception ignored) {
-			LogUtils.sendConsoleMessage("&cAn exception occurred on event registering.");
+			plugin.getLogger().warning("Exception occurred on event registering.");
 		}
 	}
 }

@@ -18,7 +18,6 @@
 
 package me.despical.oitc.commands.admin;
 
-import me.despical.commons.util.LogUtils;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.commands.SubCommand;
@@ -49,9 +48,6 @@ public class ReloadCommand extends SubCommand {
 
 	@Override
 	public void execute(CommandSender sender, String label, String[] args) {
-		LogUtils.log("Initiated plugin reload by {0}", sender.getName());
-		long start = System.currentTimeMillis();
-
 		plugin.reloadConfig();
 		chatManager.reloadConfig();
 
@@ -59,8 +55,6 @@ public class ReloadCommand extends SubCommand {
 		ArenaRegistry.registerArenas();
 
 		sender.sendMessage(chatManager.prefixedMessage("commands.admin_commands.success_reload"));
-
-		LogUtils.log("[Reloader] Finished reloading took {0} ms", System.currentTimeMillis() - start);
 	}
 
 	@Override

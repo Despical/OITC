@@ -22,7 +22,6 @@ import me.despical.commons.compat.XMaterial;
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.item.ItemBuilder;
 import me.despical.inventoryframework.Gui;
-import me.despical.inventoryframework.GuiItem;
 import me.despical.inventoryframework.pane.StaticPane;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
@@ -63,7 +62,7 @@ public class SetupInventory {
 	}
 
 	private void prepareGui() {
-		gui = new Gui(plugin, 5, "Arena Setup Menu");
+		gui = new Gui(plugin, 5, "          OITC Arena Editor");
 		gui.setOnGlobalClick(e -> e.setCancelled(true));
 
 		StaticPane pane = new StaticPane(9, 5);
@@ -97,21 +96,18 @@ public class SetupInventory {
 
 		switch (ThreadLocalRandom.current().nextInt(12)) {
 			case 0:
-				tip = "Need help? You can join our small Discord community. Check out https://discord.gg/rVkaGmyszE";
+				tip = "Need help? You can join our Discord community. Check out https://discord.gg/rVkaGmyszE";
 				break;
 			case 1:
 				tip = "Need help? Check our wiki: https://github.com/Despical/OITC/wiki";
 				break;
 			case 2:
-				tip = "We are open source! You can always help us by contributing! Check https://github.com/Despical/OITC";
+				tip = "Help us translating our plugin to your language here: https://github.com/Despical/LocaleStorage";
 				break;
 			case 3:
-				tip = "Help us translating our plugin to your language here: https://github.com/Despical/LocaleStorage/";
+				tip = "You can donate us at https://www.buymeacoffee.com/despical";
 				break;
 			case 4:
-				tip = "You have suggestions to improve the plugin? Use our issue tracker or join our Discord server.";
-				break;
-			case 5:
 				tip = "You can support us with becoming Patron on https://www.patreon.com/despical to make updates better and sooner.";
 				break;
 			default:

@@ -22,7 +22,6 @@ import me.despical.commons.compat.XMaterial;
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.miscellaneous.BlockUtils;
 import me.despical.commons.serializer.LocationSerializer;
-import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
@@ -191,9 +190,6 @@ public class SignManager implements Listener {
 	}
 
 	public void loadSigns() {
-		LogUtils.log("Signs load event started.");
-		long start = System.currentTimeMillis();
-
 		arenaSigns.clear();
 
 		for (String path : config.getConfigurationSection("instances").getKeys(false)) {
@@ -203,20 +199,15 @@ public class SignManager implements Listener {
 				if (loc.getBlock().getState() instanceof Sign) {
 					arenaSigns.add(new ArenaSign((Sign) loc.getBlock().getState(), ArenaRegistry.getArena(path)));
 				} else {
-					LogUtils.log(Level.WARNING, "Block at location {0} for arena {1} not a sign.", loc, path);
+					plugin.getLogger().log(Level.WARNING, "Block at location {0} for arena {1} not a sign.", new Object[] { loc, path });
 				}
 			}
 		}
-
-		LogUtils.log("Sign load event finished took {0} ms.", System.currentTimeMillis() - start);
 
 		updateSigns();
 	}
 
 	public void updateSigns() {
-		LogUtils.log("[Sign Update] Updating signs.");
-		long start = System.currentTimeMillis();
-
 		for (ArenaSign arenaSign : arenaSigns) {
 			Sign sign = arenaSign.getSign();
 
@@ -267,8 +258,6 @@ public class SignManager implements Listener {
 
 			sign.update();
 		}
-
-		LogUtils.log("[Sign Update] Updated signs, took {0} ms.", System.currentTimeMillis() - start);
 	}
 
 	public void addArenaSign(Block block, Arena arena) {

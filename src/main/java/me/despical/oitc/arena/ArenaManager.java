@@ -24,7 +24,6 @@ import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.MiscUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
-import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
@@ -57,9 +56,6 @@ public class ArenaManager {
 	}
 
 	public static void joinAttempt(Player player, Arena arena) {
-		LogUtils.log("[{0}] Initial join attempt for {1}", arena.getId(), player.getName());
-		long start = System.currentTimeMillis();
-
 		OITCGameJoinAttemptEvent gameJoinEvent = new OITCGameJoinAttemptEvent(player, arena);
 		plugin.getServer().getPluginManager().callEvent(gameJoinEvent);
 
@@ -117,8 +113,6 @@ public class ArenaManager {
 			}
 		}
 
-		LogUtils.log("[{0}] Checked join attempt for {1} initialized.", arena.getId(), player.getName());
-
 		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.saveInventoryToFile(plugin, player);
 		}
@@ -168,7 +162,6 @@ public class ArenaManager {
 			}
 
 			ArenaUtils.hidePlayersOutsideTheGame(player, arena);
-			LogUtils.log("[{0}] Join attempt as spectator finished for {1} took {2} ms.", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 			return;
 		}
 
@@ -183,13 +176,9 @@ public class ArenaManager {
 		plugin.getSignManager().updateSigns();
 
 		ArenaUtils.updateNameTagsVisibility(player);
-		LogUtils.log("[{0}] Join attempt as player for {1} took {2} ms.", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 	}
 
 	public static void leaveAttempt(Player player, Arena arena) {
-		LogUtils.log("[{0}] Initial leave attempt for {1}", arena.getId(), player.getName());
-		long start = System.currentTimeMillis();
-
 		OITCGameLeaveAttemptEvent event = new OITCGameLeaveAttemptEvent(player, arena);
 		plugin.getServer().getPluginManager().callEvent(event);
 
@@ -258,14 +247,9 @@ public class ArenaManager {
 
 		plugin.getUserManager().saveAllStatistic(user);
 		plugin.getSignManager().updateSigns();
-
-		LogUtils.log("[{0}] Game leave finished for {1} took {2} ms.", arena.getId(), player.getName(), System.currentTimeMillis() - start);
 	}
 
 	public static void stopGame(boolean quickStop, Arena arena) {
-		LogUtils.log("[{0}] Stop game event initialized | quickStop = {1}", arena.getId(), quickStop);
-		long start = System.currentTimeMillis();
-
 		OITCGameStopEvent gameStopEvent = new OITCGameStopEvent(arena, quickStop ? OITCGameStopEvent.StopReason.COMMAND : OITCGameStopEvent.StopReason.DEFAULT);
 		plugin.getServer().getPluginManager().callEvent(gameStopEvent);
 
@@ -324,8 +308,6 @@ public class ArenaManager {
 				}.runTaskTimer(plugin, 30, 30);
 			}
 		}
-
-		LogUtils.log("[{0}] Stop game event finished took {1} ms", arena.getId(), System.currentTimeMillis() - start);
 	}
 
 	private static String formatSummaryPlaceholders(String msg, Arena arena, Player player) {

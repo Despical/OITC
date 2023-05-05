@@ -5,7 +5,7 @@
 
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>2.3.0</version>
+	<version>2.3.1</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -118,6 +118,9 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.1.0</version>
 				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
 					<outputDirectory>C:\Users\berke\OneDrive\Masaüstü\Server\plugins</outputDirectory>
 				</configuration>
 			</plugin>

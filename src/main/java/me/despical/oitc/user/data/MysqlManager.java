@@ -20,7 +20,6 @@ package me.despical.oitc.user.data;
 
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.database.MysqlDatabase;
-import me.despical.commons.util.LogUtils;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
 
@@ -57,8 +56,8 @@ public class MysqlManager implements UserDatabase {
 					+ "  `loses` int(11) NOT NULL DEFAULT '0'\n" + ");");
 			} catch (SQLException exception) {
 				exception.printStackTrace();
-				LogUtils.sendConsoleMessage("&cCouldn't save user statistics to MySQL database!");
-				LogUtils.sendConsoleMessage("&cCheck your configuration or disable MySQL option in config.yml");
+
+				plugin.getLogger().warning("Couldn't save user statistics to MySQL database!");
 			}
 		});
 	}
@@ -69,7 +68,6 @@ public class MysqlManager implements UserDatabase {
 			final String query = "UPDATE " + tableName + " SET " + stat.getName() + "=" + user.getStat(stat) + " WHERE UUID='" + user.getUniqueId().toString() + "';";
 
 			database.executeUpdate(query);
-			LogUtils.log("Executed MySQL: " + query);
 		});
 	}
 
@@ -104,15 +102,12 @@ public class MysqlManager implements UserDatabase {
 				final ResultSet result = statement.executeQuery("SELECT * from " + tableName + " WHERE UUID='" + uuid + "';");
 
 				if (result.next()) {
-					LogUtils.log("MySQL Stats | Player {0} already exist. Getting Stats...", playerName);
-
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 						if (!stat.isPersistent()) continue;
 
 						user.setStat(stat, result.getInt(stat.getName()));
 					}
 				} else {
-					LogUtils.log("MySQL Stats | Player {0} does not exist. Creating new one...", playerName);
 					statement.executeUpdate("INSERT INTO " + tableName + " (UUID,name) VALUES ('" + uuid + "','" + playerName + "');");
 
 					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {

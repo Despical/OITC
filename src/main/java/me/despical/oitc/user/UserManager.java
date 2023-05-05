@@ -18,7 +18,6 @@
 
 package me.despical.oitc.user;
 
-import me.despical.commons.util.LogUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
@@ -57,8 +56,6 @@ public class UserManager {
 				return user;
 			}
 		}
-
-		LogUtils.log("Registering new user {0} ({1})", uuid, player.getName());
 
 		final User user = new User(player);
 		users.add(user);

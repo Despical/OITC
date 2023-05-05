@@ -27,7 +27,6 @@ import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.scoreboard.ScoreboardLib;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
-import me.despical.commons.util.LogUtils;
 import me.despical.commons.util.UpdateChecker;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
@@ -84,19 +83,11 @@ public class Main extends JavaPlugin {
 
 		this.configPreferences = new ConfigPreferences(this);
 
-		if (configPreferences.getOption(ConfigPreferences.Option.DEBUG_MESSAGES)) {
-			LogUtils.enableLogging("OITC");
-			LogUtils.log("Initialization started.");
-		}
-
-		long start = System.currentTimeMillis();
-
 		setupFiles();
 		initializeClasses();
 		checkUpdate();
 
-		LogUtils.sendConsoleMessage("[OITC] &aInitialization finished. Join our Discord server if you need any help. (https://discord.gg/rVkaGmyszE)");
-		LogUtils.log("Initialization finished took {0} ms.", System.currentTimeMillis() - start);
+		getLogger().info("Initialization finished. Join our Discord server if you need any help. (https://discord.gg/rVkaGmyszE)");
 
 		if (configPreferences.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
 			getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
@@ -105,16 +96,16 @@ public class Main extends JavaPlugin {
 	
 	private boolean validateIfPluginShouldStart() {
 		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_8_R3, VersionResolver.ServerVersion.v1_19_R3)) {
-			LogUtils.sendConsoleMessage("[OITC] &cYour server version is not supported by One in the Chamber!");
-			LogUtils.sendConsoleMessage("[OITC] &cSadly, we must shut off. Maybe you consider changing your server version?");
+			getLogger().info("Your server version is not supported by One in the Chamber!");
+			getLogger().info("Sadly, we must shut off. Maybe you consider changing your server version?");
 			return false;
 		}
 
 		try {
 			Class.forName("org.spigotmc.SpigotConfig");
 		} catch (Exception exception) {
-			LogUtils.sendConsoleMessage("[OITC] &cYour server software is not supported by One in the Chamber!");
-			LogUtils.sendConsoleMessage("[OITC] &cWe support only Spigot and Spigot forks only! Shutting off...");
+			getLogger().info("Your server software is not supported by One in the Chamber!");
+			getLogger().info("We support only Spigot and Spigot forks only! Shutting off...");
 			return false;
 		}
 
@@ -124,9 +115,6 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if (forceDisable) return;
-
-		LogUtils.log("System disable initialized.");
-		long start = System.currentTimeMillis();
 
 		getServer().getLogger().removeHandler(exceptionLogHandler);
 		saveAllUserStatistics();
@@ -159,8 +147,6 @@ public class Main extends JavaPlugin {
 
 			arena.teleportAllToEndLocation();
 		}
-
-		LogUtils.log("System disable finished took {0} ms.", System.currentTimeMillis() - start);
 	}
 	
 	private void initializeClasses() {
@@ -190,17 +176,11 @@ public class Main extends JavaPlugin {
 	}
 	
 	private void registerSoftDependenciesAndServices() {
-		LogUtils.log("Hooking into soft dependencies");
-		long start = System.currentTimeMillis();
-
 		startPluginMetrics();
 
 		if (chatManager.isPapiEnabled()) {
-			LogUtils.log("Hooking into PlaceholderAPI");
 			new PlaceholderManager(this);
 		}
-
-		LogUtils.log("Hooked into soft dependencies took {0} ms", System.currentTimeMillis() - start);
 	}
 	
 	private void startPluginMetrics() {
@@ -216,9 +196,9 @@ public class Main extends JavaPlugin {
 
 		UpdateChecker.init(this, 81185).requestUpdateCheck().whenComplete((result, exception) -> {
 			if (result.requiresUpdate()) {
-				LogUtils.sendConsoleMessage("[OITC] Found a new version available: v" + result.getNewestVersion());
-				LogUtils.sendConsoleMessage("[OITC] Download it SpigotMC:");
-				LogUtils.sendConsoleMessage("[OITC] https://www.spigotmc.org/resources/one-in-the-chamber.81185/");
+				getLogger().info("Found a new version available: v" + result.getNewestVersion());
+				getLogger().info("Download it SpigotMC:");
+				getLogger().info("https://www.spigotmc.org/resources/one-in-the-chamber.81185/");
 			}
 		});
 	}
