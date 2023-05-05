@@ -20,7 +20,8 @@ or killing other players. When a player reaches 25 points the game ends and winn
 - [Discord Community](https://www.discord.gg/rVkaGmyszE)
 
 ## Donations
-You like the OITC? Then [donate](https://www.patreon.com/despical) back me to support the development. Donations are more like motivation than money and, they are speeding up the development.
+- [Patreon](https://www.patreon.com/despical)
+- [Buy me a Coffe](https://www.buymeacoffee.com/despical)
 
 ## Using One in the Chamber API
 The project isn't in the Central Repository yet, so specifying a repository is needed.<br>
@@ -38,7 +39,7 @@ The project isn't in the Central Repository yet, so specifying a repository is n
 <dependency>
     <groupId>com.github.Despical</groupId>
     <artifactId>OITC</artifactId>
-    <version>2.3.0</version>
+    <version>2.3.1</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -55,7 +56,7 @@ repositories {
 ```
 ```
 dependencies {
-    compileOnly group: "com.github.Despical", name: "OITC", version: "2.2.9";
+    compileOnly group: "com.github.Despical", name: "OITC", version: "2.3.1";
 }
 ```
 </details>
