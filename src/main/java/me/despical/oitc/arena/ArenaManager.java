@@ -168,7 +168,7 @@ public class ArenaManager {
 		AttributeUtils.setAttackCooldown(player, plugin.getConfig().getDouble("Hit-Cooldown-Delay", 4));
 
 		arena.teleportToLobby(player);
-		arena.doBarAction(Arena.BarAction.ADD, player);
+		arena.doBarAction(1, player);
 		arena.showPlayers();
 		ArenaUtils.showPlayer(player, arena);
 
@@ -208,7 +208,7 @@ public class ArenaManager {
 
 		user.setSpectator(false);
 		arena.getScoreboardManager().removeScoreboard(player);
-		arena.doBarAction(Arena.BarAction.REMOVE, player);
+		arena.doBarAction(0, player);
 
 		player.getInventory().clear();
 		player.getInventory().setArmorContents(null);
@@ -224,7 +224,7 @@ public class ArenaManager {
 		player.setGameMode(GameMode.SURVIVAL);
 		player.getInventory().setHeldItemSlot(4); // change slot to not trigger something else
 
-		if (arena.getArenaState() != ArenaState.WAITING_FOR_PLAYERS && arena.getArenaState() != ArenaState.STARTING && arena.getPlayers().isEmpty()) {
+		if (!arena.isArenaState(ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && arena.getPlayers().isEmpty()) {
 			arena.setArenaState(ArenaState.ENDING);
 			arena.setTimer(0);
 		}
@@ -276,12 +276,14 @@ public class ArenaManager {
 				Titles.sendTitle(player, chatManager.message("in_game.messages.game_end_messages.titles.win"), chatManager.message("in_game.messages.game_end_messages.subtitles.win").replace("%winner%", topPlayerName));
 
 				plugin.getRewardsFactory().performReward(player, Reward.RewardType.WIN);
-			} else if (!user.isSpectator()) {
-				user.addStat(StatsStorage.StatisticType.LOSES, 1);
-
+			} else {
 				Titles.sendTitle(player, chatManager.message("in_game.messages.game_end_messages.titles.lose"), chatManager.message("in_game.messages.game_end_messages.subtitles.lose").replace("%winner%", topPlayerName));
 
-				plugin.getRewardsFactory().performReward(player, Reward.RewardType.LOSE);
+				if (!user.isSpectator()) {
+					user.addStat(StatsStorage.StatisticType.LOSES, 1);
+
+					plugin.getRewardsFactory().performReward(player, Reward.RewardType.LOSE);
+				}
 			}
 
 			plugin.getUserManager().saveAllStatistic(user);

@@ -47,19 +47,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -293,20 +288,20 @@ public class Events extends ListenerAdapter {
 	
 	@EventHandler
 	public void onDamageEntity(EntityDamageByEntityEvent e) {
-		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Arrow)) {
-			return;
-		}
+		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Arrow)) return;
 
 		Arrow arrow = (Arrow) e.getDamager();
 
-		if (!(arrow.getShooter() instanceof Player)) {
-			return;
-		}
+		if (!(arrow.getShooter() instanceof Player)) return;
 
-		if (ArenaRegistry.isInArena((Player) e.getEntity()) && ArenaRegistry.isInArena((Player) arrow.getShooter())) {
-			if (!e.getEntity().getName().equals(((Player) arrow.getShooter()).getName())) {
+		Player shooter = (Player) arrow.getShooter();
+		Player player = (Player) e.getEntity();
+
+		if (ArenaRegistry.isInArena(player) && ArenaRegistry.isInArena(shooter)) {
+			if (!player.getUniqueId().equals(shooter.getUniqueId())) {
 				e.setDamage(100.0);
-				plugin.getRewardsFactory().performReward((Player) e.getEntity(), Reward.RewardType.DEATH);
+
+				plugin.getRewardsFactory().performReward(player, Reward.RewardType.DEATH);
 			} else {
 				e.setCancelled(true);
 			}
@@ -328,7 +323,7 @@ public class Events extends ListenerAdapter {
 		e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 		e.getEntity().playEffect(org.bukkit.EntityEffect.HURT);
 
-		Titles.sendTitle(victim.getKiller(), null, chatManager.message("in_game.messages.score_subtitle"));
+		Titles.sendTitle(victim.getKiller(), "", chatManager.message("in_game.messages.score_subtitle"));
 
 		User victimUser = userManager.getUser(victim);
 		victimUser.setStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 0);
@@ -340,7 +335,7 @@ public class Events extends ListenerAdapter {
 		killerUser.addStat(StatsStorage.StatisticType.LOCAL_KILLS, 1);
 		killerUser.addStat(StatsStorage.StatisticType.KILLS, 1);
 
-		if (killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK) == 1){
+		if (killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK) == 1) {
 			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.message("in_game.messages.death").replace("%killer%", victim.getKiller().getName()), victim));
 		} else {
 			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.message("in_game.messages.kill_streak").replace("%kill_streak%", Integer.toString(killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
@@ -365,9 +360,18 @@ public class Events extends ListenerAdapter {
 
 		event.setRespawnLocation(arena.getRandomSpawnPoint());
 
-		Titles.sendTitle(player, null, chatManager.message("in_game.messages.death_subtitle"));
+		Titles.sendTitle(player, "", chatManager.message("in_game.messages.death_subtitle"));
 
 		ItemPosition.giveKit(player);
+	}
+
+	@EventHandler
+	public void onHealthRegen(EntityRegainHealthEvent event) {
+		if (!(event.getEntity() instanceof Player)) return;
+
+		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.REGEN_ENABLED)) {
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler

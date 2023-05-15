@@ -80,6 +80,12 @@ Winning-Score: 25
 # If this option is enabled, players will only be allowed to execute OITC associated commands.
 Block-Commands: true
 
+# Should we cancel health regeneration?
+Regen-Enabled: false
+
+# Should we change player's level with timer?
+Level-Countdown-Enabled: false
+
 # Should we fire some cool fireworks at location of every player after the game ends?
 Firework-When-Game-Ends: true
 

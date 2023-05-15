@@ -19,7 +19,6 @@
 package me.despical.oitc.arena;
 
 import me.despical.commons.compat.Titles;
-import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
@@ -81,7 +80,7 @@ public class Arena extends BukkitRunnable {
 			arenaOptions.put(option, option.getDefaultValue());
 		}
 
-		if (VersionResolver.isCurrentHigher(VersionResolver.ServerVersion.v1_8_R3) && plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
+		if (!ArenaUtils.isLegacy() && plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
 			gameBar = plugin.getServer().createBossBar(chatManager.message("boss_bar.main_title"), BarColor.BLUE, BarStyle.SOLID);
 		}
 
@@ -217,10 +216,10 @@ public class Arena extends BukkitRunnable {
 		player.teleport(location);
 	}
 
-	public void doBarAction(BarAction action, Player p) {
+	public void doBarAction(int action, Player p) {
 		if (gameBar == null) return;
 
-		if (action == BarAction.ADD) {
+		if (action == 1) {
 			gameBar.addPlayer(p);
 		} else {
 			gameBar.removePlayer(p);
@@ -345,9 +344,10 @@ public class Arena extends BukkitRunnable {
 					gameBar.setTitle(chatManager.message("boss_bar.starting_in").replace("%time%", Integer.toString(getTimer())));
 				}
 
-				for (Player player : players) {
-					player.setLevel(getTimer());
-					player.setExp((float) (getTimer() / waitingTime));
+				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.LEVEL_COUNTDOWN_ENABLED)) {
+					for (Player player : players) {
+						player.setLevel(getTimer());
+					}
 				}
 
 				if (size < minPlayers) {
@@ -451,7 +451,7 @@ public class Arena extends BukkitRunnable {
 					player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 
 					teleportToEndLocation(player);
-					doBarAction(BarAction.REMOVE, player);
+					doBarAction(0, player);
 				}
 
 				plugin.getRewardsFactory().performReward(this, Reward.RewardType.END_GAME);
@@ -461,7 +461,6 @@ public class Arena extends BukkitRunnable {
 				}
 
 				setArenaState(ArenaState.RESTARTING);
-				broadcastMessage(chatManager.prefixedMessage("commands.teleported-to-the-lobby"));
 				break;
 			case RESTARTING:
 				plugin.getUserManager().getUsers(this).forEach(user -> user.setSpectator(false));
@@ -484,10 +483,6 @@ public class Arena extends BukkitRunnable {
 				setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 				break;
 		}
-	}
-
-	public enum BarAction {
-		ADD, REMOVE
 	}
 
 	public enum GameLocation {

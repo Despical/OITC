@@ -26,7 +26,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -53,7 +52,7 @@ public class GameItemManager {
 		final ConfigurationSection section = config.getConfigurationSection("items");
 
 		if (section == null) {
-			plugin.getLogger().log(Level.WARNING, "Couldn't find 'items' section in items.yml, delete the file to regenerate it!");
+			plugin.getLogger().warning("Couldn't find 'items' section in items.yml, delete the file to regenerate it!");
 			return;
 		}
 

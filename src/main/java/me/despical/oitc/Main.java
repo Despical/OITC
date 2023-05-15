@@ -71,7 +71,7 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		this.forceDisable = validateIfPluginShouldStart();
 
-		if (!forceDisable) {
+		if (forceDisable) {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -98,7 +98,7 @@ public class Main extends JavaPlugin {
 		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_8_R3, VersionResolver.ServerVersion.v1_19_R3)) {
 			getLogger().info("Your server version is not supported by One in the Chamber!");
 			getLogger().info("Sadly, we must shut off. Maybe you consider changing your server version?");
-			return false;
+			return true;
 		}
 
 		try {
@@ -106,10 +106,10 @@ public class Main extends JavaPlugin {
 		} catch (Exception exception) {
 			getLogger().info("Your server software is not supported by One in the Chamber!");
 			getLogger().info("We support only Spigot and Spigot forks only! Shutting off...");
-			return false;
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 	
 	@Override
@@ -130,7 +130,7 @@ public class Main extends JavaPlugin {
 				AttributeUtils.resetAttackCooldown(player);
 
 				arena.teleportToEndLocation(player);
-				arena.doBarAction(Arena.BarAction.REMOVE, player);
+				arena.doBarAction(0, player);
 				arena.getScoreboardManager().removeScoreboard(player);
 
 				player.setFlySpeed(.1F);
