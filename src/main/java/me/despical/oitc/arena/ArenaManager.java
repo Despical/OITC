@@ -74,9 +74,16 @@ public class ArenaManager {
 			return;
 		}
 
+		User user = plugin.getUserManager().getUser(player);
+
 		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			if (!plugin.getPermissionsManager().hasJoinPerm(player, arena.getId())) {
 				player.sendMessage(chatManager.prefixedMessage("In-Game.Join-No-Permission").replace("%permission%", plugin.getPermissionsManager().getJoinPerm().replace("<arena>", arena.getId())));
+				return;
+			}
+		} else if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SPECTATING_ON_BUNGEE) && arena.getArenaState() == ArenaState.IN_GAME) {
+			if (user.isSpectator()) {
+				player.sendMessage(chatManager.prefixedMessage("In-Game.Spectating-Disabled-On-Bungee"));
 				return;
 			}
 		}
@@ -131,7 +138,6 @@ public class ArenaManager {
 		AttributeUtils.healPlayer(player);
 		PlayerUtils.setGlowing(player, false);
 
-		User user = plugin.getUserManager().getUser(player);
 		user.addGameItem("leave-item");
 		user.resetStats();
 

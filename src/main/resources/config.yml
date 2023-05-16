@@ -86,6 +86,9 @@ Regen-Enabled: false
 # Should we change player's level with timer?
 Level-Countdown-Enabled: false
 
+# Should we allow spectating on bungee mode?
+Disable-Spectating-On-Bungee: false
+
 # Should we fire some cool fireworks at location of every player after the game ends?
 Firework-When-Game-Ends: true
 
