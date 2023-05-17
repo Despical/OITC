@@ -369,6 +369,8 @@ public class Events extends ListenerAdapter {
 	public void onHealthRegen(EntityRegainHealthEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
 
+		if (!ArenaRegistry.isInArena((Player) event.getEntity())) return;
+
 		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.REGEN_ENABLED)) {
 			event.setCancelled(true);
 		}
