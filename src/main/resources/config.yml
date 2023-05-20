@@ -10,6 +10,17 @@
 #                                                             #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# If you want to translate for us check out: https://github.com/Despical/LocaleStorage#locale-storage
+
+# Available locales:
+#    default - English
+#    de - Deutsche
+#    tr - Türkçe
+#    zh_TW - Chinese (Taiwan)
+#    zn_HK - Chinese (Hong Kong)
+#    zh_CN - Chinese (China)
+locale: default
+
 # Enable boss bar support?
 Boss-Bar-Enabled: true
 
@@ -22,7 +33,7 @@ Starting-Time: 15
 # How many seconds classic game should play.
 Classic-Gameplay-Time: 600
 
-# Should we hook into bungee cord? (If you wanna use arena per server option)
+# Should we hook into bungee cord? (If you want to use arena per server option)
 # You STILL need to use external addon for HUB server game signs
 # One in the Chamber doesn't offer that addon.
 Bungee-Enabled: false
@@ -32,9 +43,8 @@ Bungee-Enabled: false
 # flat file and MySQL for player stats.
 Database-Enabled: false
 
-# Enable Inventory Manager for your games? (VERY USEFUL feature for MULTI ARENA)
+# Enable Inventory Manager for your games?
 # This saves inventory of players and restores it after player leaves arena.
-# Saved elements: max health, health, food, experience, full inventory, armor contents, fire ticks, active potions, gamemode and more
 Inventory-Manager-Enabled: true
 
 # Should in-game chat format be enabled?
@@ -105,7 +115,7 @@ Name-Tags-Hidden: true
 #   - red (inactive) stained glass
 Signs-Block-States-Enabled: true
 
-# Should we send random tips when the setup menu opens.
+# Should we send random tips when the setup menu open?
 Send-Setup-Tips: true
 
 # Should we check for updates on plugin start/after admin join?

@@ -19,6 +19,7 @@
 package me.despical.oitc;
 
 import me.despical.oitc.handlers.items.GameItemManager;
+import me.despical.oitc.handlers.language.LanguageManager;
 import org.bstats.bukkit.Metrics;
 import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.database.MysqlDatabase;
@@ -66,6 +67,7 @@ public class Main extends JavaPlugin {
 	private UserManager userManager;
 	private PermissionsManager permissionsManager;
 	private GameItemManager gameItemManager;
+	private LanguageManager languageManager;
 
 	@Override
 	public void onEnable() {
@@ -151,7 +153,9 @@ public class Main extends JavaPlugin {
 	
 	private void initializeClasses() {
 		ScoreboardLib.setPluginInstance(this);
+
 		chatManager = new ChatManager(this);
+		languageManager = new LanguageManager(this);
 
 		if (configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			bungeeManager = new BungeeManager(this);
@@ -186,6 +190,7 @@ public class Main extends JavaPlugin {
 	private void startPluginMetrics() {
 		Metrics metrics = new Metrics(this, 8118);
 
+		metrics.addCustomChart(new SimplePie("locale_used", () -> languageManager.getPluginLocale().prefix));
 		metrics.addCustomChart(new SimplePie("database_enabled", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED))));
 		metrics.addCustomChart(new SimplePie("bungeecord_hooked", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED))));
 		metrics.addCustomChart(new SimplePie("update_notifier", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED))));
