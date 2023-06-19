@@ -18,7 +18,7 @@
 
 package me.despical.oitc.handlers.sign;
 
-import me.despical.commons.compat.VersionResolver;
+import me.despical.commons.ReflectionUtils;
 import me.despical.oitc.arena.Arena;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -47,7 +47,7 @@ public class ArenaSign {
 
 	private void setBehindBlock() {
 		if (sign.getBlock().getType().name().equals("WALL_SIGN")) {
-			this.behind = VersionResolver.isCurrentEqualOrHigher(VersionResolver.ServerVersion.v1_14_R1) ? getBlockBehind() : getBlockBehindLegacy();
+			this.behind = ReflectionUtils.supports(14) ? getBlockBehind() : getBlockBehindLegacy();
 		}
 	}
 

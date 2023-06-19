@@ -18,7 +18,7 @@
 
 package me.despical.oitc.util;
 
-import me.despical.commons.compat.VersionResolver;
+import me.despical.commons.ReflectionUtils;
 import me.despical.commons.compat.XMaterial;
 import me.despical.commons.item.ItemBuilder;
 import org.bukkit.enchantments.Enchantment;
@@ -44,7 +44,7 @@ public enum ItemPosition {
 	ItemPosition(int itemPosition, ItemBuilder itemBuilder) {
 		this.itemPosition = itemPosition;
 
-		if (VersionResolver.isCurrentHigher(VersionResolver.ServerVersion.v1_8_R3)) itemBuilder.unbreakable(true);
+		if (ReflectionUtils.supportsPatch(9)) itemBuilder.unbreakable(true);
 
 		this.itemStack = itemBuilder.build();
 	}

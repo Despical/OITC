@@ -18,7 +18,7 @@
 
 package me.despical.oitc.arena;
 
-import me.despical.commons.compat.VersionResolver;
+import me.despical.commons.ReflectionUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
@@ -78,7 +78,7 @@ public class ArenaUtils {
 		}
 	}
 
-	private final static boolean isLegacy = VersionResolver.isCurrentEqual(VersionResolver.ServerVersion.v1_8_R3);
+	private final static boolean isLegacy = ReflectionUtils.supports(8);
 	private final static boolean isNameTagsSupported = !isLegacy && plugin.getConfigPreferences().getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN);
 
 	public static boolean isLegacy() {

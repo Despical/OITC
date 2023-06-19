@@ -18,8 +18,8 @@
 
 package me.despical.oitc.events;
 
+import me.despical.commons.ReflectionUtils;
 import me.despical.commons.compat.Titles;
-import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.compat.XMaterial;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
@@ -449,7 +449,7 @@ public class Events extends ListenerAdapter {
 	}
 	
 	private void registerLegacyEvents() {
-		registerIf(VersionResolver.isCurrentHigher(VersionResolver.ServerVersion.v1_9_R2), () -> new Listener() {
+		registerIf(ReflectionUtils.supports(9) && ReflectionUtils.supportsPatch(2), new Listener() {
 
 			@EventHandler
 			public void onItemSwap(PlayerSwapHandItemsEvent event) {
@@ -459,7 +459,7 @@ public class Events extends ListenerAdapter {
 			}
 		});
 
-		registerIf(VersionResolver.isCurrentHigher(VersionResolver.ServerVersion.v1_8_R3), () -> new Listener() {
+		registerIf(ReflectionUtils.supports(8) && ReflectionUtils.supportsPatch(3), new Listener() {
 
 			@EventHandler
 			public void onArrowPickup(PlayerPickupArrowEvent event) {

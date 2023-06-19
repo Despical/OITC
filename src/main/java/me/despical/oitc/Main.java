@@ -21,9 +21,7 @@ package me.despical.oitc;
 import me.despical.oitc.handlers.items.GameItemManager;
 import me.despical.oitc.handlers.language.LanguageManager;
 import org.bstats.bukkit.Metrics;
-import me.despical.commons.compat.VersionResolver;
 import me.despical.commons.database.MysqlDatabase;
-import me.despical.commons.exception.ExceptionLogHandler;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.scoreboard.ScoreboardLib;
 import me.despical.commons.serializer.InventorySerializer;
@@ -44,6 +42,7 @@ import me.despical.oitc.user.data.MysqlManager;
 import org.bstats.charts.SimplePie;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -54,9 +53,6 @@ import java.io.File;
  */
 public class Main extends JavaPlugin {
 
-	private boolean forceDisable;
-
-	private ExceptionLogHandler exceptionLogHandler;
 	private BungeeManager bungeeManager;
 	private RewardsFactory rewardsFactory;
 	private MysqlDatabase database;
@@ -71,54 +67,15 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		this.forceDisable = validateIfPluginShouldStart();
-
-		if (forceDisable) {
-			getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
-
-		exceptionLogHandler = new ExceptionLogHandler(this);
-		exceptionLogHandler.setMainPackage("me.despical.oitc");
-		exceptionLogHandler.addBlacklistedClass("me.despical.oitc.user.data.MysqlManager", "me.despical.commons.database.MysqlDatabase");
-		exceptionLogHandler.setRecordMessage("[OITC] We have found a bug in the code. Contact us at our official Discord server (link: https://discord.gg/rVkaGmyszE) with the following error given above!");
-
-		this.configPreferences = new ConfigPreferences(this);
-
 		setupFiles();
 		initializeClasses();
 		checkUpdate();
 
-		getLogger().info("Initialization finished. Join our Discord server if you need any help. (https://discord.gg/rVkaGmyszE)");
-
-		if (configPreferences.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
-			getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
-		}
+		getLogger().info("Initialization finished. Join our Discord server: https://discord.gg/rVkaGmyszE");
 	}
-	
-	private boolean validateIfPluginShouldStart() {
-		if (!VersionResolver.isCurrentBetween(VersionResolver.ServerVersion.v1_8_R3, VersionResolver.ServerVersion.v1_19_R3)) {
-			getLogger().info("Your server version is not supported by One in the Chamber!");
-			getLogger().info("Sadly, we must shut off. Maybe you consider changing your server version?");
-			return true;
-		}
 
-		try {
-			Class.forName("org.spigotmc.SpigotConfig");
-		} catch (Exception exception) {
-			getLogger().info("Your server software is not supported by One in the Chamber!");
-			getLogger().info("We support only Spigot and Spigot forks only! Shutting off...");
-			return true;
-		}
-
-		return false;
-	}
-	
 	@Override
 	public void onDisable() {
-		if (forceDisable) return;
-
-		getServer().getLogger().removeHandler(exceptionLogHandler);
 		saveAllUserStatistics();
 		
 		if (database != null) {
@@ -152,19 +109,9 @@ public class Main extends JavaPlugin {
 	}
 	
 	private void initializeClasses() {
-		ScoreboardLib.setPluginInstance(this);
-
+		configPreferences = new ConfigPreferences(this);
 		chatManager = new ChatManager(this);
 		languageManager = new LanguageManager(this);
-
-		if (configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-			bungeeManager = new BungeeManager(this);
-		}
-
-		if (configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
-			database = new MysqlDatabase(this, "mysql");
-		}
-
 		userManager = new UserManager(this);
 		signManager = new SignManager(this);
 		ArenaRegistry.registerArenas();
@@ -174,9 +121,17 @@ public class Main extends JavaPlugin {
 		permissionsManager = new PermissionsManager(this);
 		gameItemManager = new GameItemManager(this);
 
+		if (configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) bungeeManager = new BungeeManager(this);
+		if (configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED)) database = new MysqlDatabase(this, "mysql");
+
+		ScoreboardLib.setPluginInstance(this);
 		ListenerAdapter.registerEvents(this);
 
 		registerSoftDependenciesAndServices();
+
+		if (configPreferences.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
+			getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
+		}
 	}
 	
 	private void registerSoftDependenciesAndServices() {
@@ -211,43 +166,53 @@ public class Main extends JavaPlugin {
 	private void setupFiles() {
 		Collections.streamOf("arenas", "bungee", "rewards", "stats", "items", "mysql", "messages").filter(name -> !new File(getDataFolder(),name + ".yml").exists()).forEach(name -> saveResource(name + ".yml", false));
 	}
-	
+
+	@NotNull
 	public RewardsFactory getRewardsFactory() {
 		return rewardsFactory;
 	}
-	
+
+	@NotNull
 	public BungeeManager getBungeeManager() {
 		return bungeeManager;
 	}
-	
+
+	@NotNull
 	public ConfigPreferences getConfigPreferences() {
 		return configPreferences;
 	}
-	
+
+	@NotNull
 	public MysqlDatabase getMysqlDatabase() {
 		return database;
 	}
-	
+
+	@NotNull
 	public SignManager getSignManager() {
 		return signManager;
 	}
 
+	@NotNull
 	public ChatManager getChatManager() {
 		return chatManager;
 	}
-	
+
+	@NotNull
 	public CommandHandler getCommandHandler() {
 		return commandHandler;
 	}
 
+	@NotNull
 	public UserManager getUserManager() {
 		return userManager;
 	}
 
+	@NotNull
 	public PermissionsManager getPermissionsManager() {
 		return permissionsManager;
 	}
 
+	@NotNull
 	public GameItemManager getGameItemManager() {
 		return gameItemManager;
 	}
