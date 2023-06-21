@@ -60,7 +60,7 @@ public class StatsCommand extends SubCommand {
 		if (player.equals(sender)) {
 			player.sendMessage(chatManager.message(path + "header", player));
 		} else {
-			player.sendMessage(chatManager.message(path + "header_other", player).replace("%player%", player.getName()));
+			sender.sendMessage(chatManager.message(path + "header_other", player).replace("%player%", player.getName()));
 		}
 
 		sender.sendMessage(chatManager.message(path + "kills", player) + user.getStat(StatsStorage.StatisticType.KILLS));
