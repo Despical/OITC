@@ -5,7 +5,7 @@
 
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>2.3.7</version>
+	<version>2.3.8</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -35,17 +35,14 @@
 			<id>papermc</id>
 			<url>https://papermc.io/repo/repository/maven-public/</url>
 		</repository>
-
 		<repository>
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
-
 		<repository>
 			<id>papi-repo</id>
 			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
-
 		<repository>
 			<id>codemc-repo</id>
 			<url>https://repo.codemc.org/repository/maven-public/</url>
@@ -58,26 +55,22 @@
 			<artifactId>Commons</artifactId>
 			<version>1.6.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.github.Despical</groupId>
 			<artifactId>InventoryFramework</artifactId>
 			<version>2.2.6</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
 			<version>3.0.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.destroystokyo.paper</groupId>
 			<artifactId>paper-api</artifactId>
 			<version>1.16.5-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>me.clip</groupId>
 			<artifactId>placeholderapi</artifactId>
@@ -107,7 +100,6 @@
 						<target>${java.version}</target>
 					</configuration>
 			</plugin>
-
 			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -121,7 +113,6 @@
                     </execution>
                 </executions>
             </plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -132,7 +123,6 @@
 						</archive>
 					</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -156,7 +146,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
 </project>
