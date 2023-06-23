@@ -452,9 +452,10 @@ public class Arena extends BukkitRunnable {
 
 					teleportToEndLocation(player);
 					doBarAction(0, player);
+
+					plugin.getRewardsFactory().performReward(plugin.getUserManager().getUser(player), Reward.RewardType.END_GAME);
 				}
 
-				plugin.getRewardsFactory().performReward(this, Reward.RewardType.END_GAME);
 
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 					players.forEach(player -> InventorySerializer.loadInventory(plugin, player));
