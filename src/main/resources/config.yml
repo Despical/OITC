@@ -81,9 +81,6 @@ Whitelisted-Commands:
   - me
   - help
 
-# Enable in game rewards? See rewards.yml for more...
-Rewards-Enabled: false
-
 # First player to reach this score wins.
 Winning-Score: 25
 

@@ -67,7 +67,6 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		setupFiles();
 		initializeClasses();
 		checkUpdate();
 
@@ -109,6 +108,8 @@ public class Main extends JavaPlugin {
 	}
 	
 	private void initializeClasses() {
+		setupFiles();
+
 		configPreferences = new ConfigPreferences(this);
 		chatManager = new ChatManager(this);
 		languageManager = new LanguageManager(this);
@@ -158,7 +159,7 @@ public class Main extends JavaPlugin {
 			if (result.requiresUpdate()) {
 				getLogger().info("Found a new version available: v" + result.getNewestVersion());
 				getLogger().info("Download it SpigotMC:");
-				getLogger().info("https://www.spigotmc.org/resources/one-in-the-chamber.81185/");
+				getLogger().info("https://spigotmc.org/resources/81185");
 			}
 		});
 	}

@@ -116,7 +116,7 @@ public class Events extends ListenerAdapter {
 				final Player player = event.getPlayer();
 
 				player.sendMessage(chatManager.coloredRawMessage("&3[OITC] &bFound an update: v" + result.getNewestVersion() + " Download:"));
-				player.sendMessage(chatManager.coloredRawMessage("&3>> &bhttps://www.spigotmc.org/resources/one-in-the-chamber.81185/"));
+				player.sendMessage(chatManager.coloredRawMessage("&3>> &bhttps://spigotmc.org/resources/81185"));
 			}
 		}), 25);
 	}
@@ -301,7 +301,7 @@ public class Events extends ListenerAdapter {
 			if (!player.getUniqueId().equals(shooter.getUniqueId())) {
 				e.setDamage(100.0);
 
-				plugin.getRewardsFactory().performReward(player, Reward.RewardType.DEATH);
+				plugin.getRewardsFactory().performReward(plugin.getUserManager().getUser(player), Reward.RewardType.DEATH);
 			} else {
 				e.setCancelled(true);
 			}
@@ -344,7 +344,7 @@ public class Events extends ListenerAdapter {
 		ItemPosition.addItem(victim.getKiller(), ItemPosition.ARROW, ItemPosition.ARROW.getItem());
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> victim.spigot().respawn(), 5);
 
-		plugin.getRewardsFactory().performReward(victim.getKiller(), Reward.RewardType.KILL);
+		plugin.getRewardsFactory().performReward(victimUser, Reward.RewardType.KILL);
 
 		if (StatsStorage.getUserStats(victim.getKiller(), StatsStorage.StatisticType.LOCAL_KILLS) == plugin.getConfig().getInt("Winning-Score", 25)) {
 			ArenaManager.stopGame(false, arena);

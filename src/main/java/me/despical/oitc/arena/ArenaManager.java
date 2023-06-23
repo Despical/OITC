@@ -281,14 +281,14 @@ public class ArenaManager {
 
 				Titles.sendTitle(player, chatManager.message("in_game.messages.game_end_messages.titles.win"), chatManager.message("in_game.messages.game_end_messages.subtitles.win").replace("%winner%", topPlayerName));
 
-				plugin.getRewardsFactory().performReward(player, Reward.RewardType.WIN);
+				plugin.getRewardsFactory().performReward(user, Reward.RewardType.WIN);
 			} else {
 				Titles.sendTitle(player, chatManager.message("in_game.messages.game_end_messages.titles.lose"), chatManager.message("in_game.messages.game_end_messages.subtitles.lose").replace("%winner%", topPlayerName));
 
 				if (!user.isSpectator()) {
 					user.addStat(StatsStorage.StatisticType.LOSES, 1);
 
-					plugin.getRewardsFactory().performReward(player, Reward.RewardType.LOSE);
+					plugin.getRewardsFactory().performReward(user, Reward.RewardType.LOSE);
 				}
 			}
 

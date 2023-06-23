@@ -60,6 +60,10 @@ public class User {
 		return player;
 	}
 
+	public String getName() {
+		return player.getName();
+	}
+
 	public UUID getUniqueId() {
 		return uuid;
 	}
