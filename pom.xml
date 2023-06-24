@@ -121,7 +121,6 @@
 						<archive>
 							<addMavenDescriptor>false</addMavenDescriptor>
 						</archive>
-						<outputDirectory>C:\Users\berke\OneDrive\Masaüstü\Server\plugins</outputDirectory>
 					</configuration>
 			</plugin>
 			<plugin>
