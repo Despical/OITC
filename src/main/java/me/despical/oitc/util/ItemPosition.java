@@ -43,10 +43,7 @@ public enum ItemPosition {
 
 	ItemPosition(int itemPosition, ItemBuilder itemBuilder) {
 		this.itemPosition = itemPosition;
-
-		if (ReflectionUtils.supportsPatch(9)) itemBuilder.unbreakable(true);
-
-		this.itemStack = itemBuilder.build();
+		this.itemStack = ReflectionUtils.supports(9) ? itemBuilder.unbreakable(true).build() : itemBuilder.build();
 	}
 
 	public static void addItem(Player player, ItemPosition itemPosition, ItemStack itemStack) {

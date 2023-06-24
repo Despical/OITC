@@ -24,6 +24,7 @@ import me.despical.oitc.api.events.player.OITCPlayerStatisticChangeEvent;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.handlers.items.GameItem;
+import me.despical.oitc.handlers.rewards.Reward;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -129,5 +130,9 @@ public class User {
 
 			setStat(statistic, 0);
 		}
+	}
+
+	public void performReward(final Reward.RewardType rewardType) {
+		plugin.getRewardsFactory().performReward(this, rewardType);
 	}
 }

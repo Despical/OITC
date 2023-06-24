@@ -39,7 +39,7 @@ Rewards-Enabled: true
 rewards:
   # Commands performed when game is finished
   endgame:
-    - p:say %mapname% has ended!
+    - p:say %map_name% has ended!
     - p:say Ooh and there were playing %players% players
   # Commands executed when player kills someone
   kill:

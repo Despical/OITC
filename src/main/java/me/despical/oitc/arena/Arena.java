@@ -453,7 +453,7 @@ public class Arena extends BukkitRunnable {
 					teleportToEndLocation(player);
 					doBarAction(0, player);
 
-					plugin.getRewardsFactory().performReward(plugin.getUserManager().getUser(player), Reward.RewardType.END_GAME);
+					plugin.getUserManager().getUser(player).performReward(Reward.RewardType.END_GAME);
 				}
 
 

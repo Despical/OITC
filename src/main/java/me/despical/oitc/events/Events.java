@@ -300,8 +300,6 @@ public class Events extends ListenerAdapter {
 		if (ArenaRegistry.isInArena(player) && ArenaRegistry.isInArena(shooter)) {
 			if (!player.getUniqueId().equals(shooter.getUniqueId())) {
 				e.setDamage(100.0);
-
-				plugin.getRewardsFactory().performReward(plugin.getUserManager().getUser(player), Reward.RewardType.DEATH);
 			} else {
 				e.setCancelled(true);
 			}
@@ -329,11 +327,13 @@ public class Events extends ListenerAdapter {
 		victimUser.setStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 0);
 		victimUser.addStat(StatsStorage.StatisticType.LOCAL_DEATHS, 1);
 		victimUser.addStat(StatsStorage.StatisticType.DEATHS, 1);
+		victimUser.performReward(Reward.RewardType.DEATH);
 
 		User killerUser = userManager.getUser(victim.getKiller());
 		killerUser.addStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 1);
 		killerUser.addStat(StatsStorage.StatisticType.LOCAL_KILLS, 1);
 		killerUser.addStat(StatsStorage.StatisticType.KILLS, 1);
+		killerUser.performReward(Reward.RewardType.KILL);
 
 		if (killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK) == 1) {
 			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.message("in_game.messages.death").replace("%killer%", victim.getKiller().getName()), victim));
@@ -343,8 +343,6 @@ public class Events extends ListenerAdapter {
 
 		ItemPosition.addItem(victim.getKiller(), ItemPosition.ARROW, ItemPosition.ARROW.getItem());
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> victim.spigot().respawn(), 5);
-
-		plugin.getRewardsFactory().performReward(victimUser, Reward.RewardType.KILL);
 
 		if (StatsStorage.getUserStats(victim.getKiller(), StatsStorage.StatisticType.LOCAL_KILLS) == plugin.getConfig().getInt("Winning-Score", 25)) {
 			ArenaManager.stopGame(false, arena);
