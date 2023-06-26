@@ -5,7 +5,7 @@
 
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>2.4.0</version>
+	<version>2.4.1</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -32,8 +32,12 @@
 
 	<repositories>
 		<repository>
-			<id>papermc</id>
-			<url>https://papermc.io/repo/repository/maven-public/</url>
+			<id>papermc-repo</id>
+			<url>https://repo.papermc.io/repository/maven-public/</url>
+		</repository>
+		<repository>
+			<id>sonatype</id>
+			<url>https://oss.sonatype.org/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>jitpack.io</id>
@@ -42,10 +46,6 @@
 		<repository>
 			<id>papi-repo</id>
 			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-		</repository>
-		<repository>
-			<id>codemc-repo</id>
-			<url>https://repo.codemc.org/repository/maven-public/</url>
 		</repository>
 	</repositories>
 
@@ -63,13 +63,7 @@
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
-			<version>3.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.destroystokyo.paper</groupId>
-			<artifactId>paper-api</artifactId>
-			<version>1.16.5-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<version>3.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>me.clip</groupId>
@@ -77,8 +71,13 @@
 			<version>2.11.2</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.papermc.paper</groupId>
+			<artifactId>paper-api</artifactId>
+			<version>1.19.4-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<resources>
 			<resource>
@@ -126,7 +125,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.1.1</version>
+				<version>3.4.1</version>
 				<executions>
 					<execution>
 						<phase>package</phase>

@@ -18,11 +18,11 @@
 
 package me.despical.oitc.commands.player;
 
+import me.despical.commons.string.StringUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.commands.SubCommand;
 import me.despical.oitc.user.data.MysqlManager;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
 import java.sql.Connection;
@@ -127,10 +127,10 @@ public class TopPlayersCommand extends SubCommand {
 	private String formatMessage(String statisticName, String playerName, int position, int value) {
 		String message = chatManager.message("commands.statistics.format");
 
-		message = StringUtils.replace(message, "%position%", Integer.toString(position));
-		message = StringUtils.replace(message, "%name%", playerName);
-		message = StringUtils.replace(message, "%value%", Integer.toString(value));
-		message = StringUtils.replace(message, "%statistic%", statisticName);
+		message = message.replace("%position%", Integer.toString(position));
+		message = message.replace("%name%", playerName);
+		message = message.replace("%value%", Integer.toString(value));
+		message = message.replace("%statistic%", statisticName);
 		return message;
 	}
 }

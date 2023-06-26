@@ -34,7 +34,6 @@ import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.handlers.ChatManager.ActionType;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -159,11 +158,13 @@ public class ArenaManager {
 
 			ArenaUtils.hidePlayer(player, arena);
 
-			for (Player spectator : arena.getPlayers()) {
-				if (plugin.getUserManager().getUser(spectator).isSpectator()) {
-					PlayerUtils.hidePlayer(player, spectator, plugin);
-				} else {
-					PlayerUtils.showPlayer(player, spectator, plugin);
+			if (!ArenaUtils.isLegacy() || ArenaUtils.shouldHide()) {
+				for (Player spectator : arena.getPlayers()) {
+					if (plugin.getUserManager().getUser(spectator).isSpectator()) {
+						PlayerUtils.hidePlayer(player, spectator, plugin);
+					} else {
+						PlayerUtils.showPlayer(player, spectator, plugin);
+					}
 				}
 			}
 
@@ -320,11 +321,11 @@ public class ArenaManager {
 		String formatted = msg, topPlayerName = arena.getScoreboardManager().getTopPlayerName(0);
 
 		User user = plugin.getUserManager().getUser(player);
-		formatted = StringUtils.replace(formatted, "%score%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILLS)));
-		formatted = StringUtils.replace(formatted, "%deaths%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_DEATHS)));
-		formatted = StringUtils.replace(formatted, "%rank%", Integer.toString(arena.getScoreboardManager().getRank(player)));
-		formatted = StringUtils.replace(formatted, "%winner%", topPlayerName);
-		formatted = StringUtils.replace(formatted, "%winner_score%", Integer.toString(StatsStorage.getUserStats(plugin.getServer().getPlayerExact(topPlayerName), StatsStorage.StatisticType.LOCAL_KILLS)));
+		formatted = formatted.replace("%score%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILLS)));
+		formatted = formatted.replace("%deaths%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_DEATHS)));
+		formatted = formatted.replace("%rank%", Integer.toString(arena.getScoreboardManager().getRank(player)));
+		formatted = formatted.replace("%winner%", topPlayerName);
+		formatted = formatted.replace("%winner_score%", Integer.toString(StatsStorage.getUserStats(plugin.getServer().getPlayerExact(topPlayerName), StatsStorage.StatisticType.LOCAL_KILLS)));
 
 		if (chatManager.isPapiEnabled()) {
 			formatted = PlaceholderAPI.setPlaceholders(player, formatted);

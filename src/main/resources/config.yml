@@ -102,6 +102,9 @@ Firework-When-Game-Ends: true
 # Should players' name tags in game be hidden?
 Name-Tags-Hidden: true
 
+# Should we hide in-game players to other online players?
+Hide-Players: true
+
 # Should blocks behind game signs change their color based on game state?
 # They will change color to:
 #   - white (waiting for players) stained glass

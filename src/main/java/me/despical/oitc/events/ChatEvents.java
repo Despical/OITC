@@ -23,7 +23,6 @@ import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -85,8 +84,8 @@ public class ChatEvents extends ListenerAdapter {
 	private String formatChatPlaceholders(String message, Player player, String saidMessage) {
 		String formatted = message;
 
-		formatted = StringUtils.replace(formatted, "%player%", player.getName());
-		formatted = StringUtils.replace(formatted, "%message%", ChatColor.stripColor(saidMessage));
+		formatted = formatted.replace("%player%", player.getName());
+		formatted = formatted.replace("%message%", ChatColor.stripColor(saidMessage));
 
 		if (chatManager.isPapiEnabled()) {
 			formatted = PlaceholderAPI.setPlaceholders(player, formatted);

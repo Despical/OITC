@@ -37,7 +37,7 @@ public class ArenaUtils {
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	public static void hidePlayer(Player p, Arena arena) {
-		if (isLegacy) return;
+		if (isLegacy || !hide) return;
 
 		for (Player player : arena.getPlayers()) {
 			PlayerUtils.hidePlayer(player , p, plugin);
@@ -45,7 +45,7 @@ public class ArenaUtils {
 	}
 
 	public static void showPlayer(Player p, Arena arena) {
-		if (isLegacy) return;
+		if (isLegacy || !hide) return;
 
 		for (Player player : arena.getPlayers()) {
 			PlayerUtils.showPlayer(player, p, plugin);
@@ -53,7 +53,7 @@ public class ArenaUtils {
 	}
 
 	public static void hidePlayersOutsideTheGame(Player player, Arena arena) {
-		if (isLegacy) return;
+		if (isLegacy || !hide) return;
 
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
 			if (arena.getPlayers().contains(players)) {
@@ -66,7 +66,7 @@ public class ArenaUtils {
 	}
 
 	public static void showPlayersOutsideTheGame(Player player, Arena arena) {
-		if (isLegacy) return;
+		if (isLegacy || !hide) return;
 
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
 			if (arena.getPlayers().contains(players)) {
@@ -79,10 +79,15 @@ public class ArenaUtils {
 	}
 
 	private final static boolean isLegacy = !ReflectionUtils.supports(9);
+	private final static boolean hide = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.HIDE_PLAYERS);
 	private final static boolean isNameTagsSupported = !isLegacy && plugin.getConfigPreferences().getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN);
 
 	public static boolean isLegacy() {
 		return isLegacy;
+	}
+
+	public static boolean shouldHide() {
+		return hide;
 	}
 
 	public static void updateNameTagsVisibility(Player p) {

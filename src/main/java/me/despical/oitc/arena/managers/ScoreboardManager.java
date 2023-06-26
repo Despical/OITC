@@ -29,7 +29,6 @@ import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaState;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -109,20 +108,20 @@ public class ScoreboardManager {
 	private String formatScoreboardLine(String line, Player player) {
 		String formattedLine = line;
 
-		formattedLine = StringUtils.replace(formattedLine, "%time%", Integer.toString(arena.getTimer()));
-		formattedLine = StringUtils.replace(formattedLine, "%formatted_time%", StringFormatUtils.formatIntoMMSS(arena.getTimer()));
-		formattedLine = StringUtils.replace(formattedLine, "%map_name%", arena.getMapName());
-		formattedLine = StringUtils.replace(formattedLine, "%players%", Integer.toString(arena.getPlayers().size()));
-		formattedLine = StringUtils.replace(formattedLine, "%max_players%", Integer.toString(arena.getMaximumPlayers()));
-		formattedLine = StringUtils.replace(formattedLine, "%min_players%", Integer.toString(arena.getMinimumPlayers()));
-		formattedLine = StringUtils.replace(formattedLine, "%kills%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS)));
-		formattedLine = StringUtils.replace(formattedLine, "%deaths%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_DEATHS)));
-		formattedLine = StringUtils.replace(formattedLine, "%kill_streak%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
+		formattedLine = formattedLine.replace("%time%", Integer.toString(arena.getTimer()));
+		formattedLine = formattedLine.replace("%formatted_time%", StringFormatUtils.formatIntoMMSS(arena.getTimer()));
+		formattedLine = formattedLine.replace("%map_name%", arena.getMapName());
+		formattedLine = formattedLine.replace("%players%", Integer.toString(arena.getPlayers().size()));
+		formattedLine = formattedLine.replace("%max_players%", Integer.toString(arena.getMaximumPlayers()));
+		formattedLine = formattedLine.replace("%min_players%", Integer.toString(arena.getMinimumPlayers()));
+		formattedLine = formattedLine.replace("%kills%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS)));
+		formattedLine = formattedLine.replace("%deaths%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_DEATHS)));
+		formattedLine = formattedLine.replace("%kill_streak%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
 
 		final Map<Player, Integer> leaderboard = getSortedLeaderboard();
 
 		for (int i = 0, size = arena.getPlayersLeft().size(); i <= arena.getMaximumPlayers(); i++) {
-			formattedLine = StringUtils.replace(formattedLine, "%top_player_" + (i + 1) + "%", size > i ? formatTopPlayer(leaderboard, getTopPlayerName(leaderboard, i), i) : "%empty%");
+			formattedLine = formattedLine.replace("%top_player_" + (i + 1) + "%", size > i ? formatTopPlayer(leaderboard, getTopPlayerName(leaderboard, i), i) : "%empty%");
 		}
 
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -173,8 +172,8 @@ public class ScoreboardManager {
 	private String formatTopPlayer(Map<Player, Integer> leaderboard, String player, int rank) {
 		String formatted = plugin.getChatManager().message("Scoreboard.Top-Player-Format");
 
-		formatted = StringUtils.replace(formatted, "%player%", player);
-		formatted = StringUtils.replace(formatted, "%score%", Integer.toString(getTopPlayerScore(leaderboard, rank)));
+		formatted = formatted.replace("%player%", player);
+		formatted = formatted.replace("%score%", Integer.toString(getTopPlayerScore(leaderboard, rank)));
 		return formatted;
 	}
 }

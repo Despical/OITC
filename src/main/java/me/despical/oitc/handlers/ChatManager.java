@@ -21,11 +21,11 @@ package me.despical.oitc.handlers;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.string.StringFormatUtils;
+import me.despical.commons.string.StringUtils;
 import me.despical.commons.util.Strings;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.user.User;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -98,7 +98,7 @@ public class ChatManager {
 	public String formatMessage(Arena arena, String message, Player player) {
 		String returnString = message;
 
-		returnString = StringUtils.replace(returnString, "%player%", player.getName());
+		returnString = returnString.replace("%player%", player.getName());
 		returnString = formatPlaceholders(returnString, arena);
 
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -128,19 +128,19 @@ public class ChatManager {
 	private String formatPlaceholders(String message, Arena arena) {
 		String returnString = message;
 
-		returnString = StringUtils.replace(returnString, "%arena%", arena.getMapName());
-		returnString = StringUtils.replace(returnString, "%time%", Integer.toString(arena.getTimer()));
-		returnString = StringUtils.replace(returnString, "%formatted_time%", StringFormatUtils.formatIntoMMSS(arena.getTimer()));
-		returnString = StringUtils.replace(returnString, "%players%", Integer.toString(arena.getPlayers().size()));
-		returnString = StringUtils.replace(returnString, "%maxplayers%", Integer.toString(arena.getMaximumPlayers()));
-		returnString = StringUtils.replace(returnString, "%minplayers%", Integer.toString(arena.getMinimumPlayers()));
+		returnString = returnString.replace("%arena%", arena.getMapName());
+		returnString = returnString.replace("%time%", Integer.toString(arena.getTimer()));
+		returnString = returnString.replace("%formatted_time%", StringFormatUtils.formatIntoMMSS(arena.getTimer()));
+		returnString = returnString.replace("%players%", Integer.toString(arena.getPlayers().size()));
+		returnString = returnString.replace("%maxplayers%", Integer.toString(arena.getMaximumPlayers()));
+		returnString = returnString.replace("%minplayers%", Integer.toString(arena.getMinimumPlayers()));
 		return returnString;
 	}
 
 	public String formatMessage(Arena arena, String message, int integer) {
 		String returnString = message;
 
-		returnString = StringUtils.replace(returnString, "%number%", Integer.toString(integer));
+		returnString = returnString.replace("%number%", Integer.toString(integer));
 		return arena != null ? formatPlaceholders(returnString, arena) : returnString;
 	}
 

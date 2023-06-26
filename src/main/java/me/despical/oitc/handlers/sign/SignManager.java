@@ -28,7 +28,6 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -110,16 +109,16 @@ public class SignManager implements Listener {
 		String formatted = msg;
 		int size = arena.getPlayers().size(), max = arena.getMaximumPlayers();
 
-		formatted = StringUtils.replace(formatted, "%map_name%", arena.getMapName());
+		formatted = formatted.replace("%map_name%", arena.getMapName());
 
 		if (size >= max) {
-			formatted = StringUtils.replace(formatted, "%state%", plugin.getChatManager().message("Signs.Game-States.Full-Game"));
+			formatted = formatted.replace("%state%", plugin.getChatManager().message("Signs.Game-States.Full-Game"));
 		} else {
-			formatted = StringUtils.replace(formatted, "%state%", gameStateToString.get(arena.getArenaState()));
+			formatted = formatted.replace("%state%", gameStateToString.get(arena.getArenaState()));
 		}
 
-		formatted = StringUtils.replace(formatted, "%players%", Integer.toString(size));
-		formatted = StringUtils.replace(formatted, "%max_players%", Integer.toString(max));
+		formatted = formatted.replace("%players%", Integer.toString(size));
+		formatted = formatted.replace("%max_players%", Integer.toString(max));
 		return plugin.getChatManager().coloredRawMessage(formatted);
 	}
 

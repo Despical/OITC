@@ -298,7 +298,7 @@ public class Arena extends BukkitRunnable {
 	}
 
 	public void showPlayers() {
-		if (ArenaUtils.isLegacy()) return;
+		if (ArenaUtils.isLegacy() || !ArenaUtils.shouldHide()) return;
 
 		for (Player player : players) {
 			for (Player p : players) {
