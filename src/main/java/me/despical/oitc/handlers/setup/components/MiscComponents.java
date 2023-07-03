@@ -125,7 +125,7 @@ public class MiscComponents implements SetupComponent {
 					config.set("instances." + arena.getId() + ".mapName", arena.getMapName());
 					ConfigUtils.saveConfig(plugin, config, "arenas");
 
-					new SetupInventory(plugin, arena, player).openInventory(false);
+					new SetupInventory(plugin, arena, player).openInventory();
 					return Prompt.END_OF_CONVERSATION;
 				}
 			}).buildFor(player);

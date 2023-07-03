@@ -23,18 +23,14 @@ import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.item.ItemBuilder;
 import me.despical.inventoryframework.Gui;
 import me.despical.inventoryframework.pane.StaticPane;
-import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
-import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.handlers.setup.components.ArenaRegisterComponent;
 import me.despical.oitc.handlers.setup.components.MiscComponents;
 import me.despical.oitc.handlers.setup.components.PlayerAmountComponents;
 import me.despical.oitc.handlers.setup.components.SpawnComponents;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Despical
@@ -88,40 +84,7 @@ public class SetupInventory {
 		arenaRegisterComponent.registerComponent(this, pane);
 	}
 
-	private void sendProTip(Player player) {
-		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.SEND_SETUP_TIPS)) return;
-
-		ChatManager chatManager = plugin.getChatManager();
-		String tip = "";
-
-		switch (ThreadLocalRandom.current().nextInt(12)) {
-			case 0:
-				tip = "Need help? You can join our Discord community. Check out https://discord.gg/rVkaGmyszE";
-				break;
-			case 1:
-				tip = "Need help? Check our wiki: https://github.com/Despical/OITC/wiki";
-				break;
-			case 2:
-				tip = "Help us translating our plugin to your language here: https://github.com/Despical/LocaleStorage";
-				break;
-			case 3:
-				tip = "You can donate us at https://www.buymeacoffee.com/despical";
-				break;
-			case 4:
-				tip = "You can support us with becoming Patron on https://www.patreon.com/despical to make updates better and sooner.";
-				break;
-			default:
-				break;
-		}
-
-		if (!tip.isEmpty()) {
-			player.sendMessage(chatManager.coloredRawMessage("&e&lTIP: &7" + tip));
-		}
-	}
-
-	public void openInventory(boolean proTips) {
-		if (proTips) sendProTip(player);
-
+	public void openInventory() {
 		gui.show(player);
 	}
 

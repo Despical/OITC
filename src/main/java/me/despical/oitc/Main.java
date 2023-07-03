@@ -18,6 +18,8 @@
 
 package me.despical.oitc;
 
+import me.despical.commandframework.CommandFramework;
+import me.despical.oitc.commands.AbstractCommand;
 import me.despical.oitc.handlers.items.GameItemManager;
 import me.despical.oitc.handlers.language.LanguageManager;
 import org.bstats.bukkit.Metrics;
@@ -31,7 +33,6 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaUtils;
-import me.despical.oitc.commands.CommandHandler;
 import me.despical.oitc.events.*;
 import me.despical.oitc.handlers.*;
 import me.despical.oitc.handlers.rewards.RewardsFactory;
@@ -58,12 +59,12 @@ public class Main extends JavaPlugin {
 	private MysqlDatabase database;
 	private SignManager signManager;
 	private ConfigPreferences configPreferences;
-	private CommandHandler commandHandler;
 	private ChatManager chatManager;
 	private UserManager userManager;
 	private PermissionsManager permissionsManager;
 	private GameItemManager gameItemManager;
-	private LanguageManager languageManager;
+	private @SuppressWarnings("all") LanguageManager languageManager;
+	private CommandFramework commandFramework;
 
 	@Override
 	public void onEnable() {
@@ -108,7 +109,7 @@ public class Main extends JavaPlugin {
 	}
 	
 	private void initializeClasses() {
-		setupFiles();
+		setupConfigurationFiles();
 
 		configPreferences = new ConfigPreferences(this);
 		chatManager = new ChatManager(this);
@@ -118,15 +119,16 @@ public class Main extends JavaPlugin {
 		ArenaRegistry.registerArenas();
 		signManager.loadSigns();
 		rewardsFactory = new RewardsFactory(this);
-		commandHandler = new CommandHandler(this);
 		permissionsManager = new PermissionsManager(this);
 		gameItemManager = new GameItemManager(this);
+		commandFramework = new CommandFramework(this);
 
 		if (configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) bungeeManager = new BungeeManager(this);
 		if (configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED)) database = new MysqlDatabase(this, "mysql");
 
 		ScoreboardLib.setPluginInstance(this);
 		ListenerAdapter.registerEvents(this);
+		AbstractCommand.registerCommands(this);
 
 		registerSoftDependenciesAndServices();
 
@@ -146,7 +148,6 @@ public class Main extends JavaPlugin {
 	private void startPluginMetrics() {
 		Metrics metrics = new Metrics(this, 8118);
 
-		metrics.addCustomChart(new SimplePie("locale_used", () -> languageManager.getPluginLocale().prefix));
 		metrics.addCustomChart(new SimplePie("database_enabled", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED))));
 		metrics.addCustomChart(new SimplePie("bungeecord_hooked", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED))));
 		metrics.addCustomChart(new SimplePie("update_notifier", () -> String.valueOf(configPreferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED))));
@@ -164,7 +165,7 @@ public class Main extends JavaPlugin {
 		});
 	}
 
-	private void setupFiles() {
+	private void setupConfigurationFiles() {
 		Collections.streamOf("arenas", "bungee", "rewards", "stats", "items", "mysql", "messages").filter(name -> !new File(getDataFolder(),name + ".yml").exists()).forEach(name -> saveResource(name + ".yml", false));
 	}
 
@@ -199,11 +200,6 @@ public class Main extends JavaPlugin {
 	}
 
 	@NotNull
-	public CommandHandler getCommandHandler() {
-		return commandHandler;
-	}
-
-	@NotNull
 	public UserManager getUserManager() {
 		return userManager;
 	}
@@ -216,6 +212,11 @@ public class Main extends JavaPlugin {
 	@NotNull
 	public GameItemManager getGameItemManager() {
 		return gameItemManager;
+	}
+
+	@NotNull
+	public CommandFramework getCommandFramework() {
+		return commandFramework;
 	}
 
 	private void saveAllUserStatistics() {

@@ -54,7 +54,8 @@ public class SignManager implements Listener {
 	private final Set<ArenaSign> arenaSigns;
 	private final List<String> signLines;
 	private final Map<ArenaState, String> gameStateToString;
-	private final FileConfiguration config;
+
+	private FileConfiguration config;
 
 	public SignManager(Main plugin) {
 		this.plugin = plugin;
@@ -190,6 +191,8 @@ public class SignManager implements Listener {
 
 	public void loadSigns() {
 		arenaSigns.clear();
+
+		config = ConfigUtils.getConfig(plugin, "arenas");
 
 		for (String path : config.getConfigurationSection("instances").getKeys(false)) {
 			for (String sign : config.getStringList("instances." + path + ".signs")) {

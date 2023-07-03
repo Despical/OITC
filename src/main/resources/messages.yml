@@ -12,7 +12,6 @@
 # One in the Chamber Command Messages
 Commands:
   Did-You-Mean: "&3Did you mean &b/%command%&3?"
-  Are-You-Sure: "&cAre you sure you want to do this action? Type the command again &6within 10 seconds &cto confirm!"
   Removed-Game-Instance: "&aSuccessfully removed game instance!"
   No-Arena-Like-That: "&cWe couldn't find any arena with that name matching!"
   Look-Sign: "&cYou have to look at a sign to perform this command!"

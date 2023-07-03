@@ -18,18 +18,17 @@
 
 package me.despical.oitc.commands;
 
-import me.despical.commons.util.Collections;
+import me.despical.commandframework.CommandArguments;
+import me.despical.commandframework.Completer;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -37,40 +36,39 @@ import java.util.stream.Collectors;
  * <p>
  * Created at 02.07.2020
  */
-public class TabCompletion implements TabCompleter {
+public class TabCompleter extends AbstractCommand {
 
-	private final Main plugin;
-	private final Set<String> compatibleArgs;
-
-	public TabCompletion(Main plugin) {
-		this.plugin = plugin;
-		this.compatibleArgs = Collections.immutableSetOf("join", "edit", "delete");
+	public TabCompleter(Main plugin) {
+		super(plugin);
 	}
 
-	@Override
-	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-		List<String> completions = new ArrayList<>(), commands = plugin.getCommandHandler().getSubCommands().stream().map(SubCommand::getName).collect(Collectors.toList());
-		String arg = args[0];
+	@Completer(
+		name = "oitc"
+	)
+	public List<String> onTabComplete(CommandArguments arguments) {
+		final List<String> completions = new ArrayList<>(), commands = plugin.getCommandFramework().getCommands().stream().map(cmd -> cmd.name().replace(arguments.getLabel() + '.', "")).collect(Collectors.toList());
+		final String args[] = arguments.getArguments(), arg = args[0];
+
+		commands.remove("oitc");
 
 		if (args.length == 1) {
-			StringUtil.copyPartialMatches(arg, commands, completions);
+			StringUtil.copyPartialMatches(arg, arguments.hasPermission("oitc.admin") || arguments.getSender().isOp() ? commands : Arrays.asList("top", "stats", "join", "leave", "randomjoin"), completions);
 		}
 
 		if (args.length == 2) {
+			if (Arrays.asList("create", "list", "randomjoin", "leave").contains(arg)) return null;
+
 			if (arg.equalsIgnoreCase("top")) {
-				return Collections.listOf("kills", "deaths", "games_played", "highest_score", "loses", "wins");
+				return Arrays.asList("kills", "deaths", "games_played", "highest_score", "loses", "wins");
 			}
 
 			if (arg.equalsIgnoreCase("stats")) {
 				return plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
 			}
 
-			if (!commands.contains(arg)) return null;
-			if (!compatibleArgs.contains(arg)) return null;
+			final List<String> arenas = ArenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());
 
-			List<String> arenas = ArenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());
 			StringUtil.copyPartialMatches(args[1], arenas, completions);
-
 			arenas.sort(null);
 			return arenas;
 		}

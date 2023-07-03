@@ -3,21 +3,18 @@ items:
     name: "&c&lReturn to Lobby &7(Right Click)"
     material: RED_BED
     slot: 8
-    murderer-slot: 8
     lore:
       - "&7Right-click to leave to the lobby!"
   settings-item:
     name: "&b&lSpectator Settings &7(Right Click)"
     material: REPEATER
     slot: 4
-    murderer-slot: 4
     lore:
       - "&7Right-click to change your spectator settings!"
   play-again:
     name: "&b&lPlay Again &7(Right Click)"
     material: PAPER
     slot: 7
-    murderer-slot: 7
     lore:
       - "&7Right-click to play another game!"
   force-start-item:
