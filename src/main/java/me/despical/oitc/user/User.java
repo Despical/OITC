@@ -32,7 +32,6 @@ import org.bukkit.scoreboard.Scoreboard;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -101,14 +100,6 @@ public class User {
 		setStat(stat, getStat(stat) + value);
 	}
 
-	public void removeGameItem(final String id) {
-		final GameItem gameItem = plugin.getGameItemManager().getGameItem(id);
-
-		if (gameItem == null) return;
-
-		this.player.getInventory().setItem(gameItem.getSlot(), null);
-	}
-
 	public void addGameItems(final String... ids) {
 		this.player.getInventory().clear();
 
@@ -141,8 +132,6 @@ public class User {
 
 	public void cacheScoreboard() {
 		this.cachedScoreboard = player.getScoreboard();
-
-		plugin.getLogger().log(Level.INFO, "Caching {0}'s scoreboard.");
 	}
 
 	public void removeScoreboard() {
@@ -150,8 +139,6 @@ public class User {
 			player.setScoreboard(cachedScoreboard);
 
 			cachedScoreboard = null;
-
-			plugin.getLogger().log(Level.INFO, "Setting {0}'s scoreboard to last cached one.", player.getName());
 		}
 	}
 }
