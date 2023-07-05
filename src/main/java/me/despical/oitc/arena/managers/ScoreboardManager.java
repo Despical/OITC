@@ -29,7 +29,10 @@ import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaState;
+import me.despical.oitc.handlers.ChatManager;
+import me.despical.oitc.user.User;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,12 +45,14 @@ import java.util.stream.Collectors;
 public class ScoreboardManager {
 
 	private final Main plugin;
-	private final Set<Scoreboard> scoreboards;
 	private final Arena arena;
+	private final ChatManager chatManager;
+	private final Set<Scoreboard> scoreboards;
 
 	public ScoreboardManager(Main plugin, Arena arena) {
 		this.plugin = plugin;
 		this.arena = arena;
+		this.chatManager = plugin.getChatManager();
 		this.scoreboards = new HashSet<>();
 	}
 
@@ -56,7 +61,7 @@ public class ScoreboardManager {
 
 			@Override
 			public String getTitle(Player player) {
-				return plugin.getChatManager().message("Scoreboard.Title");
+				return chatManager.message("Scoreboard.Title");
 			}
 
 			@Override
@@ -89,13 +94,15 @@ public class ScoreboardManager {
 		final List<String> lines;
 
 		if (arena.isArenaState(ArenaState.IN_GAME, ArenaState.ENDING)) {
-			lines = plugin.getChatManager().getStringList("Scoreboard.Content.Playing");
+			lines = chatManager.getStringList("Scoreboard.Content.Playing");
 		} else {
-			lines = plugin.getChatManager().getStringList("Scoreboard.Content." + arena.getArenaState().getDefaultName());
+			lines = chatManager.getStringList("Scoreboard.Content." + arena.getArenaState().getDefaultName());
 		}
 
+		final User user = plugin.getUserManager().getUser(player);
+
 		for (final String line : lines) {
-			final String formattedLine = formatScoreboardLine(line, player);
+			final String formattedLine = formatScoreboardLine(line, user);
 
 			if (formattedLine.equals("%empty%")) continue;
 
@@ -105,8 +112,9 @@ public class ScoreboardManager {
 		return builder.build();
 	}
 
-	private String formatScoreboardLine(String line, Player player) {
+	private String formatScoreboardLine(String line, User user) {
 		String formattedLine = line;
+		Player player = user.getPlayer();
 
 		formattedLine = formattedLine.replace("%time%", Integer.toString(arena.getTimer()));
 		formattedLine = formattedLine.replace("%formatted_time%", StringFormatUtils.formatIntoMMSS(arena.getTimer()));
@@ -114,9 +122,9 @@ public class ScoreboardManager {
 		formattedLine = formattedLine.replace("%players%", Integer.toString(arena.getPlayers().size()));
 		formattedLine = formattedLine.replace("%max_players%", Integer.toString(arena.getMaximumPlayers()));
 		formattedLine = formattedLine.replace("%min_players%", Integer.toString(arena.getMinimumPlayers()));
-		formattedLine = formattedLine.replace("%kills%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS)));
-		formattedLine = formattedLine.replace("%deaths%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_DEATHS)));
-		formattedLine = formattedLine.replace("%kill_streak%", Integer.toString(StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
+		formattedLine = formattedLine.replace("%kills%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILLS)));
+		formattedLine = formattedLine.replace("%deaths%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_DEATHS)));
+		formattedLine = formattedLine.replace("%kill_streak%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
 
 		final Map<Player, Integer> leaderboard = getSortedLeaderboard();
 
@@ -128,7 +136,7 @@ public class ScoreboardManager {
 			formattedLine = PlaceholderAPI.setPlaceholders(player, formattedLine);
 		}
 
-		return plugin.getChatManager().coloredRawMessage(formattedLine);
+		return chatManager.coloredRawMessage(formattedLine);
 	}
 
 	public Map<Player, Integer> getSortedLeaderboard() {
@@ -137,12 +145,14 @@ public class ScoreboardManager {
 		return statistics.entrySet().stream().sorted(Map.Entry.<Player, Integer>comparingByValue().reversed()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 
+	@NotNull
 	public String getTopPlayerName(Map<Player, Integer> leaderboard, int rank) {
 		List<String> names = leaderboard.keySet().stream().map(Player::getName).collect(Collectors.toList());
 
 		return rank < leaderboard.size() ? names.get(rank) : "";
 	}
 
+	@NotNull
 	public String getTopPlayerName(int rank) {
 		return this.getTopPlayerName(getSortedLeaderboard(), rank);
 	}
@@ -156,7 +166,7 @@ public class ScoreboardManager {
 	public int getRank(Map<Player, Integer> leaderboard, Player player) {
 		List<Player> ranks = new ArrayList<>(leaderboard.keySet());
 
-		for (int i = 0; i <= ranks.size(); i++) {
+		for (int i = 0; i < ranks.size(); i++) {
 			if (ranks.get(i).equals(player)) {
 				return i + 1;
 			}
@@ -170,7 +180,7 @@ public class ScoreboardManager {
 	}
 
 	private String formatTopPlayer(Map<Player, Integer> leaderboard, String player, int rank) {
-		String formatted = plugin.getChatManager().message("Scoreboard.Top-Player-Format");
+		String formatted = chatManager.message("Scoreboard.Top-Player-Format");
 
 		formatted = formatted.replace("%player%", player);
 		formatted = formatted.replace("%score%", Integer.toString(getTopPlayerScore(leaderboard, rank)));

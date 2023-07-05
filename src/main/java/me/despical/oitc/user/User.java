@@ -27,10 +27,12 @@ import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.handlers.rewards.Reward;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * @author Despical
@@ -46,6 +48,7 @@ public class User {
 	private final Map<StatsStorage.StatisticType, Integer> stats;
 
 	private boolean spectator;
+	private Scoreboard cachedScoreboard;
 
 	public User(Player player) {
 		this.player = player;
@@ -134,5 +137,21 @@ public class User {
 
 	public void performReward(final Reward.RewardType rewardType) {
 		plugin.getRewardsFactory().performReward(this, rewardType);
+	}
+
+	public void cacheScoreboard() {
+		this.cachedScoreboard = player.getScoreboard();
+
+		plugin.getLogger().log(Level.INFO, "Caching {0}'s scoreboard.");
+	}
+
+	public void removeScoreboard() {
+		if (cachedScoreboard != null) {
+			player.setScoreboard(cachedScoreboard);
+
+			cachedScoreboard = null;
+
+			plugin.getLogger().log(Level.INFO, "Setting {0}'s scoreboard to last cached one.", player.getName());
+		}
 	}
 }

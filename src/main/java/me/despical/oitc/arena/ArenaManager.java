@@ -123,6 +123,8 @@ public class ArenaManager {
 			InventorySerializer.saveInventoryToFile(plugin, player);
 		}
 
+		user.cacheScoreboard();
+
 		arena.addPlayer(player);
 		arena.getScoreboardManager().createScoreboard(player);
 
@@ -216,6 +218,8 @@ public class ArenaManager {
 		user.setSpectator(false);
 		arena.getScoreboardManager().removeScoreboard(player);
 		arena.doBarAction(0, player);
+
+		user.removeScoreboard();
 
 		player.getInventory().clear();
 		player.getInventory().setArmorContents(null);
@@ -325,7 +329,7 @@ public class ArenaManager {
 		formatted = formatted.replace("%deaths%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_DEATHS)));
 		formatted = formatted.replace("%rank%", Integer.toString(arena.getScoreboardManager().getRank(player)));
 		formatted = formatted.replace("%winner%", topPlayerName);
-		formatted = formatted.replace("%winner_score%", Integer.toString(StatsStorage.getUserStats(plugin.getServer().getPlayerExact(topPlayerName), StatsStorage.StatisticType.LOCAL_KILLS)));
+		formatted = formatted.replace("%winner_score%", Integer.toString(StatsStorage.getUserStats(plugin.getServer().getPlayer(topPlayerName), StatsStorage.StatisticType.LOCAL_KILLS)));
 
 		if (chatManager.isPapiEnabled()) {
 			formatted = PlaceholderAPI.setPlaceholders(player, formatted);
