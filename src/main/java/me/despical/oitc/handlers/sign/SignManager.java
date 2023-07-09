@@ -55,14 +55,11 @@ public class SignManager implements Listener {
 	private final List<String> signLines;
 	private final Map<ArenaState, String> gameStateToString;
 
-	private FileConfiguration config;
-
 	public SignManager(Main plugin) {
 		this.plugin = plugin;
 		this.arenaSigns = new HashSet<>();
 		this.signLines = plugin.getChatManager().getStringList("Signs.Lines");
 		this.gameStateToString = new EnumMap<>(ArenaState.class);
-		this.config = ConfigUtils.getConfig(plugin, "arenas");
 
 		for (ArenaState state : ArenaState.values()) {
 			gameStateToString.put(state, plugin.getChatManager().message("Signs.Game-States." + state.getDefaultName()));
@@ -99,6 +96,7 @@ public class SignManager implements Listener {
 
 		player.sendMessage(plugin.getChatManager().prefixedMessage("Signs.Sign-Created"));
 
+		FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
 		List<String> locs = config.getStringList("instances." + arena.getId() + ".signs");
 		locs.add(LocationSerializer.toString(event.getBlock().getLocation()));
 
@@ -143,6 +141,7 @@ public class SignManager implements Listener {
 		arenaSigns.remove(arenaSign);
 
 		String location = LocationSerializer.toString(block.getLocation());
+		FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
 
 		for (String arena : config.getConfigurationSection("instances").getKeys(false)) {
 			String path = "instances." + arena + ".signs";
@@ -192,7 +191,7 @@ public class SignManager implements Listener {
 	public void loadSigns() {
 		arenaSigns.clear();
 
-		config = ConfigUtils.getConfig(plugin, "arenas");
+		FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
 
 		for (String path : config.getConfigurationSection("instances").getKeys(false)) {
 			for (String sign : config.getStringList("instances." + path + ".signs")) {
@@ -269,5 +268,9 @@ public class SignManager implements Listener {
 
 	public Set<ArenaSign> getArenaSigns() {
 		return new HashSet<>(arenaSigns);
+	}
+
+	public boolean isGameSign(Block block) {
+		return this.arenaSigns.stream().anyMatch(sign -> sign.getSign().getLocation().equals(block.getLocation()));
 	}
 }

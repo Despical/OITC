@@ -35,7 +35,6 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,9 +82,8 @@ public class MiscComponents implements SetupComponent {
 				return;
 			}
 
-			if (block.getLocation().distance(player.getWorld().getSpawnLocation()) <= plugin.getServer().getSpawnRadius() && e.getClick() != ClickType.SHIFT_LEFT) {
-				player.sendMessage(chatManager.coloredRawMessage("&c&l✖ &cWarning | Server spawn protection is set to &6" + plugin.getServer().getSpawnRadius() + " &cand sign you want to place is in radius of this protection! &c&lNon OP players won't be able to interact with this sign and can't join the game so."));
-				player.sendMessage(chatManager.coloredRawMessage("&cYou can ignore this warning and add sign with Shift + Left Click, but for now &c&loperation is cancelled"));
+			if (plugin.getSignManager().isGameSign(block)) {
+				player.sendMessage(chatManager.prefixedRawMessage("&cThis sign is already a game sign!"));
 				return;
 			}
 

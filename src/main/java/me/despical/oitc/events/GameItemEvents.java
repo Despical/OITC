@@ -41,6 +41,11 @@ public class GameItemEvents extends ListenerAdapter {
 
 		final Player player = user.getPlayer();
 
+		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INSTANT_LEAVE)) {
+			this.leaveArena(player, arena);
+			return;
+		}
+
 		if (leaveConfirmations.contains(user)) {
 			this.leaveConfirmations.remove(user);
 
@@ -53,14 +58,17 @@ public class GameItemEvents extends ListenerAdapter {
 			plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
 				if (!this.leaveConfirmations.contains(user)) return;
 
-				if (preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-					plugin.getBungeeManager().connectToHub(player);
-				} else {
-					ArenaManager.leaveAttempt(player, arena);
-				}
-
+				this.leaveArena(player, arena);
 				this.leaveConfirmations.remove(user);
 			}, 60);
+		}
+	}
+
+	private void leaveArena(Player player, Arena arena) {
+		if (preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+			plugin.getBungeeManager().connectToHub(player);
+		} else {
+			ArenaManager.leaveAttempt(player, arena);
 		}
 	}
 

@@ -5,7 +5,7 @@
 
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>2.4.3</version>
+	<version>2.4.4</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>com.github.Despical</groupId>
 			<artifactId>Commons</artifactId>
-			<version>1.6.4</version>
+			<version>1.6.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Despical</groupId>
@@ -79,6 +79,7 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<resources>
 			<resource>

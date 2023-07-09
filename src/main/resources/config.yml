@@ -121,4 +121,7 @@ Send-Setup-Tips: true
 # Should we check for updates on plugin start/after admin join?
 Update-Notifier-Enabled: true
 
+# Should players instantly leave the arena using leave item?
+Instant-Leave: false
+
 # No way! You've reached the end! But... where's the dragon!?
