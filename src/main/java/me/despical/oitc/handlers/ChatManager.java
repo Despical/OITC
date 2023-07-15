@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Despical
@@ -144,8 +145,10 @@ public class ChatManager {
 		return arena != null ? formatPlaceholders(returnString, arena) : returnString;
 	}
 
-	public String prefixedFormattedPathMessage(Arena arena, String path, int value) {
-		return prefix + formatMessage(arena, message(path), value);
+	public String getStreakMessage() {
+		final List<String> quotes = getStringList("In-Game.Messages.Kill-Streak");
+
+		return quotes.get(ThreadLocalRandom.current().nextInt(quotes.size()));
 	}
 
 	public List<String> getStringList(String path) {
