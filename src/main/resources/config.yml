@@ -43,9 +43,15 @@ Bungee-Enabled: false
 # flat file and MySQL for player stats.
 Database-Enabled: false
 
-# Enable Inventory Manager for your games?
+# Enable Inventory Manager for your games? (Very useful feature for MULTI ARENA)
 # This saves inventory of players and restores it after player leaves arena.
-Inventory-Manager-Enabled: true
+# Saved elements: max health, health, food, experience, full inventory, armor contents, and more.
+Inventory-Manager:
+  Enabled: true
+  # Usable elements: health, max-health, health-scale
+  Do-Not-Restore:
+    - "max-health"
+    - "health-scale"
 
 # Should in-game chat format be enabled?
 # You can edit the formatting in messages.yml
@@ -114,9 +120,6 @@ Hide-Players: true
 #   - black (restarting) stained glass
 #   - red (inactive) stained glass
 Signs-Block-States-Enabled: true
-
-# Should we send random tips when the setup menu open?
-Send-Setup-Tips: true
 
 # Should we check for updates on plugin start/after admin join?
 Update-Notifier-Enabled: true
