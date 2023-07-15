@@ -54,6 +54,7 @@ import java.io.File;
  */
 public class Main extends JavaPlugin {
 
+	private ArenaRegistry arenaRegistry;
 	private BungeeManager bungeeManager;
 	private RewardsFactory rewardsFactory;
 	private MysqlDatabase database;
@@ -82,7 +83,7 @@ public class Main extends JavaPlugin {
 			database.shutdownConnPool();
 		}
 
-		for (Arena arena : ArenaRegistry.getArenas()) {
+		for (Arena arena : arenaRegistry.getArenas()) {
 			arena.getScoreboardManager().stopAllScoreboards();
 
 			for (Player player : arena.getPlayers()) {
@@ -116,7 +117,7 @@ public class Main extends JavaPlugin {
 		languageManager = new LanguageManager(this);
 		userManager = new UserManager(this);
 		signManager = new SignManager(this);
-		ArenaRegistry.registerArenas();
+		arenaRegistry = new ArenaRegistry(this);
 		signManager.loadSigns();
 		rewardsFactory = new RewardsFactory(this);
 		permissionsManager = new PermissionsManager(this);
@@ -217,6 +218,11 @@ public class Main extends JavaPlugin {
 	@NotNull
 	public CommandFramework getCommandFramework() {
 		return commandFramework;
+	}
+
+	@NotNull
+	public ArenaRegistry getArenaRegistry() {
+		return arenaRegistry;
 	}
 
 	private void saveAllUserStatistics() {

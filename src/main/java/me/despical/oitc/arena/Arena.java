@@ -470,9 +470,9 @@ public class Arena extends BukkitRunnable {
 				players.clear();
 
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-					ArenaRegistry.shuffleBungeeArena();
+					plugin.getArenaRegistry().shuffleBungeeArena();
 
-					Arena bungeeArena = ArenaRegistry.getBungeeArena();
+					Arena bungeeArena = plugin.getArenaRegistry().getBungeeArena();
 
 					for (Player player : plugin.getServer().getOnlinePlayers()) {
 						ArenaManager.joinAttempt(player, bungeeArena);

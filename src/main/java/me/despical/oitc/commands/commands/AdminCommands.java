@@ -7,7 +7,6 @@ import me.despical.commons.serializer.LocationSerializer;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.commands.AbstractCommand;
 import me.despical.oitc.handlers.setup.SetupInventory;
@@ -69,7 +68,7 @@ public class AdminCommands extends AbstractCommand {
 
 		String id = arguments.getArgument(0);
 
-		if (ArenaRegistry.isArena(id)) {
+		if (arenaRegistry.isArena(id)) {
 			player.sendMessage(chatManager.prefixedRawMessage("&cArena with that ID already contains!"));
 			player.sendMessage(chatManager.prefixedRawMessage("&cTo check existing arenas use: /oitc list"));
 			return;
@@ -93,7 +92,7 @@ public class AdminCommands extends AbstractCommand {
 		arena.setLobbyLocation(LocationSerializer.DEFAULT_LOCATION);
 		arena.setEndLocation(LocationSerializer.DEFAULT_LOCATION);
 
-		ArenaRegistry.registerArena(arena);
+		arenaRegistry.registerArena(arena);
 
 		player.sendMessage(chatManager.coloredRawMessage("&l--------------------------------------------"));
 		MiscUtils.sendCenteredMessage(player, "&eInstance &a&l" + id + " &ecreated!");
@@ -119,7 +118,7 @@ public class AdminCommands extends AbstractCommand {
 		}
 
 		String arenaName = arguments.getArgument(0);
-		Arena arena = ArenaRegistry.getArena(arenaName);
+		Arena arena = arenaRegistry.getArena(arenaName);
 
 		if (arena == null) {
 			arguments.sendMessage(chatManager.prefixedMessage("commands.no_arena_like_that"));
@@ -127,7 +126,7 @@ public class AdminCommands extends AbstractCommand {
 		}
 
 		ArenaManager.stopGame(true, arena);
-		ArenaRegistry.unregisterArena(arena);
+		arenaRegistry.unregisterArena(arena);
 
 		arenaConfig.set("instances." + arenaName, null);
 		saveConfig();
@@ -145,7 +144,7 @@ public class AdminCommands extends AbstractCommand {
 		senderType = PLAYER
 	)
 	public void listCommand(CommandArguments arguments) {
-		List<Arena> arenas = ArenaRegistry.getArenas();
+		List<Arena> arenas = new ArrayList<>(arenaRegistry.getArenas());
 
 		if (arenas.isEmpty()) {
 			arguments.sendMessage(chatManager.prefixedMessage("commands.admin_commands.list_command.no_arenas_created"));
@@ -165,7 +164,7 @@ public class AdminCommands extends AbstractCommand {
 	)
 	public void forceStartCommand(CommandArguments arguments) {
 		Player player = arguments.getSender();
-		Arena arena = ArenaRegistry.getArena(player);
+		Arena arena = arenaRegistry.getArena(player);
 
 		if (arena == null) {
 			player.sendMessage(chatManager.prefixedMessage("commands.not_playing", player));
@@ -199,7 +198,7 @@ public class AdminCommands extends AbstractCommand {
 	)
 	public void oitcStopCommand(CommandArguments arguments) {
 		Player player = arguments.getSender();
-		Arena arena = ArenaRegistry.getArena(player);
+		Arena arena = arenaRegistry.getArena(player);
 
 		if (arena == null) {
 			player.sendMessage(chatManager.prefixedMessage("commands.not_playing", player));
@@ -219,7 +218,7 @@ public class AdminCommands extends AbstractCommand {
 		senderType = PLAYER
 	)
 	public void editCommand(CommandArguments arguments) {
-		Arena arena = ArenaRegistry.getArena(arguments.getArgument(0));
+		Arena arena = arenaRegistry.getArena(arguments.getArgument(0));
 
 		if (arena == null) {
 			arguments.sendMessage(chatManager.prefixedMessage("Commands.no_arena_like_that"));
@@ -237,7 +236,7 @@ public class AdminCommands extends AbstractCommand {
 	public void helpCommand(CommandArguments arguments) {
 		final boolean isPlayer = arguments.isSenderPlayer();
 		final CommandSender sender = arguments.getSender();
-		final String message = chatManager.coloredRawMessage("&3&l---- One in the Chamber Help ----");
+		final String message = chatManager.coloredRawMessage("&3&l---- One in the Chamber ----");
 
 		arguments.sendMessage("");
 		if (isPlayer) MiscUtils.sendCenteredMessage((Player) sender, message); else arguments.sendMessage(message);

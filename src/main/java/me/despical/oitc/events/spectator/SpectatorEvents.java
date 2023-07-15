@@ -19,7 +19,6 @@
 package me.despical.oitc.events.spectator;
 
 import me.despical.oitc.Main;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.events.ListenerAdapter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -133,12 +132,12 @@ public class SpectatorEvents extends ListenerAdapter {
 
 		Player player = (Player) event.getEntity();
 
-		if (!userManager.getUser(player).isSpectator() || !ArenaRegistry.isInArena(player)) {
+		if (!userManager.getUser(player).isSpectator() || !arenaRegistry.isInArena(player)) {
 			return;
 		}
 
 		if (player.getLocation().getY() < 1) {
-			player.teleport(ArenaRegistry.getArena(player).getRandomSpawnPoint());
+			player.teleport(arenaRegistry.getArena(player).getRandomSpawnPoint());
 		}
 
 		event.setCancelled(true);

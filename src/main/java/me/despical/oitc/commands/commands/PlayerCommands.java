@@ -10,7 +10,6 @@ import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.commands.AbstractCommand;
 import me.despical.oitc.user.User;
@@ -65,7 +64,7 @@ public class PlayerCommands extends AbstractCommand {
 			return;
 		}
 
-		Arena arena = ArenaRegistry.getArena(arguments.getArgument(0));
+		Arena arena = plugin.getArenaRegistry().getArena(arguments.getArgument(0));
 
 		if (arena != null) {
 			ArenaManager.joinAttempt(player, arena);
@@ -84,7 +83,7 @@ public class PlayerCommands extends AbstractCommand {
 			return;
 		}
 
-		List<Arena> arenas = ArenaRegistry.getArenas().stream().filter(arena -> Collections.contains(arena.getArenaState(), ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && arena.getPlayers().size() < arena.getMaximumPlayers()).collect(Collectors.toList());
+		List<Arena> arenas = plugin.getArenaRegistry().getArenas().stream().filter(arena -> Collections.contains(arena.getArenaState(), ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && arena.getPlayers().size() < arena.getMaximumPlayers()).collect(Collectors.toList());
 		Player player = arguments.getSender();
 
 		if (!arenas.isEmpty()) {
@@ -108,7 +107,7 @@ public class PlayerCommands extends AbstractCommand {
 		}
 
 		Player player = arguments.getSender();
-		Arena arena = ArenaRegistry.getArena(player);
+		Arena arena = plugin.getArenaRegistry().getArena(player);
 
 		if (arena == null) {
 			player.sendMessage(chatManager.prefixedMessage("commands.not_playing", player));

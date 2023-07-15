@@ -23,7 +23,6 @@ import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.inventoryframework.GuiItem;
 import me.despical.inventoryframework.pane.StaticPane;
 import me.despical.oitc.arena.Arena;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.events.spectator.SpectatorSettingsMenu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -44,7 +43,7 @@ public class MiscComponents implements SpectatorSettingComponent {
 	@Override
 	public void registerComponent(SpectatorSettingsMenu spectatorSettingsMenu, StaticPane pane) {
 		Player player = spectatorSettingsMenu.getPlayer();
-		Arena arena = ArenaRegistry.getArena(player);
+		Arena arena = plugin.getArenaRegistry().getArena(player);
 		ItemStack nightVision = player.hasPotionEffect(PotionEffectType.NIGHT_VISION) ?
 			new ItemBuilder(Material.ENDER_PEARL)
 				.name(plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Disable-Night-Vision"))

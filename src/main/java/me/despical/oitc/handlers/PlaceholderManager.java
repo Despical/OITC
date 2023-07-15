@@ -22,7 +22,6 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.user.User;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +88,7 @@ public class PlaceholderManager extends PlaceholderExpansion {
 
 	private String handleArenaPlaceholderRequest(String id) {
 		final String[] data = id.split(":");
-		final Arena arena = ArenaRegistry.getArena(data[0]);
+		final Arena arena = plugin.getArenaRegistry().getArena(data[0]);
 
 		if (arena == null) return null;
 

@@ -22,7 +22,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
-import me.despical.oitc.arena.ArenaRegistry;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,11 +47,11 @@ public class ChatEvents extends ListenerAdapter {
 	@EventHandler(ignoreCancelled = true)
 	public void onChatInGame(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
-		Arena arena = ArenaRegistry.getArena(player);
+		Arena arena = arenaRegistry.getArena(player);
 
 		if (arena == null) {
 			if (!disableSeparateChat) {
-				ArenaRegistry.getArenas().forEach(loopArena -> loopArena.getPlayers().forEach(p -> event.getRecipients().remove(p)));
+				arenaRegistry.getArenas().forEach(loopArena -> loopArena.getPlayers().forEach(p -> event.getRecipients().remove(p)));
 			}
 
 			return;

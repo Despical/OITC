@@ -26,7 +26,6 @@ import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -81,7 +80,7 @@ public class SignManager implements Listener {
 			return;
 		}
 
-		Arena arena = ArenaRegistry.getArena(event.getLine(1));
+		Arena arena = plugin.getArenaRegistry().getArena(event.getLine(1));
 
 		if (arena == null) {
 			player.sendMessage(plugin.getChatManager().prefixedMessage("Signs.Arena-Doesnt-Exists"));
@@ -175,7 +174,7 @@ public class SignManager implements Listener {
 				return;
 			}
 
-			if (ArenaRegistry.isInArena(e.getPlayer())) {
+			if (plugin.getArenaRegistry().isInArena(e.getPlayer())) {
 				e.getPlayer().sendMessage(plugin.getChatManager().prefixedMessage("In-Game.Already-Playing"));
 				return;
 			}
@@ -198,7 +197,7 @@ public class SignManager implements Listener {
 				Location loc = LocationSerializer.fromString(sign);
 				
 				if (loc.getBlock().getState() instanceof Sign) {
-					arenaSigns.add(new ArenaSign((Sign) loc.getBlock().getState(), ArenaRegistry.getArena(path)));
+					arenaSigns.add(new ArenaSign((Sign) loc.getBlock().getState(), plugin.getArenaRegistry().getArena(path)));
 				} else {
 					plugin.getLogger().log(Level.WARNING, "Block at location {0} for arena {1} not a sign.", new Object[] { loc, path });
 				}

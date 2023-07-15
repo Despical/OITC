@@ -2,6 +2,7 @@ package me.despical.oitc.commands;
 
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.oitc.Main;
+import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.commands.commands.*;
 import me.despical.oitc.handlers.ChatManager;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -9,11 +10,13 @@ import org.bukkit.configuration.file.FileConfiguration;
 public abstract class AbstractCommand {
 
 	protected final Main plugin;
+	protected final ArenaRegistry arenaRegistry;
 	protected final ChatManager chatManager;
 	protected final FileConfiguration arenaConfig;
 
 	public AbstractCommand(final Main plugin) {
 		this.plugin = plugin;
+		this.arenaRegistry = plugin.getArenaRegistry();
 		this.chatManager = plugin.getChatManager();
 		this.arenaConfig = ConfigUtils.getConfig(plugin, "arenas");
 		this.plugin.getCommandFramework().registerCommands(this);

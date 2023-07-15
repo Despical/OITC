@@ -56,7 +56,7 @@ public class User {
 	}
 
 	public Arena getArena() {
-		return ArenaRegistry.getArena(player);
+		return plugin.getArenaRegistry().getArena(player);
 	}
 
 	public Player getPlayer() {

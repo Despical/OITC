@@ -31,7 +31,6 @@ import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.handlers.rewards.Reward;
@@ -87,12 +86,12 @@ public class Events extends ListenerAdapter {
 		userManager.loadStatistics(eventPlayer);
 
 		if (preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-			ArenaRegistry.getBungeeArena().teleportToLobby(eventPlayer);
+			arenaRegistry.getBungeeArena().teleportToLobby(eventPlayer);
 			return;
 		}
 
 		for (Player player : plugin.getServer().getOnlinePlayers()) {
-			if (!ArenaRegistry.isInArena(player)) {
+			if (!arenaRegistry.isInArena(player)) {
 				continue;
 			}
 
@@ -128,7 +127,7 @@ public class Events extends ListenerAdapter {
 		}
 
 		final Player player = (Player) event.getEntity();
-		final Arena arena = ArenaRegistry.getArena(player);
+		final Arena arena = arenaRegistry.getArena(player);
 
 		if (arena == null || arena.getArenaState() == ArenaState.IN_GAME) {
 			return;
@@ -150,7 +149,7 @@ public class Events extends ListenerAdapter {
 	}
 
 	private void handleQuit(Player player) {
-		final Arena arena = ArenaRegistry.getArena(player);
+		final Arena arena = arenaRegistry.getArena(player);
 
 		if (arena != null) {
 			ArenaManager.leaveAttempt(player, arena);
@@ -161,7 +160,7 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onCommandExecute(PlayerCommandPreprocessEvent event) {
-		if (!ArenaRegistry.isInArena(event.getPlayer())) {
+		if (!arenaRegistry.isInArena(event.getPlayer())) {
 			return;
 		}
 
@@ -189,7 +188,7 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onInGameInteract(PlayerInteractEvent event) {
-		if (!ArenaRegistry.isInArena(event.getPlayer()) || event.getClickedBlock() == null) {
+		if (!arenaRegistry.isInArena(event.getPlayer()) || event.getClickedBlock() == null) {
 			return;
 		}
 
@@ -198,7 +197,7 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onInGameBedEnter(PlayerBedEnterEvent event) {
-		if (ArenaRegistry.isInArena(event.getPlayer())) {
+		if (arenaRegistry.isInArena(event.getPlayer())) {
 			event.setCancelled(true);
 		}
 	}
@@ -209,7 +208,7 @@ public class Events extends ListenerAdapter {
 
 		ItemStack itemStack = event.getItem();
 		Player player = event.getPlayer();
-		Arena currentArena = ArenaRegistry.getArena(player);
+		Arena currentArena = arenaRegistry.getArena(player);
 
 		if (currentArena == null) return;
 
@@ -224,7 +223,7 @@ public class Events extends ListenerAdapter {
 
 			Map<Arena, Integer> arenas = new HashMap<>();
 
-			for (Arena arena : ArenaRegistry.getArenas()) {
+			for (Arena arena : arenaRegistry.getArenas()) {
 				if (arena.isArenaState(ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && arena.getPlayers().size() < 2) {
 					arenas.put(arena, arena.getPlayers().size());
 				}
@@ -246,7 +245,7 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onFoodLevelChange(FoodLevelChangeEvent event) {
-		if (event.getEntity().getType() == EntityType.PLAYER && ArenaRegistry.isInArena((Player) event.getEntity())) {
+		if (event.getEntity().getType() == EntityType.PLAYER && arenaRegistry.isInArena((Player) event.getEntity())) {
 			event.setFoodLevel(20);
 			event.setCancelled(true);
 		}
@@ -254,14 +253,14 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (ArenaRegistry.isInArena(event.getPlayer())) {
+		if (arenaRegistry.isInArena(event.getPlayer())) {
 			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler
 	public void onBuild(BlockPlaceEvent event) {
-		if (ArenaRegistry.isInArena(event.getPlayer())) {
+		if (arenaRegistry.isInArena(event.getPlayer())) {
 			event.setCancelled(true);
 		}
 	}
@@ -269,7 +268,7 @@ public class Events extends ListenerAdapter {
 	@EventHandler
 	public void onHangingBreakEvent(HangingBreakByEntityEvent event) {
 		if (event.getEntity() instanceof ItemFrame || event.getEntity() instanceof Painting) {
-			if (event.getRemover() instanceof Player && ArenaRegistry.isInArena((Player) event.getRemover())) {
+			if (event.getRemover() instanceof Player && arenaRegistry.isInArena((Player) event.getRemover())) {
 				event.setCancelled(true);
 				return;
 			}
@@ -280,7 +279,7 @@ public class Events extends ListenerAdapter {
 
 			Arrow arrow = (Arrow) event.getRemover();
 
-			if (arrow.getShooter() instanceof Player && ArenaRegistry.isInArena((Player) arrow.getShooter())) {
+			if (arrow.getShooter() instanceof Player && arenaRegistry.isInArena((Player) arrow.getShooter())) {
 				event.setCancelled(true);
 			}
 		}
@@ -297,7 +296,7 @@ public class Events extends ListenerAdapter {
 		Player shooter = (Player) arrow.getShooter();
 		Player player = (Player) e.getEntity();
 
-		if (ArenaRegistry.isInArena(player) && ArenaRegistry.isInArena(shooter)) {
+		if (arenaRegistry.isInArena(player) && arenaRegistry.isInArena(shooter)) {
 			if (!player.getUniqueId().equals(shooter.getUniqueId())) {
 				e.setDamage(100.0);
 			} else {
@@ -309,7 +308,7 @@ public class Events extends ListenerAdapter {
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
 		Player victim = e.getEntity();
-		Arena arena = ArenaRegistry.getArena(e.getEntity());
+		Arena arena = arenaRegistry.getArena(e.getEntity());
 
 		if (arena == null) {
 			return;
@@ -352,7 +351,7 @@ public class Events extends ListenerAdapter {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
-		Arena arena = ArenaRegistry.getArena(player);
+		Arena arena = arenaRegistry.getArena(player);
 
 		if (arena == null) return;
 
@@ -367,7 +366,7 @@ public class Events extends ListenerAdapter {
 	public void onHealthRegen(EntityRegainHealthEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
 
-		if (!ArenaRegistry.isInArena((Player) event.getEntity())) return;
+		if (!arenaRegistry.isInArena((Player) event.getEntity())) return;
 
 		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.REGEN_ENABLED)) {
 			event.setCancelled(true);
@@ -376,7 +375,7 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onInteractWithArmorStand(PlayerArmorStandManipulateEvent event) {
-		if (ArenaRegistry.isInArena(event.getPlayer())) {
+		if (arenaRegistry.isInArena(event.getPlayer())) {
 			event.setCancelled(true);
 		}
 	}
@@ -384,7 +383,7 @@ public class Events extends ListenerAdapter {
 	@EventHandler
 	public void onItemMove(InventoryClickEvent event) {
 		if (event.getWhoClicked() instanceof Player) {
-			if (ArenaRegistry.isInArena((Player) event.getWhoClicked())) {
+			if (arenaRegistry.isInArena((Player) event.getWhoClicked())) {
 				event.setResult(Event.Result.DENY);
 			}
 		}
@@ -416,7 +415,7 @@ public class Events extends ListenerAdapter {
 
 		Player victim = (Player) event.getEntity();
 
-		if (!ArenaRegistry.isInArena(victim)) {
+		if (!arenaRegistry.isInArena(victim)) {
 			return;
 		}
 
@@ -431,7 +430,7 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onPickupItem(PlayerPickupItemEvent event) {
-		if (!ArenaRegistry.isInArena(event.getPlayer())) {
+		if (!arenaRegistry.isInArena(event.getPlayer())) {
 			return;
 		}
 
@@ -441,7 +440,7 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onDrop(PlayerDropItemEvent event) {
-		if (ArenaRegistry.isInArena(event.getPlayer())) {
+		if (arenaRegistry.isInArena(event.getPlayer())) {
 			event.setCancelled(true);
 		}
 	}
@@ -451,7 +450,7 @@ public class Events extends ListenerAdapter {
 
 			@EventHandler
 			public void onItemSwap(PlayerSwapHandItemsEvent event) {
-				if (ArenaRegistry.isInArena(event.getPlayer())) {
+				if (arenaRegistry.isInArena(event.getPlayer())) {
 					event.setCancelled(true);
 				}
 			}
@@ -461,7 +460,7 @@ public class Events extends ListenerAdapter {
 
 			@EventHandler
 			public void onArrowPickup(PlayerPickupArrowEvent event) {
-				if (ArenaRegistry.isInArena(event.getPlayer())) {
+				if (arenaRegistry.isInArena(event.getPlayer())) {
 					event.getItem().remove();
 					event.setCancelled(true);
 				}

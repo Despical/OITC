@@ -23,7 +23,6 @@ import me.despical.commons.item.ItemUtils;
 import me.despical.commons.number.NumberUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.events.ListenerAdapter;
 import org.bukkit.ChatColor;
 import org.bukkit.SkullType;
@@ -55,7 +54,7 @@ public class SpectatorItemEvents extends ListenerAdapter {
 	@EventHandler
 	public void onSpectatorItemClick(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() != Action.PHYSICAL) {
-			if (!ArenaRegistry.isInArena(e.getPlayer())) {
+			if (!arenaRegistry.isInArena(e.getPlayer())) {
 				return;
 			}
 
@@ -76,7 +75,7 @@ public class SpectatorItemEvents extends ListenerAdapter {
 	}
 
 	private void openSpectatorMenu(World world, Player p) {
-		Set<Player> players = ArenaRegistry.getArena(p).getPlayers();
+		Set<Player> players = arenaRegistry.getArena(p).getPlayers();
 		Inventory inventory = plugin.getServer().createInventory(null, NumberUtils.roundInteger(players.size(), 9), chatManager.message("In-Game.Spectator.Spectator-Menu-Name"));
 
 		for (Player player : world.getPlayers()) {
@@ -86,7 +85,7 @@ public class SpectatorItemEvents extends ListenerAdapter {
 				meta = ItemUtils.setPlayerHead(player, meta);
 				meta.setDisplayName(player.getName());
 
-				String score = chatManager.message("In-Game.Spectator.Target-Player-Score", p).replace("%score%", String.valueOf(ArenaRegistry.getArena(p).getScoreboardManager().getRank(p)));
+				String score = chatManager.message("In-Game.Spectator.Target-Player-Score", p).replace("%score%", String.valueOf(arenaRegistry.getArena(p).getScoreboardManager().getRank(p)));
 
 				meta.setLore(Collections.singletonList(score));
 				skull.setDurability((short) SkullType.PLAYER.ordinal());
@@ -102,11 +101,11 @@ public class SpectatorItemEvents extends ListenerAdapter {
 	public void onSpectatorInventoryClick(InventoryClickEvent e) {
 		Player p = (Player) e.getWhoClicked();
 
-		if (!ArenaRegistry.isInArena(p)) {
+		if (!arenaRegistry.isInArena(p)) {
 			return;
 		}
 
-		Arena arena = ArenaRegistry.getArena(p);
+		Arena arena = arenaRegistry.getArena(p);
 
 		if (!ItemUtils.isNamed(e.getCurrentItem())) {
 			return;

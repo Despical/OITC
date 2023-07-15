@@ -20,6 +20,7 @@ package me.despical.oitc.events;
 
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
+import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.events.spectator.SpectatorEvents;
 import me.despical.oitc.events.spectator.SpectatorItemEvents;
 import me.despical.oitc.handlers.ChatManager;
@@ -36,12 +37,14 @@ import java.util.function.Supplier;
 public abstract class ListenerAdapter implements Listener {
 
 	protected final Main plugin;
+	protected final ArenaRegistry arenaRegistry;
 	protected final ChatManager chatManager;
 	protected final UserManager userManager;
 	protected final ConfigPreferences preferences;
 
 	public ListenerAdapter(Main plugin) {
 		this.plugin = plugin;
+		this.arenaRegistry = plugin.getArenaRegistry();
 		this.chatManager = plugin.getChatManager();
 		this.userManager = plugin.getUserManager();
 		this.preferences = plugin.getConfigPreferences();

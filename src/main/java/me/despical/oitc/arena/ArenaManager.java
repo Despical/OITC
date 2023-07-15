@@ -68,7 +68,7 @@ public class ArenaManager {
 			return;
 		}
 
-		if (ArenaRegistry.isInArena(player)) {
+		if (plugin.getArenaRegistry().isInArena(player)) {
 			player.sendMessage(chatManager.prefixedMessage("In-Game.Already-Playing"));
 			return;
 		}
@@ -242,7 +242,7 @@ public class ArenaManager {
 
 		if (!ArenaUtils.isLegacy()) {
 			for (Player players : plugin.getServer().getOnlinePlayers()) {
-				if (!ArenaRegistry.isInArena(players)) {
+				if (!plugin.getArenaRegistry().isInArena(players)) {
 					players.showPlayer(plugin, player);
 				}
 

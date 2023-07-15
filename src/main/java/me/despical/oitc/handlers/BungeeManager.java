@@ -24,7 +24,6 @@ import me.despical.commons.configuration.ConfigUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -86,11 +85,11 @@ public class BungeeManager implements Listener {
 			return;
 		}
 
-		if (ArenaRegistry.getArenas().isEmpty()) {
+		if (plugin.getArenaRegistry().getArenas().isEmpty()) {
 			return;
 		}
 
-		Arena bungeeArena = ArenaRegistry.getBungeeArena();
+		Arena bungeeArena = plugin.getArenaRegistry().getBungeeArena();
 
 		event.setMaxPlayers(bungeeArena.getMaximumPlayers());
 		event.setMotd(motd.replace("%state%", gameStates.get(bungeeArena.getArenaState())));
@@ -98,24 +97,24 @@ public class BungeeManager implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onJoin(PlayerJoinEvent event) {
-		if (ArenaRegistry.getArenas().isEmpty()) {
+		if (plugin.getArenaRegistry().getArenas().isEmpty()) {
 			return;
 		}
 
 		event.setJoinMessage("");
-		plugin.getServer().getScheduler().runTaskLater(plugin, () -> ArenaManager.joinAttempt(event.getPlayer(), ArenaRegistry.getBungeeArena()), 1L);
+		plugin.getServer().getScheduler().runTaskLater(plugin, () -> ArenaManager.joinAttempt(event.getPlayer(), plugin.getArenaRegistry().getBungeeArena()), 1L);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onQuit(PlayerQuitEvent event) {
-		if (ArenaRegistry.getArenas().isEmpty()) {
+		if (plugin.getArenaRegistry().getArenas().isEmpty()) {
 			return;
 		}
 
 		event.setQuitMessage("");
 
-		if (ArenaRegistry.isInArena(event.getPlayer())) {
-			ArenaManager.leaveAttempt(event.getPlayer(), ArenaRegistry.getBungeeArena());
+		if (plugin.getArenaRegistry().isInArena(event.getPlayer())) {
+			ArenaManager.leaveAttempt(event.getPlayer(), plugin.getArenaRegistry().getBungeeArena());
 		}
 	}
 }

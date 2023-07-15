@@ -94,7 +94,7 @@ public class ArenaUtils {
 		if (!isNameTagsSupported) return;
 
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
-			Arena arena = ArenaRegistry.getArena(players);
+			Arena arena = plugin.getArenaRegistry().getArena(players);
 
 			if (arena == null) {
 				continue;
