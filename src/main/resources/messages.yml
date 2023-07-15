@@ -202,11 +202,6 @@ Formatted-Arena-States:
   Restarting: "Restarting"
   Inactive: "Inactive"
 
-Validator:
-  Invalid-Arena-Configuration: "Arena %arena% has invalid configuration! Missing node: %error%"
-  Instance-Started: "Arena %arena% instance successfully started!"
-  No-Instances-Created: "There are no arena instances created in configuration!"
-
 # If you change the value the file will be replaced with default yaml
 # So you shouldn't edit here. Be careful to make changes here!
 Language: default
