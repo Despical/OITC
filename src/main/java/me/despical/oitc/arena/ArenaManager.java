@@ -136,11 +136,11 @@ public class ArenaManager {
 		player.getInventory().setArmorContents(null);
 		player.setGameMode(GameMode.ADVENTURE);
 
-		AttributeUtils.healPlayer(player);
 		PlayerUtils.setGlowing(player, false);
 
 		user.addGameItem("leave-item");
 		user.resetStats();
+		user.heal();
 
 		if (arena.isArenaState(ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && player.isOp()) {
 			user.addGameItem("force-start-item");
@@ -212,9 +212,9 @@ public class ArenaManager {
 		chatManager.broadcastAction(arena, user, ActionType.LEAVE);
 
 		PlayerUtils.setGlowing(player, false);
-		AttributeUtils.healPlayer(player);
 		AttributeUtils.resetAttackCooldown(player);
 
+		user.heal();
 		user.setSpectator(false);
 		arena.getScoreboardManager().removeScoreboard(player);
 		arena.doBarAction(0, player);

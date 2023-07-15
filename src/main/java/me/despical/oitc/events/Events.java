@@ -21,7 +21,6 @@ package me.despical.oitc.events;
 import me.despical.commons.ReflectionUtils;
 import me.despical.commons.compat.Titles;
 import me.despical.commons.compat.XMaterial;
-import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
@@ -135,7 +134,6 @@ public class Events extends ListenerAdapter {
 
 		event.setCancelled(true);
 		player.setFireTicks(0);
-		AttributeUtils.healPlayer(player);
 	}
 
 	@EventHandler

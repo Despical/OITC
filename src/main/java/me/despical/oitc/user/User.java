@@ -18,11 +18,12 @@
 
 package me.despical.oitc.user;
 
+import me.despical.commons.miscellaneous.AttributeUtils;
+import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.api.events.player.OITCPlayerStatisticChangeEvent;
 import me.despical.oitc.arena.Arena;
-import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.handlers.rewards.Reward;
 import org.bukkit.entity.Player;
@@ -128,6 +129,10 @@ public class User {
 
 	public void performReward(final Reward.RewardType rewardType) {
 		plugin.getRewardsFactory().performReward(this, rewardType);
+	}
+
+	public void heal() {
+		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.HEAL_PLAYER)) AttributeUtils.healPlayer(player);
 	}
 
 	public void cacheScoreboard() {

@@ -18,9 +18,14 @@
 
 package me.despical.oitc;
 
+import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.string.StringUtils;
+import me.despical.commons.util.function.DoubleSupplier;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -51,9 +56,17 @@ public class ConfigPreferences {
 
 		BLOCK_COMMANDS, BOSS_BAR_ENABLED, BUNGEE_ENABLED(false), CHAT_FORMAT_ENABLED, DATABASE_ENABLED(false),
 		DISABLE_FALL_DAMAGE(false), DISABLE_LEAVE_COMMAND(false), DISABLE_SEPARATE_CHAT(false),
-		ENABLE_SHORT_COMMANDS, IGNORE_WARNING_MESSAGES(false), INVENTORY_MANAGER_ENABLED, NAME_TAGS_HIDDEN,
-		SIGNS_BLOCK_STATES_ENABLED, UPDATE_NOTIFIER_ENABLED, REGEN_ENABLED(false),
-		LEVEL_COUNTDOWN_ENABLED(false), DISABLE_SPECTATING_ON_BUNGEE(false), HIDE_PLAYERS, INSTANT_LEAVE(false);
+		ENABLE_SHORT_COMMANDS, IGNORE_WARNING_MESSAGES(false), INVENTORY_MANAGER_ENABLED("Inventory-Manager.Enabled"),
+		NAME_TAGS_HIDDEN, SIGNS_BLOCK_STATES_ENABLED, UPDATE_NOTIFIER_ENABLED, REGEN_ENABLED(false), HIDE_PLAYERS,
+		LEVEL_COUNTDOWN_ENABLED(false), DISABLE_SPECTATING_ON_BUNGEE(false),  INSTANT_LEAVE(false),
+
+		HEAL_PLAYER((config) -> {
+			final List<String> list = config.getStringList("Inventory-Manager.Do-Not-Restore");
+			list.forEach(InventorySerializer::addNonSerializableElements);
+
+			return !list.contains("health");
+		});
+
 
 		final String path;
 		final boolean def;
@@ -65,6 +78,16 @@ public class ConfigPreferences {
 		Option(boolean def) {
 			this.def = def;
 			this.path = StringUtils.capitalize(name().replace('_', '-').toLowerCase(Locale.ENGLISH), '-', '.');
+		}
+
+		Option(String path) {
+			this.def = true;
+			this.path = path;
+		}
+
+		Option(DoubleSupplier<FileConfiguration, Boolean> supplier) {
+			this.path = "";
+			this.def = supplier.accept(JavaPlugin.getPlugin(Main.class).getConfig());
 		}
 	}
 }
