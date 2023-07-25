@@ -4,7 +4,6 @@
 
 [![](https://jitpack.io/v/Despical/OITC.svg)](https://jitpack.io/#Despical/OITC)
 [![](https://img.shields.io/badge/JavaDocs-latest-lime.svg)](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html)
-[![Discord](https://img.shields.io/discord/719922452259668000.svg?color=lime&label=Discord)](https://discord.gg/rVkaGmyszE)
 [![Support](https://img.shields.io/badge/Patreon-Support-lime.svg?logo=Patreon)](https://www.patreon.com/despical)
 
 One in the Chamber is an old Minecraft minigame. Each player is equipped with a sword, bow and arrow.
@@ -16,7 +15,6 @@ or killing other players. When a player reaches 25 points the game ends and winn
 ## Documentation
 - [Wiki](https://github.com/Despical/OITC/wiki)
 - [JavaDocs](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html)
-- [Discord Community](https://www.discord.gg/rVkaGmyszE)
 
 ## Donations
 - [Patreon](https://www.patreon.com/despical)
@@ -38,7 +36,7 @@ The project isn't in the Central Repository yet, so specifying a repository is n
 <dependency>
     <groupId>com.github.Despical</groupId>
     <artifactId>OITC</artifactId>
-    <version>2.4.4</version>
+    <version>2.4.6</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -55,7 +53,7 @@ repositories {
 ```
 ```
 dependencies {
-    compileOnly group: "com.github.Despical", name: "OITC", version: "2.4.4";
+    compileOnly group: "com.github.Despical", name: "OITC", version: "2.4.6";
 }
 ```
 </details>
