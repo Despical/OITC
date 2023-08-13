@@ -32,6 +32,7 @@ import me.despical.oitc.arena.options.ArenaOption;
 import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
+import me.despical.oitc.user.UserManager;
 import me.despical.oitc.util.ItemPosition;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -458,9 +459,12 @@ public class Arena extends BukkitRunnable {
 					user.removeScoreboard();
 				}
 
-
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 					players.forEach(player -> InventorySerializer.loadInventory(plugin, player));
+				}
+
+				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED) && plugin.getBungeeManager().isShutdownWhenGameEnds()) {
+					plugin.getServer().shutdown();
 				}
 
 				setArenaState(ArenaState.RESTARTING);
@@ -470,12 +474,12 @@ public class Arena extends BukkitRunnable {
 				players.clear();
 
 				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
-					plugin.getArenaRegistry().shuffleBungeeArena();
+					final ArenaRegistry arenaRegistry = plugin.getArenaRegistry();
 
-					Arena bungeeArena = plugin.getArenaRegistry().getBungeeArena();
+					arenaRegistry.shuffleBungeeArena();
 
-					for (Player player : plugin.getServer().getOnlinePlayers()) {
-						ArenaManager.joinAttempt(player, bungeeArena);
+					for (final Player player : plugin.getServer().getOnlinePlayers()) {
+						ArenaManager.joinAttempt(player, arenaRegistry.getBungeeArena());
 					}
 				}
 
