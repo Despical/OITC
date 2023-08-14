@@ -40,17 +40,18 @@ public class PlayerCommands extends AbstractCommand {
 		super(plugin);
 
 		plugin.getCommandFramework().setMatchFunction(arguments -> {
-			if (arguments.isArgumentsEmpty()) return true;
+			if (arguments.isArgumentsEmpty()) return false;
 
 			String label = arguments.getLabel(), arg = arguments.getArgument(0);
 
-			List<StringMatcher.Match> matches = StringMatcher.match(arg, plugin.getCommandFramework().getCommands().stream().map(cmd -> cmd.name().replace(label + ".", "")).collect(Collectors.toList()));
+			List<StringMatcher.Match> matches = StringMatcher.match(arg, plugin.getCommandFramework().getCommands().stream().filter(cmd -> !cmd.name().equals("oitc")).map(cmd -> cmd.name().replace(label + ".", "")).collect(Collectors.toList()));
 
 			if (!matches.isEmpty()) {
-				arguments.sendMessage(chatManager.message("admin-commands.did-you-mean").replace("%command%", label + " " + matches.get(0).getMatch()));
+				arguments.sendMessage(chatManager.message("commands.did-you-mean").replace("%command%", label + " " + matches.get(0).getMatch()));
+				return true;
 			}
 
-			return true;
+			return false;
 		});
 	}
 
