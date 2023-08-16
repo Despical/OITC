@@ -5,7 +5,7 @@
 
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>2.4.7</version>
+	<version>2.4.8</version>
 	<name>One In The Chamber</name>
 
 	<properties>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>com.github.Despical</groupId>
 			<artifactId>CommandFramework</artifactId>
-			<version>1.2.3</version>
+			<version>1.2.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bstats</groupId>
@@ -119,6 +119,7 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.1.0</version>
 					<configuration>
+						<outputDirectory>C:\Users\berke\OneDrive\Masaüstü\Server\plugins</outputDirectory>
 						<archive>
 							<addMavenDescriptor>false</addMavenDescriptor>
 						</archive>
