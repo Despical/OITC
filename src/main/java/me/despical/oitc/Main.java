@@ -112,7 +112,8 @@ public class Main extends JavaPlugin {
 	private void initializeClasses() {
 		setupConfigurationFiles();
 
-		configPreferences = new ConfigPreferences(this);
+		if ((configPreferences = new ConfigPreferences(this)).getOption(ConfigPreferences.Option.DATABASE_ENABLED)) database = new MysqlDatabase(this, "mysql");
+
 		chatManager = new ChatManager(this);
 		languageManager = new LanguageManager(this);
 		userManager = new UserManager(this);
@@ -125,27 +126,19 @@ public class Main extends JavaPlugin {
 		commandFramework = new CommandFramework(this);
 
 		if (configPreferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) bungeeManager = new BungeeManager(this);
-		if (configPreferences.getOption(ConfigPreferences.Option.DATABASE_ENABLED)) database = new MysqlDatabase(this, "mysql");
+		if (chatManager.isPapiEnabled()) new PlaceholderManager(this);
 
 		ScoreboardLib.setPluginInstance(this);
 		ListenerAdapter.registerEvents(this);
 		AbstractCommand.registerCommands(this);
 
-		registerSoftDependenciesAndServices();
+		startPluginMetrics();
 
 		if (configPreferences.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
 			getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
 		}
 	}
-	
-	private void registerSoftDependenciesAndServices() {
-		startPluginMetrics();
 
-		if (chatManager.isPapiEnabled()) {
-			new PlaceholderManager(this);
-		}
-	}
-	
 	private void startPluginMetrics() {
 		Metrics metrics = new Metrics(this, 8118);
 
@@ -226,27 +219,29 @@ public class Main extends JavaPlugin {
 	}
 
 	private void saveAllUserStatistics() {
-		for (Player player : getServer().getOnlinePlayers()) {
+		for (final Player player : getServer().getOnlinePlayers()) {
 			final User user = userManager.getUser(player);
 
 			if (userManager.getDatabase() instanceof MysqlManager) {
+				final MysqlManager mysqlManager = (MysqlManager) userManager.getDatabase();
 				final StringBuilder builder = new StringBuilder(" SET ");
-				final MysqlManager database = (MysqlManager) userManager.getDatabase();
 
-				for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+				for (final StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 					if (!stat.isPersistent()) continue;
 
 					final int value = user.getStat(stat);
+					final String name = stat.getName();
 
 					if (builder.toString().equalsIgnoreCase(" SET ")) {
-						builder.append(stat.getName()).append("'='").append(value);
+						builder.append(name).append("=").append(value);
 					}
 
-					builder.append(", ").append(stat.getName()).append("'='").append(value);
+					builder.append(", ").append(name).append("=").append(value);
 				}
 
 				final String update = builder.toString();
-				database.getDatabase().executeUpdate("UPDATE " + database.getTableName() + update + " WHERE UUID='" + user.getPlayer().getUniqueId() + "';");
+
+				mysqlManager.getDatabase().executeUpdate(String.format("UPDATE %s%s WHERE UUID='%s';", mysqlManager.getTable(), update, user.getUniqueId().toString()));
 				continue;
 			}
 

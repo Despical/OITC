@@ -22,6 +22,7 @@ import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.database.MysqlDatabase;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -35,17 +36,18 @@ import java.sql.Statement;
  */
 public class MysqlManager implements UserDatabase {
 
-	private final MysqlDatabase database;
-	private final String tableName;
+	private final String table;
+	private MysqlDatabase database;
 
 	public MysqlManager() {
-		this.database = plugin.getMysqlDatabase();
-		this.tableName = ConfigUtils.getConfig(plugin, "mysql").getString("table", "playerstats");
+		this.table = ConfigUtils.getConfig(plugin, "mysql").getString("table", "oitc_stats");
 
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+			this.database = plugin.getMysqlDatabase();
+
 			try (Connection connection = database.getConnection()) {
 				Statement statement = connection.createStatement();
-				statement.executeUpdate("CREATE TABLE IF NOT EXISTS `" + tableName + "` (\n"
+				statement.executeUpdate("CREATE TABLE IF NOT EXISTS `" + table + "` (\n"
 					+ "  `UUID` char(36) NOT NULL PRIMARY KEY,\n"
 					+ "  `name` varchar(32) NOT NULL,\n"
 					+ "  `kills` int(11) NOT NULL DEFAULT '0',\n"
@@ -53,64 +55,61 @@ public class MysqlManager implements UserDatabase {
 					+ "  `highestscore` int(11) NOT NULL DEFAULT '0',\n"
 					+ "  `gamesplayed` int(11) NOT NULL DEFAULT '0',\n"
 					+ "  `wins` int(11) NOT NULL DEFAULT '0',\n"
-					+ "  `loses` int(11) NOT NULL DEFAULT '0'\n" + ");");
+					+ "  `loses` int(11) NOT NULL DEFAULT '0');");
 			} catch (SQLException exception) {
 				exception.printStackTrace();
 
-				plugin.getLogger().warning("Couldn't save user statistics to MySQL database!");
+				plugin.getLogger().severe("Couldn't create statistics table on MySQL database!");
 			}
 		});
 	}
 
 	@Override
-	public void saveStatistic(User user, StatsStorage.StatisticType stat) {
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-			final String query = "UPDATE " + tableName + " SET " + stat.getName() + "=" + user.getStat(stat) + " WHERE UUID='" + user.getUniqueId().toString() + "';";
-
-			database.executeUpdate(query);
-		});
+	public void saveStatistic(@NotNull User user, StatsStorage.StatisticType statisticType) {
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> database.executeUpdate(String.format("UPDATE %s SET %s=%d WHERE UUID='%s';", table, statisticType.getName(), user.getStat(statisticType), user.getUniqueId().toString())));
 	}
 
 	@Override
-	public void saveAllStatistic(User user) {
+	public void saveAllStatistic(@NotNull User user) {
 		final StringBuilder builder = new StringBuilder(" SET ");
 
-		for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+		for (final StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 			if (!stat.isPersistent()) continue;
 
 			final String name = stat.getName();
-			final int val = user.getStat(stat);
+			final int value = user.getStat(stat);
 
 			if (builder.toString().equalsIgnoreCase(" SET ")) {
-				builder.append(name).append("=").append(val);
+				builder.append(name).append("=").append(value);
 			}
 
-			builder.append(", ").append(name).append("=").append(val);
+			builder.append(", ").append(name).append("=").append(value);
 		}
 
 		final String update = builder.toString();
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> database.executeUpdate("UPDATE " + tableName + update + " WHERE UUID='" + user.getUniqueId().toString() + "';"));
+
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> database.executeUpdate(String.format("UPDATE %s%s WHERE UUID='%s';", table, update, user.getUniqueId().toString())));
 	}
 
 	@Override
-	public void loadStatistics(User user) {
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-			final String uuid = user.getUniqueId().toString(), playerName = user.getPlayer().getName();
+	public void loadStatistics(@NotNull User user) {
+		final String uuid = user.getUniqueId().toString();
 
-			try (Connection connection = database.getConnection()) {
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+			try (final Connection connection = database.getConnection()) {
 				final Statement statement = connection.createStatement();
-				final ResultSet result = statement.executeQuery("SELECT * from " + tableName + " WHERE UUID='" + uuid + "';");
+				final ResultSet result = statement.executeQuery(String.format("SELECT * from %s WHERE UUID='%s';", table, uuid));
 
 				if (result.next()) {
-					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+					for (final StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 						if (!stat.isPersistent()) continue;
 
 						user.setStat(stat, result.getInt(stat.getName()));
 					}
 				} else {
-					statement.executeUpdate("INSERT INTO " + tableName + " (UUID,name) VALUES ('" + uuid + "','" + playerName + "');");
+					statement.executeUpdate(String.format("INSERT INTO %s (UUID,name) VALUES ('%s','%s');", table, uuid, user.getName()));
 
-					for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+					for (final StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 						if (!stat.isPersistent()) continue;
 
 						user.setStat(stat, 0);
@@ -122,10 +121,11 @@ public class MysqlManager implements UserDatabase {
 		});
 	}
 
-	public String getTableName() {
-		return tableName;
+	public String getTable() {
+		return table;
 	}
 
+	@NotNull
 	public MysqlDatabase getDatabase() {
 		return database;
 	}

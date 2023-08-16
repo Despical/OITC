@@ -17,4 +17,4 @@ user: <user>
 password: <password>
 
 # MySQL table name.
-table: playerstats
+table: oitc_stats
