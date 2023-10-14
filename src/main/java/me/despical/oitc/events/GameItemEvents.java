@@ -41,7 +41,7 @@ public class GameItemEvents extends ListenerAdapter {
 
 		final Player player = user.getPlayer();
 
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INSTANT_LEAVE)) {
+		if (plugin.getOption(ConfigPreferences.Option.INSTANT_LEAVE)) {
 			this.leaveArena(player, arena);
 			return;
 		}
@@ -65,7 +65,7 @@ public class GameItemEvents extends ListenerAdapter {
 	}
 
 	private void leaveArena(Player player, Arena arena) {
-		if (preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+		if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			plugin.getBungeeManager().connectToHub(player);
 		} else {
 			ArenaManager.leaveAttempt(player, arena);

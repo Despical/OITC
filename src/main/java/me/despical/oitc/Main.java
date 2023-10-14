@@ -95,13 +95,12 @@ public class Main extends JavaPlugin {
 
 				player.setFlySpeed(.1F);
 				player.setWalkSpeed(.2F);
+				player.getInventory().clear();
+				player.getInventory().setArmorContents(null);
+				player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 
 				if (configPreferences.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 					InventorySerializer.loadInventory(this, player);
-				} else {
-					player.getInventory().clear();
-					player.getInventory().setArmorContents(null);
-					player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 				}
 			}
 
@@ -174,11 +173,6 @@ public class Main extends JavaPlugin {
 	}
 
 	@NotNull
-	public ConfigPreferences getConfigPreferences() {
-		return configPreferences;
-	}
-
-	@NotNull
 	public MysqlDatabase getMysqlDatabase() {
 		return database;
 	}
@@ -216,6 +210,10 @@ public class Main extends JavaPlugin {
 	@NotNull
 	public ArenaRegistry getArenaRegistry() {
 		return arenaRegistry;
+	}
+
+	public boolean getOption(ConfigPreferences.Option option) {
+		return configPreferences.getOption(option);
 	}
 
 	private void saveAllUserStatistics() {

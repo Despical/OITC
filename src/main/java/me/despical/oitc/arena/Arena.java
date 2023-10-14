@@ -32,7 +32,6 @@ import me.despical.oitc.arena.options.ArenaOption;
 import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
-import me.despical.oitc.user.UserManager;
 import me.despical.oitc.util.ItemPosition;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -81,7 +80,7 @@ public class Arena extends BukkitRunnable {
 			arenaOptions.put(option, option.getDefaultValue());
 		}
 
-		if (!ArenaUtils.isLegacy() && plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
+		if (!ArenaUtils.isLegacy() && plugin.getOption(ConfigPreferences.Option.BOSS_BAR_ENABLED)) {
 			gameBar = plugin.getServer().createBossBar(chatManager.message("boss_bar.main_title"), BarColor.BLUE, BarStyle.SOLID);
 		}
 
@@ -256,7 +255,7 @@ public class Arena extends BukkitRunnable {
 	}
 
 	public void teleportToEndLocation(Player player) {
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+		if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			plugin.getBungeeManager().connectToHub(player);
 			return;
 		}
@@ -345,7 +344,7 @@ public class Arena extends BukkitRunnable {
 					gameBar.setTitle(chatManager.message("boss_bar.starting_in").replace("%time%", Integer.toString(getTimer())));
 				}
 
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.LEVEL_COUNTDOWN_ENABLED)) {
+				if (plugin.getOption(ConfigPreferences.Option.LEVEL_COUNTDOWN_ENABLED)) {
 					for (Player player : players) {
 						player.setLevel(getTimer());
 					}
@@ -459,11 +458,11 @@ public class Arena extends BukkitRunnable {
 					user.removeScoreboard();
 				}
 
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
+				if (plugin.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 					players.forEach(player -> InventorySerializer.loadInventory(plugin, player));
 				}
 
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED) && plugin.getBungeeManager().isShutdownWhenGameEnds()) {
+				if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED) && plugin.getBungeeManager().isShutdownWhenGameEnds()) {
 					plugin.getServer().shutdown();
 				}
 
@@ -473,7 +472,7 @@ public class Arena extends BukkitRunnable {
 				plugin.getUserManager().getUsers(this).forEach(user -> user.setSpectator(false));
 				players.clear();
 
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+				if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 					final ArenaRegistry arenaRegistry = plugin.getArenaRegistry();
 
 					arenaRegistry.shuffleBungeeArena();

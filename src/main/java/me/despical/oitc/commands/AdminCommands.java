@@ -1,14 +1,15 @@
-package me.despical.oitc.commands.commands;
+package me.despical.oitc.commands;
 
 import me.despical.commandframework.Command;
 import me.despical.commandframework.CommandArguments;
+import me.despical.commandframework.Completer;
+import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.miscellaneous.MiscUtils;
 import me.despical.commons.serializer.LocationSerializer;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaState;
-import me.despical.oitc.commands.AbstractCommand;
 import me.despical.oitc.handlers.setup.SetupInventory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -16,12 +17,11 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.despical.commandframework.Command.SenderType.PLAYER;
@@ -43,7 +43,7 @@ public class AdminCommands extends AbstractCommand {
 	)
 	public void mainCommand(CommandArguments arguments) {
 		if (arguments.isArgumentsEmpty()) {
-			arguments.sendMessage(chatManager.coloredRawMessage("&3This server is running &bOne in the Chamber " + plugin.getDescription().getVersion() + " &3by &bDespical."));
+			arguments.sendMessage(chatManager.coloredRawMessage("&3This server is running &bOne in the Chamber " + plugin.getDescription().getVersion() + " &3by &bDespical&3!"));
 
 			if (arguments.hasPermission("oitc.admin")) {
 				arguments.sendMessage(chatManager.coloredRawMessage("&3Commands: &b/" + arguments.getLabel() + " help"));
@@ -74,18 +74,19 @@ public class AdminCommands extends AbstractCommand {
 			return;
 		}
 
-		String path = "instances." + id + ".";
+		final String path = "instances." + id + ".";
+		final FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
 
-		arenaConfig.set(path + "ready", false);
-		arenaConfig.set(path + "mapName", id);
-		arenaConfig.set(path + "minimumPlayers", 2);
-		arenaConfig.set(path + "maximumPlayers", 10);
-		arenaConfig.set(path + "lobbyLocation", LocationSerializer.SERIALIZED_LOCATION);
-		arenaConfig.set(path + "endLocation", LocationSerializer.SERIALIZED_LOCATION);
-		arenaConfig.set(path + "playersSpawnPoints", new ArrayList<>());
-		arenaConfig.set(path + "signs", new ArrayList<>());
+		config.set(path + "ready", false);
+		config.set(path + "mapName", id);
+		config.set(path + "minimumPlayers", 2);
+		config.set(path + "maximumPlayers", 10);
+		config.set(path + "lobbyLocation", LocationSerializer.SERIALIZED_LOCATION);
+		config.set(path + "endLocation", LocationSerializer.SERIALIZED_LOCATION);
+		config.set(path + "playersSpawnPoints", new ArrayList<>());
+		config.set(path + "signs", new ArrayList<>());
 
-		saveConfig();
+		ConfigUtils.saveConfig(plugin, config, "arenas");
 
 		Arena arena = new Arena(id);
 		arena.setMapName(id);
@@ -128,8 +129,9 @@ public class AdminCommands extends AbstractCommand {
 		ArenaManager.stopGame(true, arena);
 		arenaRegistry.unregisterArena(arena);
 
-		arenaConfig.set("instances." + arenaName, null);
-		saveConfig();
+		final FileConfiguration config = ConfigUtils.getConfig(plugin, "arenas");
+		config.set("instances." + arenaName, null);
+		ConfigUtils.saveConfig(plugin, config, "arenas");
 
 		plugin.getSignManager().loadSigns();
 
@@ -236,10 +238,9 @@ public class AdminCommands extends AbstractCommand {
 	public void helpCommand(CommandArguments arguments) {
 		final boolean isPlayer = arguments.isSenderPlayer();
 		final CommandSender sender = arguments.getSender();
-		final String message = chatManager.coloredRawMessage("&3&l---- One in the Chamber ----");
 
 		arguments.sendMessage("");
-		if (isPlayer) MiscUtils.sendCenteredMessage((Player) sender, message); else arguments.sendMessage(message);
+		MiscUtils.sendCenteredMessage(sender, "&3&l---- One in the Chamber ----");
 		arguments.sendMessage("");
 
 		for (final Command command : plugin.getCommandFramework().getCommands().stream().sorted(Collections
@@ -274,5 +275,40 @@ public class AdminCommands extends AbstractCommand {
 				.append(" on the commands!", ComponentBuilder.FormatRetention.NONE).color(ChatColor.GRAY)
 				.create());
 		}
+	}
+
+	@Completer(
+		name = "oitc"
+	)
+	public List<String> onTabComplete(CommandArguments arguments) {
+		final List<String> completions = new ArrayList<>(), commands = plugin.getCommandFramework().getCommands().stream().map(cmd -> cmd.name().replace(arguments.getLabel() + '.', "")).collect(Collectors.toList());
+		final String args[] = arguments.getArguments(), arg = args[0];
+
+		commands.remove("oitc");
+
+		if (args.length == 1) {
+			StringUtil.copyPartialMatches(arg, arguments.hasPermission("oitc.admin") || arguments.getSender().isOp() ? commands : Arrays.asList("top", "stats", "join", "leave", "randomjoin"), completions);
+		}
+
+		if (args.length == 2) {
+			if (Arrays.asList("create", "list", "randomjoin", "leave").contains(arg)) return null;
+
+			if (arg.equalsIgnoreCase("top")) {
+				return Arrays.asList("kills", "deaths", "games_played", "highest_score", "loses", "wins");
+			}
+
+			if (arg.equalsIgnoreCase("stats")) {
+				return plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+			}
+
+			final List<String> arenas = arenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());
+
+			StringUtil.copyPartialMatches(args[1], arenas, completions);
+			arenas.sort(null);
+			return arenas;
+		}
+
+		completions.sort(null);
+		return completions;
 	}
 }

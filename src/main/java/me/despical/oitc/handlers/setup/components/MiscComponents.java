@@ -54,7 +54,7 @@ public class MiscComponents implements SetupComponent {
 		Arena arena = setupInventory.getArena();
 		ItemStack bungeeItem;
 
-		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+		if (!plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			bungeeItem = new ItemBuilder(XMaterial.OAK_SIGN)
 				.name("&e&lAdd Game Sign")
 				.lore("&7Target a sign and click this.")
@@ -70,7 +70,7 @@ public class MiscComponents implements SetupComponent {
 		}
 
 		pane.addItem(GuiItem.of(bungeeItem, e -> {
-			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+			if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 				return;
 			}
 

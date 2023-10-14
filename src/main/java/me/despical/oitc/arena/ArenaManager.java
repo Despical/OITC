@@ -75,12 +75,12 @@ public class ArenaManager {
 
 		User user = plugin.getUserManager().getUser(player);
 
-		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+		if (!plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			if (!plugin.getPermissionsManager().hasJoinPerm(player, arena.getId())) {
 				player.sendMessage(chatManager.prefixedMessage("In-Game.Join-No-Permission").replace("%permission%", plugin.getPermissionsManager().getJoinPerm().replace("<arena>", arena.getId())));
 				return;
 			}
-		} else if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_SPECTATING_ON_BUNGEE) && arena.getArenaState() == ArenaState.IN_GAME) {
+		} else if (plugin.getOption(ConfigPreferences.Option.DISABLE_SPECTATING_ON_BUNGEE) && arena.getArenaState() == ArenaState.IN_GAME) {
 			if (user.isSpectator()) {
 				player.sendMessage(chatManager.prefixedMessage("In-Game.Spectating-Disabled-On-Bungee"));
 				return;
@@ -119,7 +119,7 @@ public class ArenaManager {
 			}
 		}
 
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
+		if (plugin.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.saveInventoryToFile(plugin, player);
 		}
 
@@ -252,7 +252,7 @@ public class ArenaManager {
 
 		arena.teleportToEndLocation(player);
 
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
+		if (plugin.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.loadInventory(plugin, player);
 		}
 

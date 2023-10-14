@@ -1,4 +1,4 @@
-package me.despical.oitc.commands.commands;
+package me.despical.oitc.commands;
 
 import me.despical.commandframework.Command;
 import me.despical.commandframework.CommandArguments;
@@ -82,7 +82,7 @@ public class PlayerCommands extends AbstractCommand {
 		senderType = PLAYER
 	)
 	public void randomJoinCommand(CommandArguments arguments) {
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+		if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			return;
 		}
 
@@ -105,7 +105,7 @@ public class PlayerCommands extends AbstractCommand {
 		senderType = PLAYER
 	)
 	public void leaveCommand(CommandArguments arguments) {
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DISABLE_LEAVE_COMMAND)) {
+		if (plugin.getOption(ConfigPreferences.Option.DISABLE_LEAVE_COMMAND)) {
 			return;
 		}
 
@@ -117,7 +117,7 @@ public class PlayerCommands extends AbstractCommand {
 			return;
 		}
 
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+		if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			plugin.getBungeeManager().connectToHub(player);
 			return;
 		}
@@ -196,7 +196,7 @@ public class PlayerCommands extends AbstractCommand {
 			} catch (NullPointerException ex) {
 				UUID current = (UUID) stats.keySet().toArray()[stats.keySet().toArray().length - 1];
 
-				if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
+				if (plugin.getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
 					try (Connection connection = plugin.getMysqlDatabase().getConnection()) {
 						Statement statement = connection.createStatement();
 						ResultSet set = statement.executeQuery("SELECT name FROM " + ((MysqlManager) plugin.getUserManager().getDatabase()).getTable() + " WHERE UUID='" + current.toString() + "'");

@@ -79,8 +79,8 @@ public class ArenaUtils {
 	}
 
 	private final static boolean isLegacy = !ReflectionUtils.supports(9);
-	private final static boolean hide = plugin.getConfigPreferences().getOption(ConfigPreferences.Option.HIDE_PLAYERS);
-	private final static boolean isNameTagsSupported = !isLegacy && plugin.getConfigPreferences().getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN);
+	private final static boolean hide = plugin.getOption(ConfigPreferences.Option.HIDE_PLAYERS);
+	private final static boolean isNameTagsSupported = !isLegacy && plugin.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN);
 
 	public static boolean isLegacy() {
 		return isLegacy;

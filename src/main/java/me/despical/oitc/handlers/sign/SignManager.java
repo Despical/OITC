@@ -18,11 +18,8 @@
 
 package me.despical.oitc.handlers.sign;
 
-import me.despical.commons.compat.XMaterial;
 import me.despical.commons.configuration.ConfigUtils;
-import me.despical.commons.miscellaneous.BlockUtils;
 import me.despical.commons.serializer.LocationSerializer;
-import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
@@ -208,52 +205,11 @@ public class SignManager implements Listener {
 	}
 
 	public void updateSigns() {
-		for (ArenaSign arenaSign : arenaSigns) {
-			Sign sign = arenaSign.getSign();
+		for (final ArenaSign arenaSign : arenaSigns) {
+			final Sign sign = arenaSign.getSign();
 
 			for (int i = 0; i < signLines.size(); i++) {
 				sign.setLine(i, formatSign(signLines.get(i), arenaSign.getArena()));
-			}
-
-			if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.SIGNS_BLOCK_STATES_ENABLED) && arenaSign.getBehind() != null) {
-				Block behind = arenaSign.getBehind();
-
-				try {
-					switch (arenaSign.getArena().getArenaState()) {
-						case WAITING_FOR_PLAYERS:
-							behind.setType(XMaterial.WHITE_STAINED_GLASS.parseMaterial());
-
-							BlockUtils.setData(behind, (byte) 0);
-							break;
-						case STARTING:
-							behind.setType(XMaterial.YELLOW_STAINED_GLASS.parseMaterial());
-
-							BlockUtils.setData(behind, (byte) 4);
-							break;
-						case IN_GAME:
-							behind.setType(XMaterial.ORANGE_STAINED_GLASS.parseMaterial());
-
-							BlockUtils.setData(behind, (byte) 1);
-							break;
-						case ENDING:
-							behind.setType(XMaterial.GRAY_STAINED_GLASS.parseMaterial());
-
-							BlockUtils.setData(behind, (byte) 7);
-							break;
-						case RESTARTING:
-							behind.setType(XMaterial.BLACK_STAINED_GLASS.parseMaterial());
-
-							BlockUtils.setData(behind, (byte) 15);
-							break;
-						case INACTIVE:
-							behind.setType(XMaterial.RED_STAINED_GLASS.parseMaterial());
-
-							BlockUtils.setData(behind, (byte) 14);
-							break;
-						default:
-							break;
-					}
-				} catch (Exception ignored) {}
 			}
 
 			sign.update();

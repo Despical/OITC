@@ -50,7 +50,7 @@ public class Reward {
 		return type;
 	}
 
-	final static class SubReward {
+	public final static class SubReward {
 
 		private String executableCode;
 		private final int chance, executor;

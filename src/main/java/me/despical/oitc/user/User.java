@@ -132,7 +132,7 @@ public class User {
 	}
 
 	public void heal() {
-		if (plugin.getConfigPreferences().getOption(ConfigPreferences.Option.HEAL_PLAYER)) AttributeUtils.healPlayer(player);
+		if (plugin.getOption(ConfigPreferences.Option.HEAL_PLAYER)) AttributeUtils.healPlayer(player);
 	}
 
 	public void cacheScoreboard() {

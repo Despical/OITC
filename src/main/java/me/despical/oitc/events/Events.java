@@ -18,6 +18,7 @@
 
 package me.despical.oitc.events;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.despical.commons.ReflectionUtils;
 import me.despical.commons.compat.Titles;
 import me.despical.commons.compat.XMaterial;
@@ -35,6 +36,7 @@ import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.util.ItemPosition;
+import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -53,6 +55,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -70,7 +73,7 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onLogin(PlayerLoginEvent e) {
-		if (!preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED) || e.getResult() != PlayerLoginEvent.Result.KICK_WHITELIST) {
+		if (!plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED) || e.getResult() != PlayerLoginEvent.Result.KICK_WHITELIST) {
 			return;
 		}
 
@@ -84,7 +87,7 @@ public class Events extends ListenerAdapter {
 		Player eventPlayer = event.getPlayer();
 		userManager.loadStatistics(eventPlayer);
 
-		if (preferences.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
+		if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			arenaRegistry.getBungeeArena().teleportToLobby(eventPlayer);
 			return;
 		}
@@ -98,14 +101,14 @@ public class Events extends ListenerAdapter {
 			PlayerUtils.hidePlayer(eventPlayer, player, plugin);
 		}
 
-		if (preferences.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
+		if (plugin.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.loadInventory(plugin, eventPlayer);
 		}
 	}
 
 	@EventHandler
 	public void onJoinCheckVersion(PlayerJoinEvent event) {
-		if (!preferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED) || !event.getPlayer().hasPermission("oitc.updatenotify")) {
+		if (!plugin.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED) || !event.getPlayer().hasPermission("oitc.updatenotify")) {
 			return;
 		}
 
@@ -162,7 +165,7 @@ public class Events extends ListenerAdapter {
 			return;
 		}
 
-		if (!preferences.getOption(ConfigPreferences.Option.BLOCK_COMMANDS)) {
+		if (!plugin.getOption(ConfigPreferences.Option.BLOCK_COMMANDS)) {
 			return;
 		}
 
@@ -366,7 +369,7 @@ public class Events extends ListenerAdapter {
 
 		if (!arenaRegistry.isInArena((Player) event.getEntity())) return;
 
-		if (!plugin.getConfigPreferences().getOption(ConfigPreferences.Option.REGEN_ENABLED)) {
+		if (!plugin.getOption(ConfigPreferences.Option.REGEN_ENABLED)) {
 			event.setCancelled(true);
 		}
 	}
@@ -389,7 +392,7 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void playerCommandExecution(PlayerCommandPreprocessEvent e) {
-		if (preferences.getOption(ConfigPreferences.Option.ENABLE_SHORT_COMMANDS)) {
+		if (plugin.getOption(ConfigPreferences.Option.ENABLE_SHORT_COMMANDS)) {
 			Player player = e.getPlayer();
 
 			if (e.getMessage().equalsIgnoreCase("/start")) {
@@ -418,7 +421,7 @@ public class Events extends ListenerAdapter {
 		}
 
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
-			if (preferences.getOption(ConfigPreferences.Option.DISABLE_FALL_DAMAGE)) {
+			if (plugin.getOption(ConfigPreferences.Option.DISABLE_FALL_DAMAGE)) {
 				return;
 			}
 
@@ -441,6 +444,55 @@ public class Events extends ListenerAdapter {
 		if (arenaRegistry.isInArena(event.getPlayer())) {
 			event.setCancelled(true);
 		}
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onChatInGame(AsyncPlayerChatEvent event) {
+		Player player = event.getPlayer();
+		Arena arena = arenaRegistry.getArena(player);
+
+		if (arena == null) {
+			if (!plugin.getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT)) {
+				arenaRegistry.getArenas().forEach(loopArena -> loopArena.getPlayers().forEach(p -> event.getRecipients().remove(p)));
+			}
+
+			return;
+		}
+
+		if (plugin.getOption(ConfigPreferences.Option.CHAT_FORMAT_ENABLED)) {
+			String message = formatChatPlaceholders(chatManager.message("In-Game.Game-Chat-Format"), player, event.getMessage().replaceAll(Pattern.quote("[$\\]"), ""));
+
+			if (!plugin.getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT)) {
+				event.setCancelled(true);
+
+				final boolean dead = userManager.getUser(player).isSpectator();
+
+				for (Player p : arena.getPlayers()) {
+					if (dead && arena.getPlayersLeft().contains(p)) {
+						continue;
+					}
+
+					p.sendMessage(dead ? formatChatPlaceholders(chatManager.message("In-Game.Game-Death-Format"), player, null) + message : message);
+				}
+
+				plugin.getServer().getConsoleSender().sendMessage(message);
+			} else {
+				event.setMessage(message);
+			}
+		}
+	}
+
+	private String formatChatPlaceholders(String message, Player player, String saidMessage) {
+		String formatted = message;
+
+		formatted = formatted.replace("%player%", player.getName());
+		formatted = formatted.replace("%message%", ChatColor.stripColor(saidMessage));
+
+		if (chatManager.isPapiEnabled()) {
+			formatted = PlaceholderAPI.setPlaceholders(player, formatted);
+		}
+
+		return chatManager.coloredRawMessage(formatted);
 	}
 	
 	private void registerLegacyEvents() {

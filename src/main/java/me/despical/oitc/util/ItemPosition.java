@@ -76,10 +76,6 @@ public enum ItemPosition {
 		setItem(player, SWORD, BOW, ARROW);
 		player.updateInventory();
 	}
-	
-	public int getItemPosition() {
-		return itemPosition;
-	}
 
 	public ItemStack getItem() {
 		return itemStack;
