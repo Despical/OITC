@@ -37,15 +37,15 @@ public class ArenaUtils {
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	public static void hidePlayer(Player p, Arena arena) {
-		if (isLegacy || !hide) return;
+		if (!hide) return;
 
 		for (Player player : arena.getPlayers()) {
-			PlayerUtils.hidePlayer(player , p, plugin);
+			PlayerUtils.hidePlayer(player, p, plugin);
 		}
 	}
 
 	public static void showPlayer(Player p, Arena arena) {
-		if (isLegacy || !hide) return;
+		if (!hide) return;
 
 		for (Player player : arena.getPlayers()) {
 			PlayerUtils.showPlayer(player, p, plugin);
@@ -53,7 +53,7 @@ public class ArenaUtils {
 	}
 
 	public static void hidePlayersOutsideTheGame(Player player, Arena arena) {
-		if (isLegacy || !hide) return;
+		if (!hide) return;
 
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
 			if (arena.getPlayers().contains(players)) {
@@ -66,15 +66,17 @@ public class ArenaUtils {
 	}
 
 	public static void showPlayersOutsideTheGame(Player player, Arena arena) {
-		if (isLegacy || !hide) return;
+		if (!hide) return;
 
 		for (Player players : plugin.getServer().getOnlinePlayers()) {
 			if (arena.getPlayers().contains(players)) {
+				PlayerUtils.hidePlayer(player, players, plugin);
+				PlayerUtils.hidePlayer(players, player, plugin);
 				continue;
 			}
 
-			player.showPlayer(plugin, players);
-			players.showPlayer(plugin, player);
+			PlayerUtils.showPlayer(player, players, plugin);
+			PlayerUtils.showPlayer(players, player, plugin);
 		}
 	}
 

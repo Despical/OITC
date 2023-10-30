@@ -137,6 +137,7 @@ public class ArenaManager {
 		player.setGameMode(GameMode.ADVENTURE);
 
 		PlayerUtils.setGlowing(player, false);
+		ArenaUtils.hidePlayersOutsideTheGame(player, arena);
 
 		user.addGameItem("leave-item");
 		user.resetStats();
@@ -160,7 +161,7 @@ public class ArenaManager {
 
 			ArenaUtils.hidePlayer(player, arena);
 
-			if (!ArenaUtils.isLegacy() || ArenaUtils.shouldHide()) {
+			if (ArenaUtils.shouldHide()) {
 				for (Player spectator : arena.getPlayers()) {
 					if (plugin.getUserManager().getUser(spectator).isSpectator()) {
 						PlayerUtils.hidePlayer(player, spectator, plugin);
@@ -170,7 +171,6 @@ public class ArenaManager {
 				}
 			}
 
-			ArenaUtils.hidePlayersOutsideTheGame(player, arena);
 			return;
 		}
 
@@ -179,12 +179,12 @@ public class ArenaManager {
 		arena.teleportToLobby(player);
 		arena.doBarAction(1, player);
 		arena.showPlayers();
+
 		ArenaUtils.showPlayer(player, arena);
+		ArenaUtils.updateNameTagsVisibility(player);
 
 		chatManager.broadcastAction(arena, user, ActionType.JOIN);
 		plugin.getSignManager().updateSigns();
-
-		ArenaUtils.updateNameTagsVisibility(player);
 	}
 
 	public static void leaveAttempt(Player player, Arena arena) {
@@ -240,17 +240,9 @@ public class ArenaManager {
 			arena.setTimer(0);
 		}
 
-		if (!ArenaUtils.isLegacy()) {
-			for (Player players : plugin.getServer().getOnlinePlayers()) {
-				if (!plugin.getArenaRegistry().isInArena(players)) {
-					players.showPlayer(plugin, player);
-				}
-
-				player.showPlayer(plugin, players);
-			}
-		}
-
 		arena.teleportToEndLocation(player);
+
+		ArenaUtils.showPlayersOutsideTheGame(player, arena);
 
 		if (plugin.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.loadInventory(plugin, player);
