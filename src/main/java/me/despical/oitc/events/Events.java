@@ -506,7 +506,7 @@ public class Events extends ListenerAdapter {
 			}
 		});
 
-		registerIf(ReflectionUtils.supports(8) && ReflectionUtils.supportsPatch(3), new Listener() {
+		registerIf(ReflectionUtils.supports(9), new Listener() {
 
 			@EventHandler
 			public void onArrowPickup(PlayerPickupArrowEvent event) {
