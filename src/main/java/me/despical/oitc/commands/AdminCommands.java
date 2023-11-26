@@ -294,11 +294,14 @@ public class AdminCommands extends AbstractCommand {
 			if (Arrays.asList("create", "list", "randomjoin", "leave").contains(arg)) return null;
 
 			if (arg.equalsIgnoreCase("top")) {
-				return Arrays.asList("kills", "deaths", "games_played", "highest_score", "loses", "wins");
+				StringUtil.copyPartialMatches(args[1], Arrays.asList("kills", "deaths", "games_played", "highest_score", "loses", "wins"), completions);
+
+				return completions;
 			}
 
 			if (arg.equalsIgnoreCase("stats")) {
-				return plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+				StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()), completions);
+				return completions;
 			}
 
 			final List<String> arenas = arenaRegistry.getArenas().stream().map(Arena::getId).sorted().collect(Collectors.toList());
