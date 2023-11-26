@@ -441,6 +441,18 @@ public class Arena extends BukkitRunnable {
 					ArenaUtils.showPlayersOutsideTheGame(player, this);
 					AttributeUtils.resetAttackCooldown(player);
 
+					for (final User users : plugin.getUserManager().getUsers()) {
+						final Player usersPlayer = users.getPlayer();
+
+						if (player == null || usersPlayer == null) continue;
+
+						PlayerUtils.showPlayer(player, usersPlayer, plugin);
+
+						if (!plugin.getArenaRegistry().isInArena(usersPlayer)) {
+							PlayerUtils.showPlayer(usersPlayer, player, plugin);
+						}
+					}
+
 					player.setGameMode(GameMode.SURVIVAL);
 					player.setFlySpeed(.1f);
 					player.setWalkSpeed(.2f);

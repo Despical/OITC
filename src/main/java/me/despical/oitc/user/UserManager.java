@@ -57,7 +57,7 @@ public class UserManager {
 			}
 		}
 
-		final User user = new User(player);
+		final User user = new User(uuid);
 		users.add(user);
 
 		database.loadStatistics(user);
@@ -67,6 +67,10 @@ public class UserManager {
 	
 	public Set<User> getUsers(Arena arena) {
 		return arena.getPlayers().stream().map(this::getUser).collect(Collectors.toSet());
+	}
+
+	public Set<User> getUsers() {
+		return users;
 	}
 
 	public void saveAllStatistic(User user) {

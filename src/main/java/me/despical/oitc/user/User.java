@@ -44,28 +44,26 @@ public class User {
 	private final static Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	private final UUID uuid;
-	private final Player player;
 	private final Map<StatsStorage.StatisticType, Integer> stats;
 
 	private boolean spectator;
 	private Scoreboard cachedScoreboard;
 
-	public User(Player player) {
-		this.player = player;
-		this.uuid = player.getUniqueId();
+	public User(UUID uuid) {
+		this.uuid = uuid;
 		this.stats = new EnumMap<>(StatsStorage.StatisticType.class);
 	}
 
 	public Arena getArena() {
-		return plugin.getArenaRegistry().getArena(player);
+		return plugin.getArenaRegistry().getArena(getPlayer());
 	}
 
 	public Player getPlayer() {
-		return player;
+		return plugin.getServer().getPlayer(uuid);
 	}
 
 	public String getName() {
-		return player.getName();
+		return getPlayer().getName();
 	}
 
 	public UUID getUniqueId() {
@@ -94,7 +92,7 @@ public class User {
 	public void setStat(StatsStorage.StatisticType stat, int value) {
 		stats.put(stat, value);
 
-		plugin.getServer().getScheduler().runTask(plugin, () -> plugin.getServer().getPluginManager().callEvent(new OITCPlayerStatisticChangeEvent(getArena(), player, stat, value)));
+		plugin.getServer().getScheduler().runTask(plugin, () -> plugin.getServer().getPluginManager().callEvent(new OITCPlayerStatisticChangeEvent(getArena(), getPlayer(), stat, value)));
 	}
 
 	public void addStat(StatsStorage.StatisticType stat, int value) {
@@ -102,13 +100,13 @@ public class User {
 	}
 
 	public void addGameItems(final String... ids) {
-		this.player.getInventory().clear();
+		this.getPlayer().getInventory().clear();
 
 		for (final String id : ids) {
 			this.addGameItem(id);
 		}
 
-		this.player.updateInventory();
+		this.getPlayer().updateInventory();
 	}
 
 	public void addGameItem(final String id) {
@@ -116,7 +114,7 @@ public class User {
 
 		if (gameItem == null) return;
 
-		this.player.getInventory().setItem(gameItem.getSlot(), gameItem.getItemStack());
+		this.getPlayer().getInventory().setItem(gameItem.getSlot(), gameItem.getItemStack());
 	}
 
 	public void resetStats() {
@@ -132,16 +130,16 @@ public class User {
 	}
 
 	public void heal() {
-		if (plugin.getOption(ConfigPreferences.Option.HEAL_PLAYER)) AttributeUtils.healPlayer(player);
+		if (plugin.getOption(ConfigPreferences.Option.HEAL_PLAYER)) AttributeUtils.healPlayer(getPlayer());
 	}
 
 	public void cacheScoreboard() {
-		this.cachedScoreboard = player.getScoreboard();
+		this.cachedScoreboard = getPlayer().getScoreboard();
 	}
 
 	public void removeScoreboard() {
 		if (cachedScoreboard != null) {
-			player.setScoreboard(cachedScoreboard);
+			getPlayer().setScoreboard(cachedScoreboard);
 
 			cachedScoreboard = null;
 		}
