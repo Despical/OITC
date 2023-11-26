@@ -301,11 +301,10 @@ public class AdminCommands extends AbstractCommand {
 				return plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
 			}
 
-			final List<String> arenas = arenaRegistry.getArenas().stream().map(Arena::getId).collect(Collectors.toList());
+			final List<String> arenas = arenaRegistry.getArenas().stream().map(Arena::getId).sorted().collect(Collectors.toList());
 
-			StringUtil.copyPartialMatches(args[1], arenas, completions);
-			arenas.sort(null);
-			return arenas;
+            StringUtil.copyPartialMatches(args[1], arenas, completions);
+			return completions;
 		}
 
 		completions.sort(null);
