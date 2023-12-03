@@ -11,7 +11,6 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaState;
-import me.despical.oitc.commands.AbstractCommand;
 import me.despical.oitc.user.User;
 import me.despical.oitc.user.data.MysqlManager;
 import org.bukkit.command.CommandSender;
@@ -27,6 +26,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import static me.despical.oitc.api.StatsStorage.StatisticType.*;
 import static me.despical.commandframework.Command.SenderType.PLAYER;
 
 /**
@@ -140,19 +140,18 @@ public class PlayerCommands extends AbstractCommand {
 
 		User user = plugin.getUserManager().getUser(player);
 
-		if (player.equals(sender)) {
-			player.sendMessage(chatManager.message(path + "header", player));
-		} else {
-			sender.sendMessage(chatManager.message(path + "header_other", player).replace("%player%", player.getName()));
-		}
+		chatManager.getStringList("commands.stats_command.messages").stream().map(message -> formatStats(message, player.equals(sender) ? "header" : "header_other", user)).forEach(player::sendMessage);
+	}
 
-		sender.sendMessage(chatManager.message(path + "kills", player) + user.getStat(StatsStorage.StatisticType.KILLS));
-		sender.sendMessage(chatManager.message(path + "deaths", player) + user.getStat(StatsStorage.StatisticType.DEATHS));
-		sender.sendMessage(chatManager.message(path + "wins", player) + user.getStat(StatsStorage.StatisticType.WINS));
-		sender.sendMessage(chatManager.message(path + "loses", player) + user.getStat(StatsStorage.StatisticType.LOSES));
-		sender.sendMessage(chatManager.message(path + "games_played", player) + user.getStat(StatsStorage.StatisticType.GAMES_PLAYED));
-		sender.sendMessage(chatManager.message(path + "highest_score", player) + user.getStat(StatsStorage.StatisticType.HIGHEST_SCORE));
-		sender.sendMessage(chatManager.message(path + "footer", player));
+	private String formatStats(String message, String header, User user) {
+		message = message.replace("%header%", chatManager.message("commands.stats_command." + header));
+		message = message.replace("%kills%", KILLS.from(user));
+		message = message.replace("%deaths%", DEATHS.from(user));
+		message = message.replace("%wins%", WINS.from(user));
+		message = message.replace("%loses%", LOSES.from(user));
+		message = message.replace("%games_played%", GAMES_PLAYED.from(user));
+		message = message.replace("%highest_score%", HIGHEST_SCORE.from(user));
+		return chatManager.coloredRawMessage(message);
 	}
 
 	@Command(
