@@ -70,6 +70,8 @@ public class PlaceholderManager extends PlaceholderExpansion {
 		final User user = plugin.getUserManager().getUser(player);
 
 		switch (id.toLowerCase()) {
+			case "online_players":
+				return Long.toString(plugin.getArenaRegistry().getArenas().stream().map(arena -> arena.getPlayers().size()).count());
 			case "kills":
 				return KILLS.from(user);
 			case "deaths":
