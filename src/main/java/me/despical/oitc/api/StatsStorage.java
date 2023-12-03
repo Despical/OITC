@@ -22,6 +22,7 @@ import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.sorter.SortUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
+import me.despical.oitc.user.User;
 import me.despical.oitc.user.data.MysqlManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -88,6 +89,10 @@ public class StatsStorage {
 		StatisticType(String name, boolean persistent) {
 			this.name = name;
 			this.persistent = persistent;
+		}
+
+		public String from(User user) {
+			return Integer.toString(user.getStat(this));
 		}
 
 		public String getName() {

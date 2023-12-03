@@ -193,8 +193,10 @@ public class ArenaManager {
 
 		User user = plugin.getUserManager().getUser(player);
 
-		if (user.getStat(StatsStorage.StatisticType.LOCAL_KILLS) > user.getStat(StatsStorage.StatisticType.HIGHEST_SCORE)) {
-			user.setStat(StatsStorage.StatisticType.HIGHEST_SCORE, user.getStat(StatsStorage.StatisticType.LOCAL_KILLS));
+		int localKills = user.getStat(StatsStorage.StatisticType.LOCAL_KILLS);
+
+		if (localKills > user.getStat(StatsStorage.StatisticType.HIGHEST_SCORE)) {
+			user.setStat(StatsStorage.StatisticType.HIGHEST_SCORE, localKills);
 		}
 
 		plugin.getUserManager().saveAllStatistic(user);
@@ -317,8 +319,8 @@ public class ArenaManager {
 		String formatted = msg, topPlayerName = arena.getScoreboardManager().getTopPlayerName(0);
 
 		User user = plugin.getUserManager().getUser(player);
-		formatted = formatted.replace("%score%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILLS)));
-		formatted = formatted.replace("%deaths%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_DEATHS)));
+		formatted = formatted.replace("%score%", StatsStorage.StatisticType.LOCAL_KILLS.from(user));
+		formatted = formatted.replace("%deaths%", StatsStorage.StatisticType.LOCAL_DEATHS.from(user));
 		formatted = formatted.replace("%rank%", Integer.toString(arena.getScoreboardManager().getRank(player)));
 		formatted = formatted.replace("%winner%", topPlayerName);
 		formatted = formatted.replace("%winner_score%", Integer.toString(StatsStorage.getUserStats(plugin.getServer().getPlayer(topPlayerName), StatsStorage.StatisticType.LOCAL_KILLS)));

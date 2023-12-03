@@ -16,6 +16,7 @@ public abstract class AbstractCommand {
 		this.chatManager = plugin.getChatManager();
 		this.plugin.getCommandFramework().registerCommands(this);
 	}
+
 	public static void registerCommands(final Main plugin) {
 		new AdminCommands(plugin);
 		new PlayerCommands(plugin);

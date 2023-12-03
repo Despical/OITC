@@ -35,14 +35,16 @@ Commands:
   Stats-Command:
     Header: "&l-----[YOUR STATS]-----"
     Header-Other: "&l-----[STATS FOR %player%]-----"
-    Footer: "&l----------------------"
-    Kills: "&aKills: &e"
-    Deaths: "&aDeaths: &e"
-    Wins: "&aWins: &e"
-    Loses: "&aLoses: &e"
-    Highest-Score: "&aHighest score: &e"
-    Games-Played: "&aGames played: &e"
-  
+    Messages:
+      - "%header%"
+      - "&8 * &aKills: &e%kills%"
+      - "&8 * &aDeaths: &e%deaths%"
+      - "&8 * &aWins: &e%wins%"
+      - "&8 * &aLoses: &e%loses%"
+      - "&8 * &aHighest score: &e%highest_score%"
+      - "&8 * &aGames played: &e%games_played%"
+      - "&l----------------------"
+
 # In game scoreboard messages.
 # Don't use more than 48 characters if you use old versions of Minecraft!
 # Can be used up to 144 characters in 1.14 and higher versions.
