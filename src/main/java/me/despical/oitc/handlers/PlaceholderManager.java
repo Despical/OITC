@@ -20,11 +20,12 @@ package me.despical.oitc.handlers;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.despical.oitc.Main;
-import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.user.User;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import static me.despical.oitc.api.StatsStorage.StatisticType.*;
 
 /**
  * @author Despical
@@ -70,23 +71,23 @@ public class PlaceholderManager extends PlaceholderExpansion {
 
 		switch (id.toLowerCase()) {
 			case "kills":
-				return Integer.toString(user.getStat(StatsStorage.StatisticType.KILLS));
+				return KILLS.from(user);
 			case "deaths":
-				return Integer.toString(user.getStat(StatsStorage.StatisticType.DEATHS));
+				return DEATHS.from(user);
 			case "games_played":
-				return Integer.toString(user.getStat(StatsStorage.StatisticType.GAMES_PLAYED));
+				return GAMES_PLAYED.from(user);
 			case "highest_score":
-				return Integer.toString(user.getStat(StatsStorage.StatisticType.HIGHEST_SCORE));
+				return HIGHEST_SCORE.from(user);
 			case "wins":
-				return Integer.toString(user.getStat(StatsStorage.StatisticType.WINS));
+				return WINS.from(user);
 			case "loses":
-				return Integer.toString(user.getStat(StatsStorage.StatisticType.LOSES));
+				return LOSES.from(user);
 			case "local_kills":
-				return Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILLS));
+				return LOCAL_KILLS.from(user);
 			case "local_deaths":
-				return Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_DEATHS));
+				return LOCAL_DEATHS.from(user);
 			case "local_kill_streak":
-				return Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK));
+				return LOCAL_KILL_STREAK.from(user);
 			default:
 				return handleArenaPlaceholderRequest(id);
 		}
