@@ -111,6 +111,9 @@ Name-Tags-Hidden: true
 # Should we hide in-game players to other online players?
 Hide-Players: true
 
+# Should we allow players to pick up arrows from ground?
+Enable-Arrow-Pickups: false
+
 # Should we check for updates on plugin start/after admin join?
 Update-Notifier-Enabled: true
 
