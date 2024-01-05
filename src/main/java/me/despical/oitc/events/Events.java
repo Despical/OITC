@@ -431,7 +431,7 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onPickupItem(PlayerPickupItemEvent event) {
-		if (!plugin.getOption(ConfigPreferences.Option.ENABLE_ARROW_PICKUPS)) return;
+		if (plugin.getOption(ConfigPreferences.Option.ENABLE_ARROW_PICKUPS)) return;
 
 		if (!arenaRegistry.isInArena(event.getPlayer())) {
 			return;
@@ -512,7 +512,7 @@ public class Events extends ListenerAdapter {
 
 			@EventHandler
 			public void onArrowPickup(PlayerPickupArrowEvent event) {
-				if (!plugin.getOption(ConfigPreferences.Option.ENABLE_ARROW_PICKUPS)) return;
+				if (plugin.getOption(ConfigPreferences.Option.ENABLE_ARROW_PICKUPS)) return;
 
 				if (arenaRegistry.isInArena(event.getPlayer())) {
 					event.getItem().remove();
