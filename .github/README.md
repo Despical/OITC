@@ -18,7 +18,7 @@ or killing other players. When a player reaches 25 points the game ends and winn
 
 ## Donations
 - [Patreon](https://www.patreon.com/despical)
-- [Buy me a Coffe](https://www.buymeacoffee.com/despical)
+- [Buy me a Coffee](https://www.buymeacoffee.com/despical)
 
 ## Using One in the Chamber API
 The project isn't in the Central Repository yet, so specifying a repository is needed.<br>
