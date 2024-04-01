@@ -102,6 +102,8 @@ public class PlaceholderManager extends PlaceholderExpansion {
 		if (arena == null) return null;
 
 		switch (data[1].toLowerCase()) {
+			case "id":
+				return arena.getId();
 			case "players":
 				return Integer.toString(arena.getPlayers().size());
 			case "players_left":
