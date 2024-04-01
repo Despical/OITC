@@ -53,7 +53,7 @@ repositories {
 ```
 ```
 dependencies {
-    compileOnly group: "com.github.Despical", name: "OITC", version: "LATEST";
+    compileOnly 'com.github.Despical:OITC:LATEST';
 }
 ```
 </details>
