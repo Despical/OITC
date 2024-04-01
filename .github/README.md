@@ -5,6 +5,7 @@
 [![](https://jitpack.io/v/Despical/OITC.svg)](https://jitpack.io/#Despical/OITC)
 [![](https://img.shields.io/badge/JavaDocs-latest-lime.svg)](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html)
 [![Support](https://img.shields.io/badge/Patreon-Support-lime.svg?logo=Patreon)](https://www.patreon.com/despical)
+[![](https://img.shields.io/badge/BuyMeACoffee-Support-lime.svg?logo=BuyMeACoffee)](https://www.buymeacoffee.com/despical)
 
 One in the Chamber is an old Minecraft minigame. Each player is equipped with a sword, bow and arrow.
 The arrows do one hit one kill damage and if player missed the shot they can't receive a new arrow until they die
@@ -37,7 +38,7 @@ The project isn't in the Central Repository yet, so specifying a repository is n
     <groupId>com.github.Despical</groupId>
     <artifactId>OITC</artifactId>
     <version>LATEST</version>
-    <scope>compile</scope>
+    <scope>provided</scope>
 </dependency>
 ```
 
