@@ -2,10 +2,12 @@ package me.despical.oitc.commands;
 
 import me.despical.commandframework.Command;
 import me.despical.commandframework.CommandArguments;
+import me.despical.commandframework.CommandFramework;
 import me.despical.commandframework.Completer;
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.miscellaneous.MiscUtils;
 import me.despical.commons.serializer.LocationSerializer;
+import me.despical.commons.string.StringMatcher;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
@@ -39,6 +41,7 @@ public class AdminCommands extends AbstractCommand {
 
 	@Command(
 		name = "oitc",
+		usage = "/oitc help",
 		desc = "Main command of One in the Chamber."
 	)
 	public void mainCommand(CommandArguments arguments) {
@@ -48,6 +51,32 @@ public class AdminCommands extends AbstractCommand {
 			if (arguments.hasPermission("oitc.admin")) {
 				arguments.sendMessage(chatManager.coloredRawMessage("&3Commands: &b/" + arguments.getLabel() + " help"));
 			}
+
+			return;
+		}
+
+		CommandFramework commandFramework = plugin.getCommandFramework();
+		String label = arguments.getLabel(), arg = arguments.getArgument(0);
+		List<String> commands = commandFramework.getCommands().stream().map(cmd -> cmd.name().replace(label + ".", "")).collect(Collectors.toList());
+		List<StringMatcher.Match> matches = StringMatcher.match(arg, commands);
+
+		if (!matches.isEmpty()) {
+			Optional<Command> optionalMatch = commandFramework.getCommands().stream().filter(cmd -> cmd.name().equals(label + "." + matches.get(0).getMatch())).findFirst();
+
+			if (optionalMatch.isPresent()) {
+				String matchedName = getMatchingParts(optionalMatch.get().name(), label + "." + String.join(".", arguments.getArguments()));
+				Optional<Command> matchedCommand = commandFramework.getSubCommands().stream().filter(cmd -> cmd.name().equals(matchedName)).findFirst();
+
+				if (matchedCommand.isPresent()) {
+					arguments.sendMessage(chatManager.prefixedMessage("Commands.Correct-Usage").replace("%usage%", matchedCommand.get().usage()));
+					return;
+				}
+
+				arguments.sendMessage(chatManager.prefixedMessage("Commands.Did-You-Mean").replace("%command%", optionalMatch.get().usage()));
+				return;
+			}
+
+			arguments.sendMessage(chatManager.prefixedMessage("Commands.Did-You-Mean").replace("%command%", label));
 		}
 	}
 
@@ -220,6 +249,11 @@ public class AdminCommands extends AbstractCommand {
 		senderType = PLAYER
 	)
 	public void editCommand(CommandArguments arguments) {
+		if (arguments.isArgumentsEmpty()) {
+			arguments.sendMessage(chatManager.prefixedMessage("commands.type_arena_name"));
+			return;
+		}
+
 		Arena arena = arenaRegistry.getArena(arguments.getArgument(0));
 
 		if (arena == null) {
@@ -233,6 +267,7 @@ public class AdminCommands extends AbstractCommand {
 	@SuppressWarnings("deprecation")
 	@Command(
 		name = "oitc.help",
+		usage = "/oitc help",
 		permission = "oitc.admin.help"
 	)
 	public void helpCommand(CommandArguments arguments) {
@@ -243,15 +278,14 @@ public class AdminCommands extends AbstractCommand {
 		MiscUtils.sendCenteredMessage(sender, "&3&l---- One in the Chamber ----");
 		arguments.sendMessage("");
 
-		for (final Command command : plugin.getCommandFramework().getCommands().stream().sorted(Collections
-			.reverseOrder(Comparator.comparingInt(cmd -> cmd.usage().length()))).collect(Collectors.toList())) {
+		for (final Command command : plugin.getCommandFramework().getSubCommands()) {
 			String usage = command.usage(), desc = command.desc();
 
-			if (usage.isEmpty() || usage.contains("help")) continue;
+			if (desc.isEmpty() || usage.isEmpty()) continue;
 
 			if (isPlayer) {
-				((Player) sender).spigot().sendMessage(new ComponentBuilder()
-					.color(ChatColor.DARK_GRAY).append(" • ")
+				((Player) sender).spigot().sendMessage(
+					new ComponentBuilder(ChatColor.DARK_GRAY + " • ")
 					.append(usage)
 					.color(ChatColor.AQUA)
 					.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, usage))
@@ -281,36 +315,43 @@ public class AdminCommands extends AbstractCommand {
 		name = "oitc"
 	)
 	public List<String> onTabComplete(CommandArguments arguments) {
-		final List<String> completions = new ArrayList<>(), commands = plugin.getCommandFramework().getCommands().stream().map(cmd -> cmd.name().replace(arguments.getLabel() + '.', "")).collect(Collectors.toList());
+		final List<String> completions = new ArrayList<>(), commands = plugin.getCommandFramework().getSubCommands().stream().map(cmd -> cmd.name().replace(arguments.getLabel() + '.', "")).collect(Collectors.toList());
 		final String args[] = arguments.getArguments(), arg = args[0];
 
-		commands.remove("oitc");
-
 		if (args.length == 1) {
-			StringUtil.copyPartialMatches(arg, arguments.hasPermission("oitc.admin") || arguments.getSender().isOp() ? commands : Arrays.asList("top", "stats", "join", "leave", "randomjoin"), completions);
+			return StringUtil.copyPartialMatches(arg, arguments.hasPermission("oitc.admin") ? commands : Arrays.asList("top", "stats", "join", "leave", "randomjoin"), completions);
 		}
 
 		if (args.length == 2) {
-			if (Arrays.asList("create", "list", "randomjoin", "leave").contains(arg)) return null;
+			if (Arrays.asList("create", "list", "randomjoin", "leave", "forcestart", "stop", "help").contains(arg)) return completions;
 
 			if (arg.equalsIgnoreCase("top")) {
-				StringUtil.copyPartialMatches(args[1], Arrays.asList("kills", "deaths", "games_played", "highest_score", "loses", "wins"), completions);
-
-				return completions;
+				return StringUtil.copyPartialMatches(args[1], Arrays.asList("kills", "deaths", "games_played", "highest_score", "loses", "wins"), completions);
 			}
 
 			if (arg.equalsIgnoreCase("stats")) {
-				StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()), completions);
-				return completions;
+				return StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()), completions);
 			}
 
 			final List<String> arenas = arenaRegistry.getArenas().stream().map(Arena::getId).sorted().collect(Collectors.toList());
 
-            StringUtil.copyPartialMatches(args[1], arenas, completions);
-			return completions;
+            return StringUtil.copyPartialMatches(args[1], arenas, completions);
 		}
 
-		completions.sort(null);
 		return completions;
+	}
+
+	public String getMatchingParts(String matched, String current) {
+		String[] matchedArray = matched.split("\\."), currentArray = current.split("\\.");
+		int max = Math.min(matchedArray.length, currentArray.length);
+		List<String> matchingParts = new ArrayList<>();
+
+		for (int i = 0; i < max; i++) {
+			if (matchedArray[i].equals(currentArray[i])) {
+				matchingParts.add(matchedArray[i]);
+			}
+		}
+
+		return String.join(".", matchingParts);
 	}
 }
