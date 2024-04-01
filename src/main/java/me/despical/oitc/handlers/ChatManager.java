@@ -40,9 +40,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ChatManager {
 
-	private FileConfiguration config;
-
 	private final Main plugin;
+	private final FileConfiguration config;
 	private final String prefix;
 	private final boolean papiEnabled;
 
@@ -160,10 +159,6 @@ public class ChatManager {
 		if (!user.isSpectator()) {
 			arena.broadcastMessage(formatMessage(arena, message("in_game.messages." + StringUtils.capitalize(action.name().toLowerCase(Locale.ENGLISH))), user.getPlayer()));
 		}
-	}
-	
-	public void reloadConfig() {
-		config = ConfigUtils.getConfig(plugin, "messages");
 	}
 
 	public enum ActionType {

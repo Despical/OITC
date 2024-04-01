@@ -15,7 +15,6 @@ public class LocaleRegistry {
 
 	public static void registerLocale(Locale locale) {
 		registeredLocales.removeIf(l -> l.prefix.equals(locale.prefix));
-
 		registeredLocales.add(locale);
 	}
 

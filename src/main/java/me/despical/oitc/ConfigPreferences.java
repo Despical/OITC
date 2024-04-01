@@ -58,7 +58,7 @@ public class ConfigPreferences {
 		DISABLE_FALL_DAMAGE(false), DISABLE_LEAVE_COMMAND(false), DISABLE_SEPARATE_CHAT(false),
 		ENABLE_SHORT_COMMANDS, IGNORE_WARNING_MESSAGES(false), INVENTORY_MANAGER_ENABLED("Inventory-Manager.Enabled"),
 		NAME_TAGS_HIDDEN, UPDATE_NOTIFIER_ENABLED, REGEN_ENABLED(false), HIDE_PLAYERS, ENABLE_ARROW_PICKUPS(false),
-		LEVEL_COUNTDOWN_ENABLED(false), DISABLE_SPECTATING_ON_BUNGEE(false), INSTANT_LEAVE(false),
+		LEVEL_COUNTDOWN_ENABLED(false), DISABLE_SPECTATING_ON_BUNGEE(false), INSTANT_LEAVE(false), HEAL_ON_KILL(false),
 
 		HEAL_PLAYER((config) -> {
 			final List<String> list = config.getStringList("Inventory-Manager.Do-Not-Restore");
@@ -66,7 +66,6 @@ public class ConfigPreferences {
 
 			return !list.contains("health");
 		});
-
 
 		final String path;
 		final boolean def;

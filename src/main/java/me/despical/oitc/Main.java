@@ -64,7 +64,7 @@ public class Main extends JavaPlugin {
 	private UserManager userManager;
 	private PermissionsManager permissionsManager;
 	private GameItemManager gameItemManager;
-	private @SuppressWarnings("all") LanguageManager languageManager;
+	private LanguageManager languageManager;
 	private CommandFramework commandFramework;
 
 	@Override
@@ -210,6 +210,12 @@ public class Main extends JavaPlugin {
 	@NotNull
 	public ArenaRegistry getArenaRegistry() {
 		return arenaRegistry;
+	}
+
+	@SuppressWarnings("unused")
+	@NotNull
+	public LanguageManager getLanguageManager() {
+		return languageManager;
 	}
 
 	public boolean getOption(ConfigPreferences.Option option) {

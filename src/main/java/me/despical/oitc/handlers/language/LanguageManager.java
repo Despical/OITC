@@ -74,10 +74,6 @@ public class LanguageManager {
 		plugin.getLogger().info("Loaded locale " + pluginLocale.name + " (ID: " + pluginLocale.prefix + " by " + pluginLocale.author + ")");
 	}
 
-	public Locale getPluginLocale() {
-		return pluginLocale;
-	}
-
 	public static class Locale {
 
 		public final String name, prefix, author, aliases[];

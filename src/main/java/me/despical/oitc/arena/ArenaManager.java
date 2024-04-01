@@ -136,7 +136,6 @@ public class ArenaManager {
 		player.getInventory().setArmorContents(null);
 		player.setGameMode(GameMode.ADVENTURE);
 
-		PlayerUtils.setGlowing(player, false);
 		ArenaUtils.hidePlayersOutsideTheGame(player, arena);
 
 		user.addGameItem("leave-item");
@@ -213,7 +212,6 @@ public class ArenaManager {
 
 		chatManager.broadcastAction(arena, user, ActionType.LEAVE);
 
-		PlayerUtils.setGlowing(player, false);
 		AttributeUtils.resetAttackCooldown(player);
 
 		user.heal();

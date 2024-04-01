@@ -89,7 +89,7 @@ public class SpawnComponents implements SetupComponent {
 			.lore("&8(locations where players will be")
 			.lore("&8teleported when game starts)")
 			.lore("", setupInventory.getSetupUtilities().isOptionDoneList("playersSpawnPoints", arena.getMaximumPlayers()))
-			.lore("", "&8Shift + Right Click to remove all spawns")
+			.lore("", "&8• &7Shift + Right Click to remove all spawns")
 			.build(), e -> {
 
 			player.closeInventory();

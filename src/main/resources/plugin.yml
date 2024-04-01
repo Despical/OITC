@@ -4,11 +4,7 @@ author: Despical
 version: ${project.version}
 api-version: 1.13
 softdepend: [PlaceholderAPI, Multiverse-Core]
-
-commands:
-  oneinthechamber:
-    description: OITC Commands
-    aliases: [oitc, oneitchamber]
+website: https://www.spigotmc.org/resources/81185/
 
 permissions:
   oitc.admin.*:

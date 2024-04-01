@@ -15,12 +15,12 @@
 #   Commands examples:                                                                                                        #
 #    - p:say Hello everyone in %arena%!           # Player will say "Hello everyone in <arena name here>"                     #
 #    - broadcast Game %arena% has ended!          # Will broadcast "Game <arena name here> has ended" message                 #
-#    - chance(1):p:say I was very lucky!          # Player has %1 chance to say "I was very lucky!"                           #
-#    - p:chance(99):spawn                         # Player has %99 chance to teleport to spawn                                #
-#    - chance(50):eco give %player% 10            # Console has %50 chance to give player 10$                                 #
+#    - chance(1):p:say I was very lucky!          # Player has 1% chance to say "I was very lucky!"                           #
+#    - p:chance(99):spawn                         # Player has 99% chance to teleport to spawn                                #
+#    - chance(50):eco give %player% 10            # Console has 50% chance to give player 10$                                 #
 #                                                                                                                             #
 #   Just add example reward:                                                                                                  #
-#    - script:player.sendMessage("oh, hi %player%");      # It will send "oh, hi <player name>" to player! %100 plain Java!   #
+#    - script:player.sendMessage("oh, hi %player%");      # It will send "oh, hi <player name>" to player! 100% plain Java!   #
 #    - script:server.broadcastMessage("hello everyone");  # Broadcasts "hello everyone" to whole server                       #
 #    - script:player.getInventory().addItem(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIRT));                    #
 #         ^ Gives player dirt item (you must always use direct package names for not provided objects)                        #
@@ -33,24 +33,29 @@
 #                                                                                                                             #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-Rewards-Enabled: true
+Rewards-Enabled: false
 
 # Rewards must be enabled via config.yml first!
 rewards:
+
   # Commands performed when game is finished
   endgame:
     - p:say %map_name% has ended!
     - p:say Ooh and there were playing %players% players
+
   # Commands executed when player kills someone
   kill:
     - eco give %player% 2
     - chance(10):eco give %player% 8
+
   # Commands executed when player dies
   death:
     - p:say I died!
+
   # Commands executed when player wins the game
   win:
     - p:say I won the game!
+
   # Commands executed when player loses the game
   lose:
     - p:say I lost the game!

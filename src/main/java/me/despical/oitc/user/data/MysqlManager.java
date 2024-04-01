@@ -20,6 +20,7 @@ package me.despical.oitc.user.data;
 
 import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.database.MysqlDatabase;
+import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
 import org.jetbrains.annotations.NotNull;
@@ -36,15 +37,16 @@ import java.sql.Statement;
  */
 public class MysqlManager implements UserDatabase {
 
+	private final Main plugin;
 	private final String table;
-	private MysqlDatabase database;
+	private final MysqlDatabase database;
 
-	public MysqlManager() {
+	public MysqlManager(Main plugin) {
+		this.plugin = plugin;
 		this.table = ConfigUtils.getConfig(plugin, "mysql").getString("table", "oitc_stats");
+		this.database = plugin.getMysqlDatabase();
 
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-			this.database = plugin.getMysqlDatabase();
-
 			try (Connection connection = database.getConnection()) {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate("CREATE TABLE IF NOT EXISTS `" + table + "` (\n"
@@ -121,6 +123,7 @@ public class MysqlManager implements UserDatabase {
 		});
 	}
 
+	@NotNull
 	public String getTable() {
 		return table;
 	}

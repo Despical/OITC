@@ -22,6 +22,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import me.despical.commons.ReflectionUtils;
 import me.despical.commons.compat.Titles;
 import me.despical.commons.compat.XMaterial;
+import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
@@ -305,7 +306,7 @@ public class Events extends ListenerAdapter {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
 		Player victim = e.getEntity();
@@ -322,6 +323,10 @@ public class Events extends ListenerAdapter {
 		e.getEntity().playEffect(org.bukkit.EntityEffect.HURT);
 
 		Titles.sendTitle(victim.getKiller(), "", chatManager.message("in_game.messages.score_subtitle"));
+
+		if (plugin.getOption(ConfigPreferences.Option.HEAL_ON_KILL)) {
+			AttributeUtils.healPlayer(victim.getKiller());
+		}
 
 		User victimUser = userManager.getUser(victim);
 		victimUser.setStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 0);
@@ -448,7 +453,7 @@ public class Events extends ListenerAdapter {
 		}
 	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler
 	public void onChatInGame(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 		Arena arena = arenaRegistry.getArena(player);

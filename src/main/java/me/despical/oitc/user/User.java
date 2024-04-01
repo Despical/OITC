@@ -41,16 +41,18 @@ import java.util.UUID;
  */
 public class User {
 
-	private final static Main plugin = JavaPlugin.getPlugin(Main.class);
+	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	private final UUID uuid;
+	private final String name;
 	private final Map<StatsStorage.StatisticType, Integer> stats;
 
 	private boolean spectator;
 	private Scoreboard cachedScoreboard;
 
-	public User(UUID uuid) {
-		this.uuid = uuid;
+	public User(Player player) {
+		this.uuid = player.getUniqueId();
+		this.name = player.getName();
 		this.stats = new EnumMap<>(StatsStorage.StatisticType.class);
 	}
 
@@ -63,7 +65,7 @@ public class User {
 	}
 
 	public String getName() {
-		return getPlayer().getName();
+		return this.name;
 	}
 
 	public UUID getUniqueId() {

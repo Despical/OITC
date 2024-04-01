@@ -3,7 +3,6 @@
 #                      One in the Chamber                     #
 #                          Despical                           #
 #                                                             #
-#              https://www.patreon.com/despical               #
 #            https://www.buymeacoffee.com/despical            #
 #                                                             #
 #            Donations are really appreciated! <3             #
@@ -119,5 +118,8 @@ Update-Notifier-Enabled: true
 
 # Should players instantly leave the arena using leave item?
 Instant-Leave: false
+
+# Should we heal players when they kill someone?
+Heal-On-Kill: false
 
 # No way! You've reached the end! But... where's the dragon!?

@@ -2,7 +2,6 @@ package me.despical.oitc.commands;
 
 import me.despical.commandframework.Command;
 import me.despical.commandframework.CommandArguments;
-import me.despical.commons.string.StringMatcher;
 import me.despical.commons.string.StringUtils;
 import me.despical.commons.util.Collections;
 import me.despical.oitc.ConfigPreferences;
@@ -22,12 +21,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-import static me.despical.oitc.api.StatsStorage.StatisticType.*;
 import static me.despical.commandframework.Command.SenderType.PLAYER;
+import static me.despical.oitc.api.StatsStorage.StatisticType.*;
 
 /**
  * @author Despical
@@ -38,30 +38,14 @@ public class PlayerCommands extends AbstractCommand {
 
 	public PlayerCommands(Main plugin) {
 		super(plugin);
-
-		plugin.getCommandFramework().setMatchFunction(arguments -> {
-			if (arguments.isArgumentsEmpty()) return false;
-
-			String label = arguments.getLabel(), arg = arguments.getArgument(0);
-
-			List<StringMatcher.Match> matches = StringMatcher.match(arg, plugin.getCommandFramework().getCommands().stream().filter(cmd -> !cmd.name().equals("oitc")).map(cmd -> cmd.name().replace(label + ".", "")).collect(Collectors.toList()));
-
-			if (!matches.isEmpty()) {
-				arguments.sendMessage(chatManager.message("commands.did-you-mean").replace("%command%", label + " " + matches.get(0).getMatch()));
-				return true;
-			}
-
-			return false;
-		});
 	}
 
 	@Command(
 		name = "oitc.join",
+		usage = "/oitc join <arena>",
 		senderType = PLAYER
 	)
-	public void joinCommand(CommandArguments arguments) {
-		Player player = arguments.getSender();
-
+	public void joinCommand(Player player, CommandArguments arguments) {
 		if (arguments.isArgumentsEmpty()) {
 			player.sendMessage(chatManager.prefixedMessage("commands.type_arena_name"));
 			return;
@@ -79,6 +63,7 @@ public class PlayerCommands extends AbstractCommand {
 
 	@Command(
 		name = "oitc.randomjoin",
+		usage = "/oitc randomjoin",
 		senderType = PLAYER
 	)
 	public void randomJoinCommand(CommandArguments arguments) {
@@ -102,6 +87,7 @@ public class PlayerCommands extends AbstractCommand {
 
 	@Command(
 		name = "oitc.leave",
+		usage = "/oitc leave",
 		senderType = PLAYER
 	)
 	public void leaveCommand(CommandArguments arguments) {
@@ -127,24 +113,35 @@ public class PlayerCommands extends AbstractCommand {
 
 	@Command(
 		name = "oitc.stats",
+		usage = "/oitc stats <player>",
 		senderType = PLAYER
 	)
 	public void statsCommand(CommandArguments arguments) {
-		final Player sender = arguments.getSender(), player = !arguments.isArgumentsEmpty() ? plugin.getServer().getPlayer(arguments.getArgument(0)) : sender;
-		String path = "commands.stats_command.";
+		final Player sender = arguments.getSender();
+		final User user = plugin.getUserManager().getUser(sender);
 
-		if (player == null) {
-			sender.sendMessage(chatManager.prefixedMessage(path + "player_not_found"));
+		if (arguments.isArgumentsEmpty()) {
+			chatManager.getStringList("commands.stats_command.messages").stream().map(message -> formatStats(message, true, user)).forEach(sender::sendMessage);
 			return;
 		}
 
-		User user = plugin.getUserManager().getUser(player);
+		Optional<Player> targetOptional = arguments.getPlayer(0);
 
-		chatManager.getStringList("commands.stats_command.messages").stream().map(message -> formatStats(message, player.equals(sender) ? "header" : "header_other", user)).forEach(player::sendMessage);
+		if (!targetOptional.isPresent()) {
+			arguments.sendMessage(chatManager.prefixedMessage("commands.admin-commands.player-not-found"));
+			return;
+		}
+
+		targetOptional.ifPresent(player -> {
+			final User targetUser = plugin.getUserManager().getUser(player);
+			final boolean self = sender.equals(player);
+
+			chatManager.getStringList("commands.stats_command.messages").stream().map(message -> formatStats(message, self, targetUser)).forEach(sender::sendMessage);
+		});
 	}
 
-	private String formatStats(String message, String header, User user) {
-		message = message.replace("%header%", chatManager.message("commands.stats_command." + header));
+	private String formatStats(String message, boolean self, User user) {
+		message = message.replace("%header%", chatManager.message("commands.stats_command." + (self ? "header" : "header_other")));
 		message = message.replace("%kills%", KILLS.from(user));
 		message = message.replace("%deaths%", DEATHS.from(user));
 		message = message.replace("%wins%", WINS.from(user));
@@ -155,7 +152,9 @@ public class PlayerCommands extends AbstractCommand {
 	}
 
 	@Command(
-		name = "oitc.top"
+		name = "oitc.top",
+		usage = "/oitc top <statistic type>",
+		senderType = PLAYER
 	)
 	public void leaderboardCommand(CommandArguments arguments) {
 		String path = "commands.statistics.";

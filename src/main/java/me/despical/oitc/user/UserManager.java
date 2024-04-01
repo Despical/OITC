@@ -43,7 +43,7 @@ public class UserManager {
 
 	public UserManager(Main plugin) {
 		this.users = new HashSet<>();
-		this.database = plugin.getOption(ConfigPreferences.Option.DATABASE_ENABLED) ? new MysqlManager() : new FileStats();
+		this.database = plugin.getOption(ConfigPreferences.Option.DATABASE_ENABLED) ? new MysqlManager(plugin) : new FileStats(plugin);
 
 		plugin.getServer().getOnlinePlayers().forEach(this::getUser);
 	}
@@ -57,11 +57,10 @@ public class UserManager {
 			}
 		}
 
-		final User user = new User(uuid);
+		final User user = new User(player);
 		users.add(user);
 
 		database.loadStatistics(user);
-		database.saveAllStatistic(user);
 		return user;
 	}
 	

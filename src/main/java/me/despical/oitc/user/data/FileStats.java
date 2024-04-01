@@ -19,6 +19,7 @@
 package me.despical.oitc.user.data;
 
 import me.despical.commons.configuration.ConfigUtils;
+import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -30,9 +31,11 @@ import org.bukkit.configuration.file.FileConfiguration;
  */
 public class FileStats implements UserDatabase {
 
+	private final Main plugin;
 	private final FileConfiguration config;
 
-	public FileStats() {
+	public FileStats(Main plugin) {
+		this.plugin = plugin;
 		this.config = ConfigUtils.getConfig(plugin, "stats");
 	}
 
