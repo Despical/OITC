@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>2.5.5</version>
+	<version>2.5.6</version>
 	<packaging>jar</packaging>
 
 	<name>One In The Chamber</name>
@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>com.github.Despical</groupId>
 			<artifactId>Commons</artifactId>
-			<version>1.7.1</version>
+			<version>1.7.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Despical</groupId>
