@@ -5,7 +5,7 @@
 [![](https://jitpack.io/v/Despical/OITC.svg)](https://jitpack.io/#Despical/OITC)
 [![](https://img.shields.io/badge/JavaDocs-latest-lime.svg)](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html)
 [![Support](https://img.shields.io/badge/Patreon-Support-lime.svg?logo=Patreon)](https://www.patreon.com/despical)
-[![](https://img.shields.io/badge/BuyMeACoffee-Support-lime.svg?logo=BuyMeACoffee)](https://www.buymeacoffee.com/despical)
+[![](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-lime.svg?logo=BuyMeACoffee)](https://www.buymeacoffee.com/despical)
 
 One in the Chamber is an old Minecraft minigame. Each player is equipped with a sword, bow and arrow.
 The arrows do one hit one kill damage and if player missed the shot they can't receive a new arrow until they die
@@ -20,6 +20,11 @@ or killing other players. When a player reaches 25 points the game ends and winn
 ## Donations
 - [Patreon](https://www.patreon.com/despical)
 - [Buy me a Coffee](https://www.buymeacoffee.com/despical)
+
+## License
+This code is under [GPL-3.0 License](http://www.gnu.org/licenses/gpl-3.0.html)
+
+See the [LICENSE](https://github.com/Despical/OITC/blob/master/LICENSE) file for required notices and attributions.
 
 ## Using One in the Chamber API
 The project isn't in the Central Repository yet, so specifying a repository is needed.<br>
@@ -72,11 +77,6 @@ You can learn more about contributing via GitHub in [contribution guidelines](..
 ## Translations
 We are supporting multiple languages such as English, Turkish and German for now.<br>
 If you want to help us with translating take a look at our [language repository](https://github.com/Despical/LocaleStorage).
-
-## License
-This code is under [GPL-3.0 License](http://www.gnu.org/licenses/gpl-3.0.html)
-
-See the [LICENSE](https://github.com/Despical/OITC/blob/master/LICENSE) file for required notices and attributions.
 
 ## Building from source
 To build this project from source code, run the following from Git Bash:
