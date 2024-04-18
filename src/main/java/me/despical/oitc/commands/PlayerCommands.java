@@ -180,9 +180,11 @@ public class PlayerCommands extends AbstractCommand {
 
 	private void printLeaderboard(CommandSender sender, StatsStorage.StatisticType statisticType) {
 		Map<UUID, Integer> stats = StatsStorage.getStats(statisticType);
-		sender.sendMessage(plugin.getChatManager().message("commands.statistics.header"));
+		sender.sendMessage(chatManager.message("commands.statistics.header"));
 
 		String statistic = StringUtils.capitalize(statisticType.name().toLowerCase(java.util.Locale.ENGLISH).replace("_", " "));
+		String emptyEntry = chatManager.message("commands.leaderboard_command.empty_entry");
+		String unknownEntry = chatManager.message("commands.leaderboard_command.unknown_entry");
 
 		for (int i = 0; i < 10; i++) {
 			try {
@@ -190,7 +192,7 @@ public class PlayerCommands extends AbstractCommand {
 				sender.sendMessage(formatMessage(statistic, plugin.getServer().getOfflinePlayer(current).getName(), i + 1, stats.get(current)));
 				stats.remove(current);
 			} catch (IndexOutOfBoundsException ex) {
-				sender.sendMessage(formatMessage(statistic, "Empty", i + 1, 0));
+				sender.sendMessage(formatMessage(statistic, emptyEntry, i + 1, 0));
 			} catch (NullPointerException ex) {
 				UUID current = (UUID) stats.keySet().toArray()[stats.keySet().toArray().length - 1];
 
@@ -206,7 +208,7 @@ public class PlayerCommands extends AbstractCommand {
 					} catch (SQLException ignored) {}
 				}
 
-				sender.sendMessage(formatMessage(statistic, "Unknown Player", i + 1, stats.get(current)));
+				sender.sendMessage(formatMessage(statistic, unknownEntry, i + 1, stats.get(current)));
 			}
 		}
 	}

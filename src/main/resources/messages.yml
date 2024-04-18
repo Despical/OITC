@@ -28,6 +28,9 @@ Commands:
   Only-By-Player: "&cYou can execute this command only as player!"
   Not-Playing: "&cYou must play to execute this command!"
   No-Permission: "&cYou don't have permission to use this command!"
+  Leaderboard-Command:
+    Empty-Entry: "Empty"
+    Unknown-Entry: "Unknown Player"
   Admin-Commands:
     Teleported-To-Player: "&aTeleported to player!"
     Player-Not-Found: "&cPlayer not found!"
