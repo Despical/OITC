@@ -1,6 +1,6 @@
 /*
  * OITC - Kill your opponents and reach 25 points to win!
- * Copyright (C) 2023 Despical
+ * Copyright (C) 2024 Despical
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
