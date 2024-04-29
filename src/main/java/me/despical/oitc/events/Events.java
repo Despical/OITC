@@ -154,7 +154,7 @@ public class Events extends ListenerAdapter {
 		final Arena arena = arenaRegistry.getArena(player);
 
 		if (arena != null) {
-			ArenaManager.leaveAttempt(player, arena);
+			ArenaManager.leaveAttempt(player, arena, true);
 		}
 
 		userManager.removeUser(player);

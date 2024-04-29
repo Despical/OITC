@@ -187,6 +187,10 @@ public class ArenaManager {
 	}
 
 	public static void leaveAttempt(Player player, Arena arena) {
+		leaveAttempt(player, arena, false);
+	}
+
+	public static void leaveAttempt(Player player, Arena arena, boolean quit) {
 		OITCGameLeaveAttemptEvent event = new OITCGameLeaveAttemptEvent(player, arena);
 		plugin.getServer().getPluginManager().callEvent(event);
 
@@ -244,7 +248,7 @@ public class ArenaManager {
 
 		ArenaUtils.showPlayersOutsideTheGame(player, arena);
 
-		if (plugin.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
+		if (!quit && plugin.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
 			InventorySerializer.loadInventory(plugin, player);
 		}
 
