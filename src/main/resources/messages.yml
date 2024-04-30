@@ -149,6 +149,7 @@ In-Game:
     Join: "&b%player% &ejoined the game &e(&b%players%&e/&b%maxplayers%&e)!"
     Leave: "&b%player% &eleft the game &e(&b%players%&e/&b%maxplayers%&e)&7!"
     Death: "&9%player% &eis slained by &9%killer%!"
+    Unknown-Death: "&9%player% &eis killed by &ksomeoneunknown&7!"
     Already-Force-Start: "&cThe game is already starting!"
     Kill-Streak:
       - "&9%killer% &eis on &b%kill_streak% &ekill streak!"

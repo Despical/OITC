@@ -322,23 +322,31 @@ public class Events extends ListenerAdapter {
 		e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 		e.getEntity().playEffect(org.bukkit.EntityEffect.HURT);
 
-		Titles.sendTitle(victim.getKiller(), 10, 40, 10, "", chatManager.message("in_game.messages.score_subtitle"));
-
-		if (plugin.getOption(ConfigPreferences.Option.HEAL_ON_KILL)) {
-			AttributeUtils.healPlayer(victim.getKiller());
-		}
-
 		User victimUser = userManager.getUser(victim);
 		victimUser.setStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 0);
 		victimUser.addStat(StatsStorage.StatisticType.LOCAL_DEATHS, 1);
 		victimUser.addStat(StatsStorage.StatisticType.DEATHS, 1);
 		victimUser.performReward(Reward.RewardType.DEATH);
 
+		plugin.getServer().getScheduler().runTaskLater(plugin, () -> victim.spigot().respawn(), 5);
+
+		Player killer = victim.getKiller();
+
+		if (killer == null) {
+			arena.broadcastMessage(chatManager.prefixedMessage("in_game.messages.unknown_death").replace("%player%", victim.getName()));
+			return;
+		}
+
 		User killerUser = userManager.getUser(victim.getKiller());
+		killerUser.sendTitle("", chatManager.message("in_game.messages.score_subtitle"));
 		killerUser.addStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK, 1);
 		killerUser.addStat(StatsStorage.StatisticType.LOCAL_KILLS, 1);
 		killerUser.addStat(StatsStorage.StatisticType.KILLS, 1);
 		killerUser.performReward(Reward.RewardType.KILL);
+
+		if (plugin.getOption(ConfigPreferences.Option.HEAL_ON_KILL)) {
+			AttributeUtils.healPlayer(killer);
+		}
 
 		if (killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK) == 1) {
 			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.message("in_game.messages.death").replace("%killer%", victim.getKiller().getName()), victim));
@@ -346,10 +354,9 @@ public class Events extends ListenerAdapter {
 			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.getStreakMessage().replace("%kill_streak%", Integer.toString(killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
 		}
 
-		ItemPosition.addItem(victim.getKiller(), ItemPosition.ARROW, ItemPosition.ARROW.getItem());
-		plugin.getServer().getScheduler().runTaskLater(plugin, () -> victim.spigot().respawn(), 5);
+		ItemPosition.addItem(killer, ItemPosition.ARROW, ItemPosition.ARROW.getItem());
 
-		if (StatsStorage.getUserStats(victim.getKiller(), StatsStorage.StatisticType.LOCAL_KILLS) == plugin.getConfig().getInt("Winning-Score", 25)) {
+		if (StatsStorage.getUserStats(killer, StatsStorage.StatisticType.LOCAL_KILLS) == plugin.getConfig().getInt("Winning-Score", 25)) {
 			ArenaManager.stopGame(false, arena);
 		}
 	}

@@ -142,6 +142,6 @@ public class User {
 	}
 
 	public void sendTitle(String title, String subTitle) {
-		Titles.sendTitle(this.getPlayer(), 10, 60, 10, title, subTitle);
+		Titles.sendTitle(this.getPlayer(), 10, 40, 10, title, subTitle);
 	}
 }
