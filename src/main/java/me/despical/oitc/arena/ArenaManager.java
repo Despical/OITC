@@ -140,6 +140,7 @@ public class ArenaManager {
 		user.addGameItem("leave-item");
 		user.resetStats();
 		user.heal();
+		user.updateAttackCooldown();
 
 		if (arena.isArenaState(ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && player.isOp()) {
 			user.addGameItem("force-start-item");
@@ -159,7 +160,9 @@ public class ArenaManager {
 
 			ArenaUtils.hidePlayer(player, arena);
 
-			if (ArenaUtils.shouldHide()) {
+			hide_player: {
+				if (!ArenaUtils.shouldHide()) break hide_player;
+
 				for (Player spectator : arena.getPlayers()) {
 					if (plugin.getUserManager().getUser(spectator).isSpectator()) {
 						PlayerUtils.hidePlayer(player, spectator, plugin);
@@ -171,8 +174,6 @@ public class ArenaManager {
 
 			return;
 		}
-
-		AttributeUtils.setAttackCooldown(player, plugin.getConfig().getDouble("Hit-Cooldown-Delay", 4));
 
 		arena.teleportToLobby(player);
 		arena.doBarAction(1, player);
@@ -215,9 +216,8 @@ public class ArenaManager {
 
 		chatManager.broadcastAction(arena, user, ActionType.LEAVE);
 
-		AttributeUtils.resetAttackCooldown(player);
-
 		user.heal();
+		user.resetAttackCooldown();
 		user.setSpectator(false);
 		arena.getScoreboardManager().removeScoreboard(player);
 		arena.doBarAction(0, player);

@@ -18,6 +18,7 @@
 
 package me.despical.oitc.user;
 
+import me.despical.commons.ReflectionUtils;
 import me.despical.commons.compat.Titles;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.oitc.ConfigPreferences;
@@ -27,12 +28,14 @@ import me.despical.oitc.api.events.player.OITCPlayerStatisticChangeEvent;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.handlers.rewards.Reward;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -49,6 +52,7 @@ public class User {
 	private final Map<StatsStorage.StatisticType, Integer> stats;
 
 	private boolean spectator;
+	private double attackCooldown;
 	private Scoreboard cachedScoreboard;
 
 	public User(Player player) {
@@ -143,5 +147,29 @@ public class User {
 
 	public void sendTitle(String title, String subTitle) {
 		Titles.sendTitle(this.getPlayer(), 10, 40, 10, title, subTitle);
+	}
+
+	public void updateAttackCooldown() {
+		if (!ReflectionUtils.supports(9)) return;
+
+		Player player = this.getPlayer();
+
+		if (player == null) return;
+
+		Optional.ofNullable(player.getAttribute(Attribute.GENERIC_ATTACK_SPEED)).ifPresent(attribute -> {
+			this.attackCooldown = attribute.getBaseValue();
+
+			attribute.setBaseValue(plugin.getConfig().getDouble("Hit-Cooldown-Delay", 4));
+		});
+	}
+
+	public void resetAttackCooldown() {
+		if (!ReflectionUtils.supports(9)) return;
+
+		Player player = this.getPlayer();
+
+		if (player == null) return;
+
+		Optional.ofNullable(player.getAttribute(Attribute.GENERIC_ATTACK_SPEED)).ifPresent(attribute -> attribute.setBaseValue(this.attackCooldown));
 	}
 }

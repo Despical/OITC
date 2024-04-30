@@ -24,7 +24,6 @@ import me.despical.oitc.handlers.items.GameItemManager;
 import me.despical.oitc.handlers.language.LanguageManager;
 import org.bstats.bukkit.Metrics;
 import me.despical.commons.database.MysqlDatabase;
-import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.scoreboard.ScoreboardLib;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
@@ -87,7 +86,8 @@ public class Main extends JavaPlugin {
 			arena.getScoreboardManager().stopAllScoreboards();
 
 			for (Player player : arena.getPlayers()) {
-				AttributeUtils.resetAttackCooldown(player);
+				User user = userManager.getUser(player);
+				user.resetAttackCooldown();
 
 				arena.teleportToEndLocation(player);
 				arena.doBarAction(0, player);

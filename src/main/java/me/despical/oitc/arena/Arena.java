@@ -438,7 +438,6 @@ public class Arena extends BukkitRunnable {
 
 				for (Player player : players) {
 					ArenaUtils.showPlayersOutsideTheGame(player, this);
-					AttributeUtils.resetAttackCooldown(player);
 
 					for (final User users : plugin.getUserManager().getUsers()) {
 						final Player usersPlayer = users.getPlayer();
@@ -465,6 +464,7 @@ public class Arena extends BukkitRunnable {
 					doBarAction(0, player);
 
 					User user = plugin.getUserManager().getUser(player);
+					user.resetAttackCooldown();
 					user.performReward(Reward.RewardType.END_GAME);
 					user.removeScoreboard();
 				}
