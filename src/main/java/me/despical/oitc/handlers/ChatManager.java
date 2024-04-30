@@ -32,6 +32,9 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author Despical
@@ -72,7 +75,7 @@ public class ChatManager {
 	public String prefixedMessage(String path) {
 		return prefix + message(path);
 	}
-	
+
 	public String message(String message, Player player) {
 		String returnString = message(message);
 
@@ -124,7 +127,6 @@ public class ChatManager {
 		return prefix + formatMessage(arena, message(path), value);
 	}
 
-
 	private String formatPlaceholders(String message, Arena arena) {
 		String returnString = message;
 
@@ -144,10 +146,28 @@ public class ChatManager {
 		return arena != null ? formatPlaceholders(returnString, arena) : returnString;
 	}
 
-	public String getStreakMessage() {
-		final List<String> quotes = getStringList("In-Game.Messages.Kill-Streak");
+	public String getStreakMessage(int score) {
+		List<String> quotes = getStringList("In-Game.Messages.Kill-Streak");
+		Pattern pattern = Pattern.compile("^\\d+");
+		List<String> pointQuote = quotes.stream().filter(str -> {
+			Matcher matcher = pattern.matcher(str);
 
-		return quotes.get(ThreadLocalRandom.current().nextInt(quotes.size()));
+			if (matcher.find()) {
+				String numberStr = matcher.group();
+				int number = Integer.parseInt(numberStr);
+
+				return number == score;
+			}
+
+			return false;
+		}).map(str -> str.substring(str.indexOf(':') + 1)).collect(Collectors.toList());
+
+		if (!pointQuote.isEmpty()) {
+			return pointQuote.get(ThreadLocalRandom.current().nextInt(pointQuote.size())).replace("%kill_streak%", Integer.toString(score));
+		}
+
+		List<String> filtered = quotes.stream().filter(str -> !Character.isDigit(str.charAt(0))).collect(Collectors.toList());
+		return filtered.get(ThreadLocalRandom.current().nextInt(filtered.size())).replace("%kill_streak%", Integer.toString(score));
 	}
 
 	public List<String> getStringList(String path) {

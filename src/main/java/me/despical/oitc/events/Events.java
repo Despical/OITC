@@ -348,10 +348,12 @@ public class Events extends ListenerAdapter {
 			AttributeUtils.healPlayer(killer);
 		}
 
-		if (killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK) == 1) {
+		int killStreak = killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK);
+
+		if (killStreak == 1) {
 			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.message("in_game.messages.death").replace("%killer%", victim.getKiller().getName()), victim));
 		} else {
-			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.getStreakMessage().replace("%kill_streak%", Integer.toString(killerUser.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK))).replace("%killer%", victim.getKiller().getName()), victim));
+			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.getStreakMessage(killStreak).replace("%killer%", victim.getKiller().getName()), victim));
 		}
 
 		ItemPosition.addItem(killer, ItemPosition.ARROW, ItemPosition.ARROW.getItem());

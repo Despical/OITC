@@ -154,6 +154,9 @@ In-Game:
     Kill-Streak:
       - "&9%killer% &eis on &b%kill_streak% &ekill streak!"
       - "&9%killer% &eis unbeatable!"
+      - "2:&9%killer% &egot 2 players in a row!"
+      - "5:&9%killer% &egot 5 kills in a row!"
+      - "10:&9%killer% &eis now reached to 10 kills in a row!"
     Seconds-Left-Title: "&c%time% &eseconds left!"
     Seconds-Left-Subtitle: "&eAfter %time%s the game will be finished"
     Score-Subtitle: "&a&l+&6&l1"
