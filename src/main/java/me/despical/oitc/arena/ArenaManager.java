@@ -19,7 +19,6 @@
 package me.despical.oitc.arena;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.despical.commons.compat.Titles;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.MiscUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
@@ -280,10 +279,9 @@ public class ArenaManager {
 			if (topPlayerName.equals(player.getName())) {
 				user.addStat(StatsStorage.StatisticType.WINS, 1);
 				user.performReward(Reward.RewardType.WIN);
-
-				Titles.sendTitle(player, chatManager.message("in_game.messages.game_end_messages.titles.win"), chatManager.message("in_game.messages.game_end_messages.subtitles.win").replace("%winner%", topPlayerName));
+				user.sendTitle(chatManager.message("in_game.messages.game_end_messages.titles.win"), chatManager.message("in_game.messages.game_end_messages.subtitles.win").replace("%winner%", topPlayerName));
 			} else {
-				Titles.sendTitle(player, chatManager.message("in_game.messages.game_end_messages.titles.lose"), chatManager.message("in_game.messages.game_end_messages.subtitles.lose").replace("%winner%", topPlayerName));
+				user.sendTitle(chatManager.message("in_game.messages.game_end_messages.titles.lose"), chatManager.message("in_game.messages.game_end_messages.subtitles.lose").replace("%winner%", topPlayerName));
 
 				if (!user.isSpectator()) {
 					user.addStat(StatsStorage.StatisticType.LOSES, 1);

@@ -18,6 +18,7 @@
 
 package me.despical.oitc.user;
 
+import me.despical.commons.compat.Titles;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
@@ -120,7 +121,7 @@ public class User {
 		}
 	}
 
-	public void performReward(final Reward.RewardType rewardType) {
+	public void performReward(Reward.RewardType rewardType) {
 		plugin.getRewardsFactory().performReward(this, rewardType);
 	}
 
@@ -138,5 +139,9 @@ public class User {
 
 			cachedScoreboard = null;
 		}
+	}
+
+	public void sendTitle(String title, String subTitle) {
+		Titles.sendTitle(this.getPlayer(), 10, 60, 10, title, subTitle);
 	}
 }

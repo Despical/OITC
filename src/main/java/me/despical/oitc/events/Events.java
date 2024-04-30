@@ -322,7 +322,7 @@ public class Events extends ListenerAdapter {
 		e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 		e.getEntity().playEffect(org.bukkit.EntityEffect.HURT);
 
-		Titles.sendTitle(victim.getKiller(), "", chatManager.message("in_game.messages.score_subtitle"));
+		Titles.sendTitle(victim.getKiller(), 10, 40, 10, "", chatManager.message("in_game.messages.score_subtitle"));
 
 		if (plugin.getOption(ConfigPreferences.Option.HEAL_ON_KILL)) {
 			AttributeUtils.healPlayer(victim.getKiller());
@@ -363,7 +363,7 @@ public class Events extends ListenerAdapter {
 
 		event.setRespawnLocation(arena.getRandomSpawnPoint());
 
-		Titles.sendTitle(player, "", chatManager.message("in_game.messages.death_subtitle"));
+		Titles.sendTitle(player, 10, 40, 10, "", chatManager.message("in_game.messages.death_subtitle"));
 
 		ItemPosition.giveKit(player);
 	}

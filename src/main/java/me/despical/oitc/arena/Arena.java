@@ -18,7 +18,6 @@
 
 package me.despical.oitc.arena;
 
-import me.despical.commons.compat.Titles;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
@@ -420,7 +419,7 @@ public class Arena extends BukkitRunnable {
 					String title = chatManager.message("in_game.messages.seconds_left_title").replace("%time%", Integer.toString(getTimer()));
 					String subtitle = chatManager.message("in_game.messages.seconds_left_subtitle").replace("%time%", Integer.toString(getTimer()));
 
-					players.forEach(p -> Titles.sendTitle(p, title, subtitle));
+					plugin.getUserManager().getUsers(this).forEach(user -> user.sendTitle(title, subtitle));
 				}
 
 				setTimer(getTimer() - 1);
