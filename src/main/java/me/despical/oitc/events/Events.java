@@ -19,11 +19,11 @@
 package me.despical.oitc.events;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.despical.commons.ReflectionUtils;
 import me.despical.commons.compat.Titles;
 import me.despical.commons.compat.XMaterial;
 import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
+import me.despical.commons.reflection.XReflection;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
 import me.despical.commons.util.UpdateChecker;
@@ -512,7 +512,7 @@ public class Events extends ListenerAdapter {
 	}
 	
 	private void registerLegacyEvents() {
-		registerIf(ReflectionUtils.supports(9) && ReflectionUtils.supportsPatch(2), new Listener() {
+		registerIf(XReflection.supports(9) && XReflection.supportsPatch(2), new Listener() {
 
 			@EventHandler
 			public void onItemSwap(PlayerSwapHandItemsEvent event) {
@@ -522,7 +522,7 @@ public class Events extends ListenerAdapter {
 			}
 		});
 
-		registerIf(ReflectionUtils.supports(9), new Listener() {
+		registerIf(XReflection.supports(9), new Listener() {
 
 			@EventHandler
 			public void onArrowPickup(PlayerPickupArrowEvent event) {

@@ -18,9 +18,9 @@
 
 package me.despical.oitc.util;
 
-import me.despical.commons.ReflectionUtils;
 import me.despical.commons.compat.XMaterial;
 import me.despical.commons.item.ItemBuilder;
+import me.despical.commons.reflection.XReflection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -43,7 +43,7 @@ public enum ItemPosition {
 
 	ItemPosition(int itemPosition, ItemBuilder itemBuilder) {
 		this.itemPosition = itemPosition;
-		this.itemStack = ReflectionUtils.supports(9) ? itemBuilder.unbreakable(true).build() : itemBuilder.build();
+		this.itemStack = XReflection.supports(9) ? itemBuilder.unbreakable(true).build() : itemBuilder.build();
 	}
 
 	public static void addItem(Player player, ItemPosition itemPosition, ItemStack itemStack) {

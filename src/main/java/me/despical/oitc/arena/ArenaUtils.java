@@ -18,8 +18,8 @@
 
 package me.despical.oitc.arena;
 
-import me.despical.commons.ReflectionUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
+import me.despical.commons.reflection.XReflection;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import org.bukkit.entity.Player;
@@ -80,7 +80,7 @@ public class ArenaUtils {
 		}
 	}
 
-	private final static boolean isLegacy = !ReflectionUtils.supports(9);
+	private final static boolean isLegacy = !XReflection.supports(9);
 	private final static boolean hide = plugin.getOption(ConfigPreferences.Option.HIDE_PLAYERS);
 	private final static boolean isNameTagsSupported = !isLegacy && plugin.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN);
 

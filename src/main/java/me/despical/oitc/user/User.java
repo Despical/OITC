@@ -18,9 +18,9 @@
 
 package me.despical.oitc.user;
 
-import me.despical.commons.ReflectionUtils;
 import me.despical.commons.compat.Titles;
 import me.despical.commons.miscellaneous.AttributeUtils;
+import me.despical.commons.reflection.XReflection;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
@@ -150,7 +150,7 @@ public class User {
 	}
 
 	public void updateAttackCooldown() {
-		if (!ReflectionUtils.supports(9)) return;
+		if (!XReflection.supports(9)) return;
 
 		Player player = this.getPlayer();
 
@@ -164,7 +164,7 @@ public class User {
 	}
 
 	public void resetAttackCooldown() {
-		if (!ReflectionUtils.supports(9)) return;
+		if (!XReflection.supports(9)) return;
 
 		Player player = this.getPlayer();
 
