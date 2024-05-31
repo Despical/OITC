@@ -7,6 +7,7 @@ import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.user.User;
+import me.despical.oitc.util.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -37,7 +38,7 @@ public class GameItemEvents extends ListenerAdapter {
 		final GameItem leaveItem = plugin.getGameItemManager().getGameItem("leave-item");
 
 		if (leaveItem == null) return;
-		if (!event.getItem().getItemMeta().equals(leaveItem.getItemStack().getItemMeta())) return;
+		if (!Utils.checkItemsEqual(event.getItem(), leaveItem.getItemStack())) return;
 
 		final Player player = user.getPlayer();
 
@@ -82,10 +83,10 @@ public class GameItemEvents extends ListenerAdapter {
 		if (arena == null) return;
 		if (event.getItem() == null) return;
 
-		final GameItem leaveItem = plugin.getGameItemManager().getGameItem("force-start-item");
+		final GameItem forceStartItem = plugin.getGameItemManager().getGameItem("force-start-item");
 
-		if (leaveItem == null) return;
-		if (!event.getItem().getItemMeta().equals(leaveItem.getItemStack().getItemMeta())) return;
+		if (forceStartItem == null) return;
+		if (!Utils.checkItemsEqual(event.getItem(), forceStartItem.getItemStack())) return;
 
 		if (arena.getPlayers().size() < 2) {
 			arena.broadcastMessage(chatManager.formatMessage(arena, "in_game.messages.lobby_messages.waiting_for_players"));
