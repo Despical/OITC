@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -56,12 +57,25 @@ public class GameItemEvents extends ListenerAdapter {
 
 			this.leaveConfirmations.add(user);
 
-			plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-				if (!this.leaveConfirmations.contains(user)) return;
+			new BukkitRunnable() {
 
-				this.leaveArena(player, arena);
-				this.leaveConfirmations.remove(user);
-			}, 60);
+				int ticks = 0;
+
+				@Override
+				public void run() {
+					if (!leaveConfirmations.contains(user)) {
+						cancel();
+						return;
+					}
+
+					if ((ticks += 2) == 60) {
+						cancel();
+						leaveArena(player, arena);
+
+						leaveConfirmations.remove(user);
+					}
+				}
+			}.runTaskTimer(plugin, 0, 2);
 		}
 	}
 
