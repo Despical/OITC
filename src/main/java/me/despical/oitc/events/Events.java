@@ -33,7 +33,6 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaState;
-import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.util.ItemPosition;
@@ -45,19 +44,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 /**
  * @author Despical
@@ -201,47 +195,6 @@ public class Events extends ListenerAdapter {
 	public void onInGameBedEnter(PlayerBedEnterEvent event) {
 		if (arenaRegistry.isInArena(event.getPlayer())) {
 			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler
-	public void onPlayAgain(PlayerInteractEvent event) {
-		if (event.getAction() == Action.PHYSICAL) return;
-
-		ItemStack itemStack = event.getItem();
-		Player player = event.getPlayer();
-		Arena currentArena = arenaRegistry.getArena(player);
-
-		if (currentArena == null) return;
-
-		final GameItem gameItem = plugin.getGameItemManager().getGameItem("play-again");
-		
-		if (gameItem == null) return;
-
-		if (gameItem.getItemStack().equals(itemStack)) {
-			event.setCancelled(true);
-
-			ArenaManager.leaveAttempt(player, currentArena);
-
-			Map<Arena, Integer> arenas = new HashMap<>();
-
-			for (Arena arena : arenaRegistry.getArenas()) {
-				if (arena.isArenaState(ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && arena.getPlayers().size() < 2) {
-					arenas.put(arena, arena.getPlayers().size());
-				}
-			}
-
-			if (!arenas.isEmpty()) {
-				Stream<Map.Entry<Arena, Integer>> sorted = arenas.entrySet().stream().sorted(Map.Entry.comparingByValue());
-				Arena arena = sorted.findFirst().get().getKey();
-
-				if (arena != null) {
-					ArenaManager.joinAttempt(player, arena);
-					return;
-				}
-			}
-
-			player.sendMessage(chatManager.prefixedMessage("commands.no_free_arenas"));
 		}
 	}
 

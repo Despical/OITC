@@ -7,15 +7,18 @@ import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.user.User;
-import me.despical.oitc.util.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class GameItemEvents extends ListenerAdapter {
 
@@ -39,7 +42,7 @@ public class GameItemEvents extends ListenerAdapter {
 		final GameItem leaveItem = plugin.getGameItemManager().getGameItem("leave-item");
 
 		if (leaveItem == null) return;
-		if (!Utils.checkItemsEqual(event.getItem(), leaveItem.getItemStack())) return;
+		if (!leaveItem.equals(event.getItem())) return;
 
 		final Player player = user.getPlayer();
 
@@ -100,7 +103,7 @@ public class GameItemEvents extends ListenerAdapter {
 		final GameItem forceStartItem = plugin.getGameItemManager().getGameItem("force-start-item");
 
 		if (forceStartItem == null) return;
-		if (!Utils.checkItemsEqual(event.getItem(), forceStartItem.getItemStack())) return;
+		if (!forceStartItem.equals(event.getItem())) return;
 
 		if (arena.getPlayers().size() < 2) {
 			arena.broadcastMessage(chatManager.formatMessage(arena, "in_game.messages.lobby_messages.waiting_for_players"));
@@ -118,5 +121,46 @@ public class GameItemEvents extends ListenerAdapter {
 			arena.setForceStart(true);
 			arena.broadcastMessage(chatManager.prefixedMessage("in_game.messages.admin_messages.set_starting_in_to_0"));
 		}
+	}
+
+	@EventHandler
+	public void onPlayAgain(PlayerInteractEvent event) {
+		if (event.getAction() == Action.PHYSICAL) return;
+
+		ItemStack itemStack = event.getItem();
+		Player player = event.getPlayer();
+		Arena currentArena = arenaRegistry.getArena(player);
+
+		if (currentArena == null) return;
+		if (event.getItem() == null) return;
+
+		final GameItem gameItem = plugin.getGameItemManager().getGameItem("play-again");
+
+		if (gameItem == null) return;
+		if (!gameItem.equals(event.getItem())) return;
+
+		event.setCancelled(true);
+
+		ArenaManager.leaveAttempt(player, currentArena);
+
+		Map<Arena, Integer> arenas = new HashMap<>();
+
+		for (Arena arena : arenaRegistry.getArenas()) {
+			if (arena.isArenaState(ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && arena.getPlayers().size() < 2) {
+				arenas.put(arena, arena.getPlayers().size());
+			}
+		}
+
+		if (!arenas.isEmpty()) {
+			Stream<Map.Entry<Arena, Integer>> sorted = arenas.entrySet().stream().sorted(Map.Entry.comparingByValue());
+			Arena arena = sorted.findFirst().get().getKey();
+
+			if (arena != null) {
+				ArenaManager.joinAttempt(player, arena);
+				return;
+			}
+		}
+
+		player.sendMessage(chatManager.prefixedMessage("commands.no_free_arenas"));
 	}
 }

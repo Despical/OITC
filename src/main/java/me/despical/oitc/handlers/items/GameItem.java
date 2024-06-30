@@ -22,6 +22,7 @@ import me.despical.commons.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
@@ -46,5 +47,14 @@ public class GameItem {
 
 	public int getSlot() {
 		return slot;
+	}
+
+	public boolean equals(ItemStack item) {
+		final ItemMeta meta = item.getItemMeta();
+		final ItemMeta itemStackMeta = itemStack.getItemMeta();
+
+		return item.getType() == itemStack.getType() &&
+			meta.getDisplayName().equals(itemStackMeta.getDisplayName()) &&
+			meta.getLore() != null && meta.getLore().equals(itemStackMeta.getLore());
 	}
 }
