@@ -40,7 +40,7 @@ public enum ArenaOption {
 
 	START_TIME("Starting-Time", 15);
 
-	int defaultValue;
+	private final int defaultValue;
 
 	ArenaOption(int defaultValue) {
 		this.defaultValue = defaultValue;

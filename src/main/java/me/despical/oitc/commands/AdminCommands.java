@@ -26,8 +26,6 @@ import org.bukkit.util.StringUtil;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static me.despical.commandframework.Command.SenderType.PLAYER;
-
 /**
  * @author Despical
  * <p>
@@ -85,7 +83,7 @@ public class AdminCommands extends AbstractCommand {
 		permission = "oitc.admin.create",
 		desc = "Create an arena with default configuration.",
 		usage = "/oitc create <arena name>",
-		senderType = PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
 	public void createCommand(CommandArguments arguments) {
 		Player player = arguments.getSender();
@@ -139,7 +137,7 @@ public class AdminCommands extends AbstractCommand {
 		permission = "oitc.admin.delete",
 		desc = "Delete specified arena and its data",
 		usage = "/oitc delete <arena name>",
-		senderType = PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
 	public void deleteCommand(CommandArguments arguments) {
 		if (arguments.isArgumentsEmpty()) {
@@ -172,7 +170,7 @@ public class AdminCommands extends AbstractCommand {
 		permission = "oitc.admin.list",
 		desc = "Get a list of registered arenas and their status",
 		usage = "/oitc list",
-		senderType = PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
 	public void listCommand(CommandArguments arguments) {
 		List<Arena> arenas = new ArrayList<>(arenaRegistry.getArenas());
@@ -191,7 +189,7 @@ public class AdminCommands extends AbstractCommand {
 		permission = "oitc.admin.forcestart",
 		desc = "Forces arena to start without waiting time",
 		usage = "/oitc forcestart",
-		senderType =  PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
 	public void forceStartCommand(CommandArguments arguments) {
 		Player player = arguments.getSender();
@@ -225,9 +223,9 @@ public class AdminCommands extends AbstractCommand {
 		permission = "oitc.admin.stop",
 		desc = "Stop the arena that you're in",
 		usage = "/oitc stop",
-		senderType = PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
-	public void oitcStopCommand(CommandArguments arguments) {
+	public void stopCommand(CommandArguments arguments) {
 		Player player = arguments.getSender();
 		Arena arena = arenaRegistry.getArena(player);
 
@@ -246,7 +244,7 @@ public class AdminCommands extends AbstractCommand {
 		permission = "oitc.admin.edit",
 		desc = "Open arena editor for specified arena",
 		usage = "/oitc edit <arena name>",
-		senderType = PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
 	public void editCommand(CommandArguments arguments) {
 		if (arguments.isArgumentsEmpty()) {

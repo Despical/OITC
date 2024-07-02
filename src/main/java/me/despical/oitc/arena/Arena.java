@@ -18,7 +18,6 @@
 
 package me.despical.oitc.arena;
 
-import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.oitc.ConfigPreferences;
