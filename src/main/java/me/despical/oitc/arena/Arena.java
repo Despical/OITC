@@ -75,7 +75,7 @@ public class Arena extends BukkitRunnable {
 		this.gameBarManager = new GameBarManager(this, plugin);
 
 		for (ArenaOption option : ArenaOption.values()) {
-			arenaOptions.put(option, option.getDefaultValue());
+			arenaOptions.put(option, option.value());
 		}
 	}
 
@@ -155,16 +155,8 @@ public class Arena extends BukkitRunnable {
 		gameLocations.put(GameLocation.END, endLoc);
 	}
 
-	public int getStartTime() {
-		return getOption(ArenaOption.START_TIME);
-	}
-
-	public int getWaitingTime() {
-		return getOption(ArenaOption.WAITING_TIME);
-	}
-
 	public int getGameplayTime() {
-		return getOption(ArenaOption.CLASSIC_GAMEPLAY_TIME);
+		return getOption(ArenaOption.GAMEPLAY_TIME);
 	}
 
 	public ArenaState getArenaState() {
@@ -312,11 +304,11 @@ public class Arena extends BukkitRunnable {
 			gameBarManager.handleGameBar();
 		}
 
-		int size = players.size(), waitingTime = getWaitingTime(), minPlayers = getMinimumPlayers();
+		final int minPlayers = getMinimumPlayers(), waitingTime = getOption(ArenaOption.LOBBY_WAITING_TIME), startingTime = getOption(ArenaOption.LOBBY_STARTING_TIME);
 
 		switch (arenaState) {
 			case WAITING_FOR_PLAYERS:
-				if (size < minPlayers) {
+				if (players.size() < minPlayers) {
 					if (getTimer() <= 0) {
 						setTimer(45);
 						broadcastMessage(chatManager.formatMessage(this, "in_game.messages.lobby_messages.waiting_for_players"));
@@ -338,7 +330,7 @@ public class Arena extends BukkitRunnable {
 					}
 				}
 
-				if (size < minPlayers) {
+				if (players.size() < minPlayers) {
 					setTimer(waitingTime);
 					setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 					broadcastMessage(chatManager.prefixedFormattedMessage(this, "in_game.messages.lobby_messages.waiting_for_players", minPlayers));
@@ -351,8 +343,8 @@ public class Arena extends BukkitRunnable {
 					break;
 				}
 
-				if (size >= getMaximumPlayers() && getTimer() >= getStartTime() && !forceStart) {
-					setTimer(getStartTime());
+				if (players.size() >= getMaximumPlayers() && getTimer() >= startingTime && !forceStart) {
+					setTimer(startingTime);
 
 					if (getTimer() == 15 || getTimer() == 10 || getTimer() <= 5) {
 						broadcastMessage(chatManager.prefixedMessage("in_game.messages.lobby_messages.start_in", getTimer()));

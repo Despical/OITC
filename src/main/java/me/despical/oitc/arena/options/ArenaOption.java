@@ -28,17 +28,19 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public enum ArenaOption {
 
-	TIMER(15),
+	TIMER(45),
 
 	MINIMUM_PLAYERS(2),
 
 	MAXIMUM_PLAYERS(10),
 
-	CLASSIC_GAMEPLAY_TIME("Classic-Gameplay-Time", 600),
+	LOBBY_WAITING_TIME("Time-Settings.Lobby-Waiting-Time", 45),
 
-	WAITING_TIME("Waiting-Time", 60),
+	LOBBY_STARTING_TIME("Time-Settings.Lobby-Starting-Time", 16),
 
-	START_TIME("Starting-Time", 15);
+	LOBBY_ENDING_TIME("Time-Settings.Ending-Time", 6),
+
+	GAMEPLAY_TIME("Time-Settings.Default-Gameplay-Time", 600);
 
 	private final int defaultValue;
 
@@ -49,10 +51,10 @@ public enum ArenaOption {
 	ArenaOption(String path, int defaultValue) {
 		final Main plugin = JavaPlugin.getPlugin(Main.class);
 
-		this.defaultValue = plugin.getConfig().getInt(path, defaultValue);
+		this.defaultValue = Math.max(0, plugin.getConfig().getInt(path, defaultValue));
 	}
 
-	public int getDefaultValue() {
+	public int value() {
 		return defaultValue;
 	}
 }

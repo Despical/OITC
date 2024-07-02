@@ -18,18 +18,22 @@
 #    zh_CN - Chinese (China)
 locale: default
 
+Time-Settings:
+  # Default gameplay time is 600 seconds which is 10 minutes.
+  Default-Gameplay-Time: 270
+  # Every 45 seconds a broadcast message will be sent to players
+  # about how many players should arena need to start.
+  Lobby-Waiting-Time: 45
+  # How many seconds should we wait for other players when we reach
+  # minimum player amount in the arena.
+  Lobby-Starting-Time: 16
+  # How many seconds are we going to wait in ending state?
+  # After this amount of time passed we'll send players to lobby.
+  Ending-Time: 6
+
 # See messages.yml for game bar messages.
 # Should we create a game bar for in-game players?
 Game-Bar-Enabled: true
-
-# How many seconds game should take to start.
-Waiting-Time: 60
-
-# Lobby waiting time set when lobby max players number is reached, used to start game quicker.
-Starting-Time: 15
-
-# How many seconds classic game should play.
-Classic-Gameplay-Time: 600
 
 # Should we hook into bungee cord? (If you want to use arena per server option)
 # You STILL need to use external addon for HUB server game signs

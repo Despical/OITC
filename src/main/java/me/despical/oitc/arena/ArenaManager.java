@@ -28,6 +28,7 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.api.events.game.OITCGameJoinAttemptEvent;
 import me.despical.oitc.api.events.game.OITCGameLeaveAttemptEvent;
 import me.despical.oitc.api.events.game.OITCGameStopEvent;
+import me.despical.oitc.arena.options.ArenaOption;
 import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.handlers.ChatManager.ActionType;
 import me.despical.oitc.handlers.rewards.Reward;
@@ -265,7 +266,7 @@ public class ArenaManager {
 			arena.broadcastMessage(chatManager.prefixedMessage("in_game.messages.admin_messages.stopped_game"));
 			return;
 		} else {
-			arena.setTimer(6);
+			arena.setTimer(ArenaOption.LOBBY_ENDING_TIME.value());
 		}
 
 		String topPlayerName = arena.getScoreboardManager().getTopPlayerName(0);
