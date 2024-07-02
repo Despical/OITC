@@ -127,7 +127,7 @@ public class ChatManager {
 		return prefix + formatMessage(arena, message(path), value);
 	}
 
-	private String formatPlaceholders(String message, Arena arena) {
+	public String formatPlaceholders(String message, Arena arena) {
 		String returnString = message;
 
 		returnString = returnString.replace("%arena%", arena.getMapName());

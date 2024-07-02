@@ -5,11 +5,9 @@
 #                                                             #
 #            https://www.buymeacoffee.com/despical            #
 #                                                             #
-#            Donations are really appreciated! <3             #
-#                                                             #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# If you want to translate for us check out: https://github.com/Despical/LocaleStorage#locale-storage
+# Translate for us: https://github.com/Despical/LocaleStorage#locale-storage
 
 # Available locales:
 #    default - English
@@ -20,8 +18,9 @@
 #    zh_CN - Chinese (China)
 locale: default
 
-# Enable boss bar support?
-Boss-Bar-Enabled: true
+# See messages.yml for game bar messages.
+# Should we create a game bar for in-game players?
+Game-Bar-Enabled: true
 
 # How many seconds game should take to start.
 Waiting-Time: 60

@@ -90,7 +90,7 @@ public class Main extends JavaPlugin {
 				user.resetAttackCooldown();
 
 				arena.teleportToEndLocation(player);
-				arena.doBarAction(0, player);
+				arena.getGameBar().doBarAction(user, 0);
 				arena.getScoreboardManager().removeScoreboard(player);
 
 				player.setFlySpeed(.1F);

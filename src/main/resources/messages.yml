@@ -89,13 +89,12 @@ Scoreboard:
       - ""
       - "&epatreon.com/despical"
 
-# Has usage only when boss bar is enabled in config.yml
-Boss-Bar:
-  Main-Title: "&e&lPLAYING &f&lONE IN THE CHAMBER &e&lby &b&lDespical"
-  Starting-In: "&f&lStarting in: &e&l%time%"
+# Leave any message empty to hide bar in a specific arena state.
+Game-Bar:
   Waiting-For-Players: "&e&lPLAYING &f&lONE IN THE CHAMBER &e&lby &b&lDespical"
-  In-Game-Info: "&e&lPlaying &f&lONE IN THE CHAMBER &e&lby &b&lDESPICAL"
-  Game-Ended: "&c&lGame has ended! You were playing &b&lOITC"
+  Starting: "&e&lPLAYING &f&lONE IN THE CHAMBER &e&lby &b&lDespical"
+  In-Game: ""
+  Ending: "&e&lPLAYING &f&lONE IN THE CHAMBER &e&lby &b&lDespical"
 
 # Used in most game messages.
 In-Game:

@@ -19,7 +19,6 @@
 package me.despical.oitc.arena;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.despical.commons.miscellaneous.AttributeUtils;
 import me.despical.commons.miscellaneous.MiscUtils;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.serializer.InventorySerializer;
@@ -176,7 +175,7 @@ public class ArenaManager {
 		}
 
 		arena.teleportToLobby(player);
-		arena.doBarAction(1, player);
+		arena.getGameBar().doBarAction(user, 1);
 		arena.showPlayers();
 
 		ArenaUtils.showPlayer(player, arena);
@@ -220,7 +219,7 @@ public class ArenaManager {
 		user.resetAttackCooldown();
 		user.setSpectator(false);
 		arena.getScoreboardManager().removeScoreboard(player);
-		arena.doBarAction(0, player);
+		arena.getGameBar().doBarAction(user, 0);
 
 		user.removeScoreboard();
 
