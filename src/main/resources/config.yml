@@ -20,7 +20,7 @@ locale: default
 
 Time-Settings:
   # Default gameplay time is 600 seconds which is 10 minutes.
-  Default-Gameplay-Time: 270
+  Default-Gameplay-Time: 600
   # Every 45 seconds a broadcast message will be sent to players
   # about how many players should arena need to start.
   Lobby-Waiting-Time: 45
@@ -30,6 +30,12 @@ Time-Settings:
   # How many seconds are we going to wait in ending state?
   # After this amount of time passed we'll send players to lobby.
   Ending-Time: 6
+
+Respawn-Protection:
+  # Should player be invulnerable for a limited time after respawning? (time in seconds)
+  Invulnerable: 0
+  # Should player be invisible for a limited time after respawning? (time in ticks)
+  Invisibility: 0
 
 # See messages.yml for game bar messages.
 # Should we create a game bar for in-game players?

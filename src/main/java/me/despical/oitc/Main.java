@@ -130,6 +130,7 @@ public class Main extends JavaPlugin {
 		ScoreboardLib.setPluginInstance(this);
 		ListenerAdapter.registerEvents(this);
 		AbstractCommand.registerCommands(this);
+		User.cooldownHandlerTask();
 
 		startPluginMetrics();
 

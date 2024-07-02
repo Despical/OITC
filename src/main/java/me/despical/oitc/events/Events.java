@@ -36,6 +36,7 @@ import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
 import me.despical.oitc.util.ItemPosition;
+import me.despical.oitc.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -51,6 +52,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.regex.Pattern;
 
@@ -243,6 +245,22 @@ public class Events extends ListenerAdapter {
 
 	@EventHandler
 	public void onDamageEntity(EntityDamageByEntityEvent e) {
+		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Player)) return;
+
+		Player damager = (Player) e.getDamager();
+		Player player = (Player) e.getEntity();
+
+		if (arenaRegistry.isInArena(player) && arenaRegistry.isInArena(damager)) {
+			User user = plugin.getUserManager().getUser(player);
+
+			if (user.getCooldown("respawn_protection") > 0) {
+				e.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler
+	public void onArrowDamage(EntityDamageByEntityEvent e) {
 		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Arrow)) return;
 
 		Arrow arrow = (Arrow) e.getDamager();
@@ -254,6 +272,13 @@ public class Events extends ListenerAdapter {
 
 		if (arenaRegistry.isInArena(player) && arenaRegistry.isInArena(shooter)) {
 			if (!player.getUniqueId().equals(shooter.getUniqueId())) {
+				User user = plugin.getUserManager().getUser(player);
+
+				if (user.getCooldown("respawn_protection") > 0) {
+					e.setCancelled(true);
+					return;
+				}
+
 				e.setDamage(100.0);
 			} else {
 				e.setCancelled(true);
@@ -281,6 +306,7 @@ public class Events extends ListenerAdapter {
 		victimUser.addStat(StatsStorage.StatisticType.LOCAL_DEATHS, 1);
 		victimUser.addStat(StatsStorage.StatisticType.DEATHS, 1);
 		victimUser.performReward(Reward.RewardType.DEATH);
+		victimUser.setCooldown("respawn_protection", plugin.getConfig().getInt("Respawn-Protection.Invulnerable"));
 
 		plugin.getServer().getScheduler().runTaskLater(plugin, () -> victim.spigot().respawn(), 5);
 
@@ -325,6 +351,12 @@ public class Events extends ListenerAdapter {
 		if (arena == null) return;
 
 		event.setRespawnLocation(arena.getRandomSpawnPoint());
+
+		int invisibilityDuration = plugin.getConfig().getInt("Respawn-Protection.Invisibility");
+
+		if (invisibilityDuration != 0) {
+			plugin.getServer().getScheduler().runTaskLater(plugin, () -> Utils.addPotionEffect(player, PotionEffectType.INVISIBILITY, invisibilityDuration, 0), 1);
+		}
 
 		Titles.sendTitle(player, 10, 40, 10, "", chatManager.message("in_game.messages.death_subtitle"));
 

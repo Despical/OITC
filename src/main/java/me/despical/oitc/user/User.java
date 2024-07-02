@@ -36,10 +36,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.text.MessageFormat;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Despical
@@ -49,9 +46,11 @@ import java.util.UUID;
 public class User {
 
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
+	private static long cooldownCounter = 0;
 
 	private final UUID uuid;
 	private final String name;
+	private final Map<String, Double> cooldowns;
 	private final Map<StatsStorage.StatisticType, Integer> stats;
 
 	private Page pinnedPage;
@@ -63,6 +62,7 @@ public class User {
 		this.uuid = player.getUniqueId();
 		this.name = player.getName();
 		this.pinnedPage = new Page(null, "", 0, 0);
+		this.cooldowns = new HashMap<>();
 		this.stats = new EnumMap<>(StatsStorage.StatisticType.class);
 	}
 
@@ -204,5 +204,19 @@ public class User {
 
 	public void sendRawMessage(final String message, final Object... args) {
 		this.getPlayer().sendMessage(plugin.getChatManager().coloredRawMessage(MessageFormat.format(message, args)));
+	}
+
+	public void setCooldown(String s, double seconds) {
+		cooldowns.put(s, seconds + cooldownCounter);
+	}
+
+	public double getCooldown(String s) {
+		final Double cooldown = cooldowns.get(s);
+
+		return (cooldown == null || cooldown <= cooldownCounter) ? 0 : cooldown - cooldownCounter;
+	}
+
+	public static void cooldownHandlerTask() {
+		plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> cooldownCounter++, 20, 20);
 	}
 }

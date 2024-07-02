@@ -84,10 +84,6 @@ public class ArenaUtils {
 	private final static boolean hide = plugin.getOption(ConfigPreferences.Option.HIDE_PLAYERS);
 	private final static boolean isNameTagsSupported = !isLegacy && plugin.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN);
 
-	public static boolean isLegacy() {
-		return isLegacy;
-	}
-
 	public static boolean shouldHide() {
 		return hide;
 	}
