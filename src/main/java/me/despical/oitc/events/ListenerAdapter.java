@@ -60,7 +60,7 @@ public abstract class ListenerAdapter implements Listener {
 				listenerAdapter.getConstructor(Main.class).newInstance(plugin);
 			}
 		} catch (Exception ignored) {
-			plugin.getLogger().warning("Exception occurred on event registering.");
+			plugin.getLogger().warning("Exception occurred on event .");
 		}
 	}
 }

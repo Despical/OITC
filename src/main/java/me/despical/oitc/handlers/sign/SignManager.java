@@ -228,4 +228,18 @@ public class SignManager implements Listener {
 	public boolean isGameSign(Block block) {
 		return this.arenaSigns.stream().anyMatch(sign -> sign.getSign().getLocation().equals(block.getLocation()));
 	}
+
+	public void updateSign(final Arena arena) {
+		this.arenaSigns.stream().filter(arenaSign -> arenaSign.getArena().equals(arena)).forEach(this::updateSign);
+	}
+
+	private void updateSign(final ArenaSign arenaSign) {
+		final Sign sign = arenaSign.getSign();
+
+		for (int i = 0; i < signLines.size(); i++) {
+			sign.setLine(i, formatSign(signLines.get(i), arenaSign.getArena()));
+		}
+
+		sign.update();
+	}
 }

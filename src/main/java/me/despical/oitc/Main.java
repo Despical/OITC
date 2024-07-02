@@ -177,7 +177,6 @@ public class Main extends JavaPlugin {
 		return database;
 	}
 
-	@NotNull
 	public SignManager getSignManager() {
 		return signManager;
 	}

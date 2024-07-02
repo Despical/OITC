@@ -12,7 +12,8 @@ import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaState;
-import me.despical.oitc.handlers.setup.SetupInventory;
+import me.despical.oitc.menu.setup.ArenaEditorMenu;
+import me.despical.oitc.user.User;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -259,7 +260,9 @@ public class AdminCommands extends AbstractCommand {
 			return;
 		}
 
-		new SetupInventory(plugin, arena, arguments.getSender()).openInventory();
+		final User user = plugin.getUserManager().getUser(arguments.getSender());
+
+		new ArenaEditorMenu(plugin, user, arena).showGui();
 	}
 
 	@SuppressWarnings("deprecation")

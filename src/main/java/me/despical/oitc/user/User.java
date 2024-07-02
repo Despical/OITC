@@ -28,11 +28,14 @@ import me.despical.oitc.api.events.player.OITCPlayerStatisticChangeEvent;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.handlers.rewards.Reward;
+import me.despical.oitc.menu.Page;
+import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 
+import java.text.MessageFormat;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -51,6 +54,7 @@ public class User {
 	private final String name;
 	private final Map<StatsStorage.StatisticType, Integer> stats;
 
+	private Page pinnedPage;
 	private boolean spectator;
 	private double attackCooldown;
 	private Scoreboard cachedScoreboard;
@@ -58,6 +62,7 @@ public class User {
 	public User(Player player) {
 		this.uuid = player.getUniqueId();
 		this.name = player.getName();
+		this.pinnedPage = new Page(null, "", 0, 0);
 		this.stats = new EnumMap<>(StatsStorage.StatisticType.class);
 	}
 
@@ -171,5 +176,33 @@ public class User {
 		if (player == null) return;
 
 		Optional.ofNullable(player.getAttribute(Attribute.GENERIC_ATTACK_SPEED)).ifPresent(attribute -> attribute.setBaseValue(this.attackCooldown));
+	}
+
+	public void setPinnedPage(final Page pinnedPage) {
+		this.pinnedPage = pinnedPage;
+	}
+
+	public Page getPinnedPage() {
+		return pinnedPage;
+	}
+
+	public Location getLocation() {
+		return this.getPlayer().getLocation();
+	}
+
+	public void closeOpenedInventory() {
+		plugin.getServer().getScheduler().runTaskLater(plugin, () -> getPlayer().closeInventory(), 1L);
+	}
+
+	public void sendMessage(final String path) {
+		Optional.ofNullable(this.getPlayer()).ifPresent(player -> player.sendMessage(plugin.getChatManager().prefixedMessage(path, player)));
+	}
+
+	public void sendRawMessage(final String message) {
+		this.getPlayer().sendMessage(plugin.getChatManager().coloredRawMessage(message));
+	}
+
+	public void sendRawMessage(final String message, final Object... args) {
+		this.getPlayer().sendMessage(plugin.getChatManager().coloredRawMessage(MessageFormat.format(message, args)));
 	}
 }

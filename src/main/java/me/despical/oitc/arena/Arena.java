@@ -177,7 +177,7 @@ public class Arena extends BukkitRunnable {
 		this.arenaState = arenaState;
 
 		plugin.getServer().getPluginManager().callEvent(new OITCGameStateChangeEvent(this, arenaState));
-		plugin.getSignManager().updateSigns();
+		this.updateSigns();
 	}
 
 	public boolean isArenaState(final ArenaState first, final ArenaState second) {
@@ -250,6 +250,10 @@ public class Arena extends BukkitRunnable {
 		for (Player player : players) {
 			player.sendMessage(message);
 		}
+	}
+
+	public void updateSigns() {
+		Optional.ofNullable(plugin.getSignManager()).ifPresent(signManager -> signManager.updateSign(this));
 	}
 
 	public void teleportToEndLocation(Player player) {

@@ -17,7 +17,6 @@ Commands:
   Correct-Usage: "&cCorrect usage: %usage%"
   Removed-Game-Instance: "&aSuccessfully removed game instance!"
   No-Arena-Like-That: "&cWe couldn't find any arena with that name matching!"
-  Look-Sign: "&cYou have to look at a sign to perform this command!"
   Type-Arena-Name: "&cPlease type an arena name!"
   No-Free-Arenas: "&cThere isn't any available arena!"
   Statistics:
@@ -189,8 +188,10 @@ Signs:
   Please-Type-Arena-Name: "&cPlease type arena name in second line!"
   Arena-Doesnt-Exists: "&cArena with that name doesn't exists!"
   Doesnt-Have-Permission: "&cYou don't have enough permission to break this sign!"
-  Sign-Created: "&aSign created successfully!"
+  Sign-Created: "&aArena sign has been created successfully!"
   Sign-Removed: "&aSign successfully removed!"
+  Look-Sign: "&cYou are not looking at any sign block!"
+  Already-A-Sign: "&cThis sign is already a game sign!"
   Game-States:
     Waiting: "&lWaiting..."
     Starting: "&e&lStarting"
