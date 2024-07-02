@@ -18,6 +18,7 @@
 
 package me.despical.oitc.events.spectator.components;
 
+import me.despical.commons.compat.XMaterial;
 import me.despical.commons.item.ItemBuilder;
 import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.inventoryframework.GuiItem;
@@ -45,14 +46,14 @@ public class MiscComponents implements SpectatorSettingComponent {
 		Player player = spectatorSettingsMenu.getPlayer();
 		Arena arena = plugin.getArenaRegistry().getArena(player);
 		ItemStack nightVision = player.hasPotionEffect(PotionEffectType.NIGHT_VISION) ?
-			new ItemBuilder(Material.ENDER_PEARL)
+			new ItemBuilder(XMaterial.ENDER_PEARL)
 				.name(plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Disable-Night-Vision"))
 				.lore(plugin.getChatManager().getStringList("In-Game.Spectator.Settings-Menu.Disable-Night-Vision-Lore"))
 				.build()
 
 			:
 
-			new ItemBuilder(Material.ENDER_EYE)
+			new ItemBuilder(XMaterial.ENDER_EYE)
 				.name(plugin.getChatManager().message("In-Game.Spectator.Settings-Menu.Enable-Night-Vision"))
 				.lore(plugin.getChatManager().getStringList("In-Game.Spectator.Settings-Menu.Enable-Night-Vision-Lore"))
 				.build();
