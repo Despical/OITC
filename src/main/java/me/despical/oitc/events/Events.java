@@ -49,6 +49,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 
 import java.util.regex.Pattern;
@@ -239,7 +240,7 @@ public class Events extends ListenerAdapter {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onDamageEntity(EntityDamageByEntityEvent e) {
 		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Arrow)) return;
@@ -315,7 +316,7 @@ public class Events extends ListenerAdapter {
 			ArenaManager.stopGame(false, arena);
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
@@ -349,11 +350,17 @@ public class Events extends ListenerAdapter {
 	}
 
 	@EventHandler
-	public void onItemMove(InventoryClickEvent event) {
-		if (event.getWhoClicked() instanceof Player) {
-			if (arenaRegistry.isInArena((Player) event.getWhoClicked())) {
-				event.setResult(Event.Result.DENY);
-			}
+	public void onItemMove(InventoryClickEvent e) {
+		if (!(e.getWhoClicked() instanceof Player)) {
+			return;
+		}
+
+		Player player = (Player) e.getWhoClicked();
+
+		if (userManager.getUser(player).getArena() == null) return;
+
+		if (e.getView().getType() == InventoryType.CRAFTING || e.getView().getType() == InventoryType.PLAYER) {
+			e.setResult(Event.Result.DENY);
 		}
 	}
 
@@ -463,7 +470,7 @@ public class Events extends ListenerAdapter {
 
 		return chatManager.coloredRawMessage(formatted);
 	}
-	
+
 	private void registerLegacyEvents() {
 		registerIf(XReflection.supports(9) && XReflection.supportsPatch(2), new Listener() {
 
