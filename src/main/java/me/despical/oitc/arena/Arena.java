@@ -218,11 +218,19 @@ public class Arena extends BukkitRunnable {
 		player.teleport(getRandomSpawnPoint());
 	}
 
-	private void teleportAllToStartLocation() {
-		int i = 0;
+	public void teleportAllToStartLocation() {
+		int i = 0, size = this.playerSpawnPoints.size();
 
-		for (Player player : getPlayersLeft()) {
-			player.teleport(playerSpawnPoints.get(i++));
+		for (final Player player : this.getPlayersLeft()) {
+			if (i + 1 > size) {
+				plugin.getLogger().warning("There aren't enough spawn points to teleport players!");
+				plugin.getLogger().warning("We are teleporting player to a random location for now!");
+
+				player.teleport(this.playerSpawnPoints.get(ThreadLocalRandom.current().nextInt(size)));
+				break;
+			}
+
+			player.teleport(this.playerSpawnPoints.get(i++));
 		}
 	}
 
@@ -290,6 +298,8 @@ public class Arena extends BukkitRunnable {
 
 		for (Player player : players) {
 			for (Player p : players) {
+				if (player.equals(p)) continue;
+
 				PlayerUtils.showPlayer(player, p, plugin);
 				PlayerUtils.showPlayer(p, player, plugin);
 			}
@@ -382,6 +392,7 @@ public class Arena extends BukkitRunnable {
 				int playerSize = getPlayersLeft().size();
 
 				if (playerSize < 2 || getTimer() <= 0) {
+					System.out.println("wtf");
 					ArenaManager.stopGame(false, this);
 					return;
 				}
@@ -414,7 +425,7 @@ public class Arena extends BukkitRunnable {
 
 						PlayerUtils.showPlayer(player, usersPlayer, plugin);
 
-						if (!plugin.getArenaRegistry().isInArena(usersPlayer)) {
+						if (!plugin.getArenaRegistry().isInArena(usersPlayer) || players.contains(usersPlayer)) {
 							PlayerUtils.showPlayer(usersPlayer, player, plugin);
 						}
 					}

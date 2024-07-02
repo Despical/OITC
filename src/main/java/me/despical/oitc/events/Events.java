@@ -254,6 +254,7 @@ public class Events extends ListenerAdapter {
 			User user = plugin.getUserManager().getUser(player);
 
 			if (user.getCooldown("respawn_protection") > 0) {
+				e.setDamage(0D);
 				e.setCancelled(true);
 			}
 		}

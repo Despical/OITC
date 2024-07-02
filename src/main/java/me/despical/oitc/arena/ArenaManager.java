@@ -269,6 +269,8 @@ public class ArenaManager {
 			arena.setTimer(ArenaOption.LOBBY_ENDING_TIME.value());
 		}
 
+		arena.showPlayers();
+
 		String topPlayerName = arena.getScoreboardManager().getTopPlayerName(0);
 
 		for (Player player : arena.getPlayers()) {
