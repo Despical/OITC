@@ -20,7 +20,6 @@ package me.despical.oitc.api.events.game;
 
 import me.despical.oitc.api.events.OITCEvent;
 import me.despical.oitc.arena.Arena;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 
 /**

@@ -26,7 +26,6 @@ import me.despical.inventoryframework.GuiItem;
 import me.despical.inventoryframework.pane.PaginatedPane;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
-
 import me.despical.oitc.menu.AbstractMenu;
 import me.despical.oitc.menu.Page;
 import me.despical.oitc.user.User;

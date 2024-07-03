@@ -1,6 +1,7 @@
 package me.despical.oitc.handlers.language;
 
 import me.despical.oitc.handlers.language.LanguageManager.Locale;
+
 import java.util.HashSet;
 import java.util.Set;
 

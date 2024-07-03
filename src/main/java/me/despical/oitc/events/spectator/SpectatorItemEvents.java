@@ -39,7 +39,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Despical
