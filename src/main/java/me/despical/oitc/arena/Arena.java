@@ -31,7 +31,6 @@ import me.despical.oitc.arena.options.ArenaOption;
 import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
-import me.despical.oitc.util.ItemPosition;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -378,7 +377,7 @@ public class Arena extends BukkitRunnable {
 						player.setGameMode(GameMode.ADVENTURE);
 						player.sendMessage(chatManager.prefixedMessage("in_game.messages.lobby_messages.game_started"));
 
-						ItemPosition.giveKit(player);
+						plugin.getGameItemManager().giveKit(player, this);
 					}
 
 					if (forceStart) {
@@ -392,7 +391,6 @@ public class Arena extends BukkitRunnable {
 				int playerSize = getPlayersLeft().size();
 
 				if (playerSize < 2 || getTimer() <= 0) {
-					System.out.println("wtf");
 					ArenaManager.stopGame(false, this);
 					return;
 				}

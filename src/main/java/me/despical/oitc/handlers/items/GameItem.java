@@ -20,11 +20,13 @@ package me.despical.oitc.handlers.items;
 
 import me.despical.commons.item.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Despical
@@ -36,8 +38,18 @@ public class GameItem {
 	private final ItemStack itemStack;
 	private final int slot;
 
-	public GameItem(final String displayName, final Material material, int slot, final List<String> lore) {
+	public GameItem(String displayName, Material material, int slot, List<String> lore) {
 		this.itemStack = new ItemBuilder(material).name(displayName).lore(lore).flag(ItemFlag.HIDE_UNBREAKABLE).build();
+		this.slot = slot;
+	}
+
+	public GameItem(String displayName, Material material, int slot, List<String> lore, List<ItemFlag> flags, Map<Enchantment, Integer> enchants) {
+		ItemBuilder builder = new ItemBuilder(material).name(displayName).lore(lore).flag(ItemFlag.HIDE_UNBREAKABLE);
+
+		enchants.forEach(builder::enchantment);
+		flags.forEach(builder::flag);
+
+		this.itemStack = builder.build();
 		this.slot = slot;
 	}
 

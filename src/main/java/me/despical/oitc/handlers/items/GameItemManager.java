@@ -20,12 +20,19 @@ package me.despical.oitc.handlers.items;
 
 import me.despical.commons.compat.XMaterial;
 import me.despical.commons.configuration.ConfigUtils;
+import me.despical.commons.number.NumberUtils;
 import me.despical.oitc.Main;
+import me.despical.oitc.arena.Arena;
+import me.despical.oitc.util.Utils;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Despical
@@ -35,10 +42,14 @@ import java.util.Map;
 public class GameItemManager {
 
 	private final Main plugin;
+	private final GameItem arrowItem;
+	private final Map<String, List<GameItem>> kits;
 	private final Map<String, GameItem> gameItems;
 
 	public GameItemManager(final Main plugin) {
 		this.plugin = plugin;
+		this.arrowItem = new GameItem("&7Arrow", XMaterial.ARROW.parseMaterial(), 7, new ArrayList<>());
+		this.kits = new HashMap<>();
 		this.gameItems = new HashMap<>();
 		this.registerItems();
 	}
@@ -47,20 +58,77 @@ public class GameItemManager {
 		return this.gameItems.get(id);
 	}
 
+	public void giveKit(Player player, Arena arena) {
+		if (player == null) return;
+
+		player.getInventory().clear();
+
+		String kitId = kits.containsKey(arena.getId()) ? arena.getId() : "default";
+		kits.get(kitId).forEach(item -> Utils.addItem(player, item.getItemStack(), item.getSlot()));
+
+		player.updateInventory();
+	}
+
+	public void giveArrow(Player player, Arena arena) {
+		String kitId = kits.containsKey(arena.getId()) ? arena.getId() : "default";
+		Material arrowMaterial = XMaterial.ARROW.parseMaterial();
+		GameItem arrow = kits.get(kitId).stream().filter(item -> item.getItemStack().getType() == arrowMaterial).findFirst().orElse(arrowItem);
+
+		Utils.addItem(player, arrow.getItemStack(), arrow.getSlot());
+	}
+
 	private void registerItems() {
 		final FileConfiguration config = ConfigUtils.getConfig(plugin, "items");
-		final ConfigurationSection section = config.getConfigurationSection("items");
+
+		items:
+		{
+			final ConfigurationSection section = config.getConfigurationSection("items");
+
+			if (section == null) {
+				plugin.getLogger().warning("Couldn't find 'items' section in items.yml, delete file to regenerate it!");
+				break items;
+			}
+
+			for (final String id : section.getKeys(false)) {
+				final String path = String.format("items.%s.", id);
+				final GameItem gameItem = new GameItem(config.getString(path + "name"), XMaterial.valueOf(config.getString(path + "material")).parseMaterial(), config.getInt(path + "slot"), config.getStringList(path + "lore"));
+
+				this.gameItems.put(id, gameItem);
+			}
+		}
+
+		final ConfigurationSection section = config.getConfigurationSection("kits");
 
 		if (section == null) {
-			plugin.getLogger().warning("Couldn't find 'items' section in items.yml, delete the file to regenerate it!");
+			plugin.getLogger().warning("Couldn't find 'kits' section in items.yml, delete file to regenerate it!");
 			return;
 		}
 
-		for (final String id : section.getKeys(false)) {
-			final String path = String.format("items.%s.", id);
-			final GameItem gameItem = new GameItem(config.getString(path + "name"), XMaterial.valueOf(config.getString(path + "material")).parseMaterial(), config.getInt(path + "slot"), config.getStringList(path + "lore"));
+		for (final String arenaId : section.getKeys(false)) {
+			ConfigurationSection itemSection = config.getConfigurationSection(String.format("kits.%s.", arenaId));
 
-			this.gameItems.put(id, gameItem);
+			if (itemSection == null) continue;
+
+			List<GameItem> kitItems = new ArrayList<>();
+
+			for (final String slotPath : itemSection.getKeys(false)) {
+				final String path = String.format("kits.%s.%s.", arenaId, slotPath);
+				final int slot = NumberUtils.getInt(slotPath, -1);
+
+				if (slot == -1) {
+					plugin.getLogger().warning("Keys under 'arena id' must be an integer that represents slots!");
+					return;
+				}
+
+				final Map<Enchantment, Integer> enchants = config.getStringList(path + "enchantments").stream().collect(Collectors.toMap(value -> Enchantment.getByName(value.split(":")[0]), value -> NumberUtils.getInt(value.split(":")[1], 1)));
+				final List<ItemFlag> flags = config.getStringList(path + "item-flags").stream().map(ItemFlag::valueOf).collect(Collectors.toList());
+				final XMaterial material = XMaterial.valueOf(config.getString(path + "material"));
+				final GameItem gameItem = new GameItem(config.getString(path + "name"), material.parseMaterial(), slot, config.getStringList(path + "lore"), flags, enchants);
+
+				kitItems.add(gameItem);
+			}
+
+			kits.put(arenaId, kitItems);
 		}
 	}
 }

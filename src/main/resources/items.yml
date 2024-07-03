@@ -23,3 +23,43 @@ items:
     slot: 4
     lore:
       - "&7Right-click to force start the game!"
+
+kits:
+  # If an arena does not have a kit, the default kit will be given.
+  # Change 'default' to arena id to create custom kits for different arenas.
+  default:
+    # Slot of the item.
+    '0':
+      material: WOODEN_SWORD
+      name: "&7Sword"
+      lore: []
+    '1':
+      material: BOW
+      lore: []
+      enchantments:
+        - "LUCK:1"
+      item-flags:
+        - "HIDE_ENCHANTS"
+    '7':
+      material: ARROW
+      name: "&7Arrow"
+      lore: []
+
+  # 'example-kit-1' is the arena id (not map name).
+  example-kit-1:
+    # Slot of the item.
+    '0':
+      material: DIAMOND_SWORD
+      name: "&b&lDiamond Sword"
+      lore: []
+    '1':
+      material: BOW
+      lore: []
+      enchantments:
+        - "LUCK:1"
+      item-flags:
+        - "HIDE_ENCHANTS"
+    '7':
+      material: ARROW
+      name: "&7Arrow"
+      lore: []

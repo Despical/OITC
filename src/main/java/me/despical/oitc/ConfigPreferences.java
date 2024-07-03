@@ -54,18 +54,31 @@ public class ConfigPreferences {
 
 	public enum Option {
 
-		BLOCK_COMMANDS, GAME_BAR_ENABLED, BUNGEE_ENABLED(false), CHAT_FORMAT_ENABLED, DATABASE_ENABLED(false),
-		DISABLE_FALL_DAMAGE(false), DISABLE_LEAVE_COMMAND(false), DISABLE_SEPARATE_CHAT(false),
-		ENABLE_SHORT_COMMANDS, INVENTORY_MANAGER_ENABLED("Inventory-Manager.Enabled"),
-		NAME_TAGS_HIDDEN, UPDATE_NOTIFIER_ENABLED, REGEN_ENABLED(false), HIDE_PLAYERS, ENABLE_ARROW_PICKUPS(false),
-		LEVEL_COUNTDOWN_ENABLED(false), DISABLE_SPECTATING_ON_BUNGEE(false), INSTANT_LEAVE(false), HEAL_ON_KILL(false),
-
+		BLOCK_COMMANDS,
+		BUNGEE_ENABLED(false),
+		CHAT_FORMAT_ENABLED,
+		DATABASE_ENABLED(false),
+		DISABLE_FALL_DAMAGE(false),
+		DISABLE_LEAVE_COMMAND(false),
+		DISABLE_SEPARATE_CHAT(false),
+		DISABLE_SPECTATING_ON_BUNGEE(false),
+		ENABLE_ARROW_PICKUPS(false),
+		ENABLE_SHORT_COMMANDS,
+		GAME_BAR_ENABLED,
+		HEAL_ON_KILL(false),
 		HEAL_PLAYER((config) -> {
 			final List<String> list = config.getStringList("Inventory-Manager.Do-Not-Restore");
 			list.forEach(InventorySerializer::addNonSerializableElements);
 
 			return !list.contains("health");
-		});
+		}),
+		HIDE_PLAYERS,
+		INSTANT_LEAVE(false),
+		INVENTORY_MANAGER_ENABLED("Inventory-Manager.Enabled"),
+		LEVEL_COUNTDOWN_ENABLED(false),
+		NAME_TAGS_HIDDEN,
+		REGEN_ENABLED(false),
+		UPDATE_NOTIFIER_ENABLED;
 
 		final String path;
 		final boolean def;

@@ -1,6 +1,9 @@
 package me.despical.oitc.util;
 
+import me.despical.oitc.handlers.items.GameItem;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -25,4 +28,20 @@ public class Utils {
 
 		player.addPotionEffect(effect);
 	}
+
+	public static void addItem(Player player, ItemStack itemStack, int slot) {
+		if (player == null) {
+			return;
+		}
+
+		Inventory inv = player.getInventory();
+		ItemStack item = inv.getItem(slot);
+
+		if (item != null) {
+			item.setAmount(item.getAmount() + itemStack.getAmount());
+		} else {
+			inv.setItem(slot, itemStack);
+		}
+	}
+
 }

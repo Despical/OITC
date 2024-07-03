@@ -35,7 +35,6 @@ import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.handlers.rewards.Reward;
 import me.despical.oitc.user.User;
-import me.despical.oitc.util.ItemPosition;
 import me.despical.oitc.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -337,7 +336,7 @@ public class Events extends ListenerAdapter {
 			arena.broadcastMessage(chatManager.prefixedFormattedMessage(arena, chatManager.getStreakMessage(killStreak).replace("%killer%", victim.getKiller().getName()), victim));
 		}
 
-		ItemPosition.addItem(killer, ItemPosition.ARROW, ItemPosition.ARROW.getItem());
+		plugin.getGameItemManager().giveArrow(killer, arena);
 
 		if (StatsStorage.getUserStats(killer, StatsStorage.StatisticType.LOCAL_KILLS) == plugin.getConfig().getInt("Winning-Score", 25)) {
 			ArenaManager.stopGame(false, arena);
@@ -361,7 +360,7 @@ public class Events extends ListenerAdapter {
 
 		Titles.sendTitle(player, 10, 40, 10, "", chatManager.message("in_game.messages.death_subtitle"));
 
-		ItemPosition.giveKit(player);
+		plugin.getGameItemManager().giveKit(player, arena);
 	}
 
 	@EventHandler
