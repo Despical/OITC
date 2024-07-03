@@ -324,8 +324,6 @@ public class AdminCommands extends AbstractCommand {
 		}
 
 		if (args.length == 2) {
-			if (Arrays.asList("create", "list", "randomjoin", "leave", "forcestart", "stop", "help").contains(arg)) return completions;
-
 			if (arg.equalsIgnoreCase("top")) {
 				return StringUtil.copyPartialMatches(args[1], Arrays.asList("kills", "deaths", "games_played", "highest_score", "loses", "wins"), completions);
 			}
@@ -334,9 +332,11 @@ public class AdminCommands extends AbstractCommand {
 				return StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()), completions);
 			}
 
-			final List<String> arenas = arenaRegistry.getArenas().stream().map(Arena::getId).sorted().collect(Collectors.toList());
+			if (Arrays.asList("delete", "edit", "join").contains(arg)) {
+				final List<String> arenas = arenaRegistry.getArenas().stream().map(Arena::getId).sorted().collect(Collectors.toList());
 
-            return StringUtil.copyPartialMatches(args[1], arenas, completions);
+				return StringUtil.copyPartialMatches(args[1], arenas, completions);
+			}
 		}
 
 		return completions;
