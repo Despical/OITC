@@ -59,8 +59,8 @@ public abstract class ListenerAdapter implements Listener {
 			for (final Class<?> listenerAdapter : listenerAdapters) {
 				listenerAdapter.getConstructor(Main.class).newInstance(plugin);
 			}
-		} catch (Exception ignored) {
-			plugin.getLogger().warning("Exception occurred on event .");
+		} catch (Exception exception) {
+			exception.printStackTrace();
 		}
 	}
 }
