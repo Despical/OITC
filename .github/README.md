@@ -85,4 +85,5 @@ git clone https://www.github.com/Despical/OITC.git && cd OITC
 mvn clean package -Dmaven.javadoc.skip=true
 ```
 
-> **Note** Don't forget to install Maven before building.
+> [!IMPORTANT]  
+> **[Maven](https://maven.apache.org/)** must be installed to build Command Framework.
