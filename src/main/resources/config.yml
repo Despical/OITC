@@ -32,9 +32,9 @@ Time-Settings:
   Ending-Time: 6
 
 Respawn-Protection:
-  # Should player be invulnerable for a limited time after respawning? (time in seconds)
+  # Should players be invulnerable for a limited time after respawning? (time in seconds)
   Invulnerable: 0
-  # Should player be invisible for a limited time after respawning? (time in ticks)
+  # Should players be invisible for a limited time after respawning? (time in ticks)
   Invisibility: 0
 
 # See messages.yml for game bar messages.
