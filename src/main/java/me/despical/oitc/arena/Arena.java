@@ -187,10 +187,6 @@ public class Arena extends BukkitRunnable {
 		arenaOptions.put(option, value);
 	}
 
-	public Set<Player> getPlayers() {
-		return players;
-	}
-
 	public void teleportToLobby(Player player) {
 		player.setFoodLevel(20);
 		player.setFlying(false);
@@ -220,7 +216,7 @@ public class Arena extends BukkitRunnable {
 	public void teleportAllToStartLocation() {
 		int i = 0, size = this.playerSpawnPoints.size();
 
-		for (final Player player : this.getPlayersLeft()) {
+		for (final Player player : this.getPlayers()) {
 			if (i + 1 > size) {
 				plugin.getLogger().warning("There aren't enough spawn points to teleport players!");
 				plugin.getLogger().warning("We are teleporting player to a random location for now!");
@@ -292,11 +288,17 @@ public class Arena extends BukkitRunnable {
 		return plugin.getUserManager().getUsers(this).stream().filter(user -> !user.isSpectator()).map(User::getPlayer).collect(Collectors.toSet());
 	}
 
+	public List<Player> getPlayers() {
+		return this.players.stream().filter(player -> player != null && player.isOnline()).collect(Collectors.toList());
+	}
+
 	public void showPlayers() {
 		if (!ArenaUtils.shouldHide()) return;
 
-		for (Player player : players) {
-			for (Player p : players) {
+		List<Player> onlinePlayers = this.getPlayers();
+
+		for (Player player : onlinePlayers) {
+			for (Player p : onlinePlayers) {
 				if (player.equals(p)) continue;
 
 				PlayerUtils.showPlayer(player, p, plugin);
@@ -334,7 +336,7 @@ public class Arena extends BukkitRunnable {
 				break;
 			case STARTING:
 				if (plugin.getOption(ConfigPreferences.Option.LEVEL_COUNTDOWN_ENABLED)) {
-					for (Player player : players) {
+					for (Player player : this.getPlayers()) {
 						player.setLevel(getTimer());
 					}
 				}
@@ -344,7 +346,7 @@ public class Arena extends BukkitRunnable {
 					setArenaState(ArenaState.WAITING_FOR_PLAYERS);
 					broadcastMessage(chatManager.prefixedFormattedMessage(this, "in_game.messages.lobby_messages.waiting_for_players", minPlayers));
 
-					for (Player player : players) {
+					for (Player player : this.getPlayers()) {
 						player.setExp(1F);
 						player.setLevel(0);
 					}
@@ -368,7 +370,7 @@ public class Arena extends BukkitRunnable {
 					setTimer(getGameplayTime());
 					teleportAllToStartLocation();
 
-					for (Player player : players) {
+					for (Player player : this.getPlayers()) {
 						ArenaUtils.updateNameTagsVisibility(player);
 						ArenaUtils.hidePlayersOutsideTheGame(player, this);
 
@@ -413,13 +415,13 @@ public class Arena extends BukkitRunnable {
 				scoreboardManager.stopAllScoreboards();
 				gameBarManager.removeAll();
 
-				for (Player player : players) {
+				for (Player player : this.getPlayers()) {
 					ArenaUtils.showPlayersOutsideTheGame(player, this);
 
 					for (final User users : plugin.getUserManager().getUsers()) {
 						final Player usersPlayer = users.getPlayer();
 
-						if (player == null || usersPlayer == null) continue;
+						if (usersPlayer == null) continue;
 
 						PlayerUtils.showPlayer(player, usersPlayer, plugin);
 
@@ -448,7 +450,7 @@ public class Arena extends BukkitRunnable {
 				}
 
 				if (plugin.getOption(ConfigPreferences.Option.INVENTORY_MANAGER_ENABLED)) {
-					players.forEach(player -> InventorySerializer.loadInventory(plugin, player));
+					this.getPlayers().forEach(player -> InventorySerializer.loadInventory(plugin, player));
 				}
 
 				if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED) && plugin.getBungeeManager().isShutdownWhenGameEnds()) {

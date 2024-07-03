@@ -1,6 +1,5 @@
 package me.despical.oitc.util;
 
-import me.despical.oitc.handlers.items.GameItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -43,5 +42,4 @@ public class Utils {
 			inv.setItem(slot, itemStack);
 		}
 	}
-
 }
