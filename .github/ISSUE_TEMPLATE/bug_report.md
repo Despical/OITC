@@ -1,9 +1,9 @@
 ---
-name: Bug report
-about: Help us with issues related One in the Chamber
-title: "[Category] Short description"
-labels: ''
-assignees: ''
+name: Bug Report
+about: Help us with issues related One in the Chamber.
+title: "Short description"
+labels: 'bug'
+assignees: 'Despical'
 
 ---
 
