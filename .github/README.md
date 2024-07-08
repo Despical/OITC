@@ -42,7 +42,7 @@ The project isn't in the Central Repository yet, so specifying a repository is n
 <dependency>
     <groupId>com.github.Despical</groupId>
     <artifactId>OITC</artifactId>
-    <version>LATEST</version>
+    <version>VERSIO</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -59,7 +59,7 @@ repositories {
 ```
 ```
 dependencies {
-    compileOnly 'com.github.Despical:OITC:LATEST';
+    compileOnly 'com.github.Despical:OITC:VERSIO';
 }
 ```
 </details>
