@@ -204,6 +204,8 @@ public class ArenaManager {
 
 		plugin.getUserManager().saveAllStatistic(user);
 
+		arena.removePlayer(player);
+
 		if (arena.getArenaState() == ArenaState.IN_GAME && !user.isSpectator()) {
 			if (arena.getPlayersLeft().size() - 1 == 1) {
 				stopGame(false, arena);
@@ -211,7 +213,6 @@ public class ArenaManager {
 			}
 		}
 
-		arena.removePlayer(player);
 		arena.teleportToEndLocation(player);
 
 		chatManager.broadcastAction(arena, user, ActionType.LEAVE);
