@@ -86,4 +86,4 @@ mvn clean package -Dmaven.javadoc.skip=true
 ```
 
 > [!IMPORTANT]  
-> **[Maven](https://maven.apache.org/)** must be installed to build Command Framework.
+> **[Maven](https://maven.apache.org/)** must be installed to build.
