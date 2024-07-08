@@ -5,6 +5,13 @@ items:
     slot: 8
     lore:
       - "&7Right-click to leave to the lobby!"
+    # Actions attribute can also be added to other lobby and spectator items.
+    # By default, items will be triggered for all actions. (PHYSICAL is not allowed)
+    actions:
+      - "RIGHT_CLICK_BLOCK"
+      - "RIGHT_CLICK_AIR"
+      - "LEFT_CLICK_BLOCK"
+      - "LEFT_CLICK_AIR"
   settings-item:
     name: "&b&lSpectator Settings &7(Right Click)"
     material: REPEATER

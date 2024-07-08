@@ -21,12 +21,15 @@ package me.despical.oitc.handlers.items;
 import me.despical.commons.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Despical
@@ -37,10 +40,12 @@ public class GameItem {
 
 	private final ItemStack itemStack;
 	private final int slot;
+	private final List<Action> actions;
 
-	public GameItem(String displayName, Material material, int slot, List<String> lore) {
+	public GameItem(String displayName, Material material, int slot, List<String> lore, List<String> actions) {
 		this.itemStack = new ItemBuilder(material).name(displayName).lore(lore).flag(ItemFlag.HIDE_UNBREAKABLE).build();
 		this.slot = slot;
+		this.actions = actions.stream().map(Action::valueOf).collect(Collectors.toList());
 	}
 
 	public GameItem(String displayName, Material material, int slot, List<String> lore, List<ItemFlag> flags, Map<Enchantment, Integer> enchants) {
@@ -51,6 +56,7 @@ public class GameItem {
 
 		this.itemStack = builder.build();
 		this.slot = slot;
+		this.actions = new ArrayList<>();
 	}
 
 	public ItemStack getItemStack() {
@@ -61,11 +67,16 @@ public class GameItem {
 		return slot;
 	}
 
+	public boolean checkAction(Action action) {
+		return !(actions.isEmpty() || actions.contains(action));
+	}
+
 	public boolean equals(ItemStack item) {
 		final ItemMeta meta = item.getItemMeta();
 		final ItemMeta itemStackMeta = itemStack.getItemMeta();
 
-		return item.getType() == itemStack.getType() &&
+		return
+			item.getType() == itemStack.getType() &&
 			meta.getDisplayName().equals(itemStackMeta.getDisplayName()) &&
 			meta.getLore() != null && meta.getLore().equals(itemStackMeta.getLore());
 	}

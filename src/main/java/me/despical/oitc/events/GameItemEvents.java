@@ -41,7 +41,7 @@ public class GameItemEvents extends ListenerAdapter {
 
 		final GameItem leaveItem = plugin.getGameItemManager().getGameItem("leave-item");
 
-		if (leaveItem == null) return;
+		if (leaveItem == null || leaveItem.checkAction(event.getAction())) return;
 		if (!leaveItem.equals(event.getItem())) return;
 
 		final Player player = user.getPlayer();
@@ -102,7 +102,7 @@ public class GameItemEvents extends ListenerAdapter {
 
 		final GameItem forceStartItem = plugin.getGameItemManager().getGameItem("force-start-item");
 
-		if (forceStartItem == null) return;
+		if (forceStartItem == null || forceStartItem.checkAction(event.getAction())) return;
 		if (!forceStartItem.equals(event.getItem())) return;
 
 		if (arena.getPlayers().size() < 2) {
@@ -134,10 +134,10 @@ public class GameItemEvents extends ListenerAdapter {
 		if (currentArena == null) return;
 		if (event.getItem() == null) return;
 
-		final GameItem gameItem = plugin.getGameItemManager().getGameItem("play-again");
+		final GameItem playAgainItem = plugin.getGameItemManager().getGameItem("play-again");
 
-		if (gameItem == null) return;
-		if (!gameItem.equals(event.getItem())) return;
+		if (playAgainItem == null || playAgainItem.checkAction(event.getAction())) return;
+		if (!playAgainItem.equals(event.getItem())) return;
 
 		event.setCancelled(true);
 

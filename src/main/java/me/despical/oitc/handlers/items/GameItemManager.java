@@ -51,7 +51,7 @@ public class GameItemManager {
 
 	public GameItemManager(final Main plugin) {
 		this.plugin = plugin;
-		this.arrowItem = new GameItem("&7Arrow", XMaterial.ARROW.parseMaterial(), 7, new ArrayList<>());
+		this.arrowItem = new GameItem("&7Arrow", XMaterial.ARROW.parseMaterial(), 7, new ArrayList<>(), new ArrayList<>());
 		this.kits = new HashMap<>();
 		this.gameItems = new HashMap<>();
 		this.registerItems();
@@ -94,7 +94,7 @@ public class GameItemManager {
 
 			for (final String id : section.getKeys(false)) {
 				final String path = String.format("items.%s.", id);
-				final GameItem gameItem = new GameItem(config.getString(path + "name"), XMaterial.valueOf(config.getString(path + "material")).parseMaterial(), config.getInt(path + "slot"), config.getStringList(path + "lore"));
+				final GameItem gameItem = new GameItem(config.getString(path + "name"), XMaterial.valueOf(config.getString(path + "material")).parseMaterial(), config.getInt(path + "slot"), config.getStringList(path + "lore"), config.getStringList(path + "actions"));
 
 				this.gameItems.put(id, gameItem);
 			}
