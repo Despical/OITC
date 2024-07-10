@@ -78,7 +78,7 @@ public class AdminCommands extends AbstractCommand {
 				return;
 			}
 
-			arguments.sendMessage(chatManager.prefixedMessage("Commands.Did-You-Mean").replace("%command%", label));
+			arguments.sendMessage(chatManager.prefixedMessage("Commands.Did-You-Mean").replace("%command%", '/' + label));
 		}
 	}
 
