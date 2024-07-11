@@ -43,13 +43,13 @@ public class GameItem {
 	private final List<Action> actions;
 
 	public GameItem(String displayName, Material material, int slot, List<String> lore, List<String> actions) {
-		this.itemStack = new ItemBuilder(material).name(displayName).lore(lore).flag(ItemFlag.HIDE_UNBREAKABLE).build();
+		this.itemStack = new ItemBuilder(material).name(displayName).lore(lore).unbreakable(true).flag(ItemFlag.HIDE_UNBREAKABLE).build();
 		this.slot = slot;
 		this.actions = actions.stream().map(Action::valueOf).collect(Collectors.toList());
 	}
 
 	public GameItem(String displayName, Material material, int slot, List<String> lore, List<ItemFlag> flags, Map<Enchantment, Integer> enchants) {
-		ItemBuilder builder = new ItemBuilder(material).name(displayName).lore(lore).flag(ItemFlag.HIDE_UNBREAKABLE);
+		ItemBuilder builder = new ItemBuilder(material).name(displayName).lore(lore).unbreakable(true).flag(ItemFlag.HIDE_UNBREAKABLE);
 
 		enchants.forEach(builder::enchantment);
 		flags.forEach(builder::flag);
