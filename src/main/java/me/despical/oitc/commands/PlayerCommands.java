@@ -1,7 +1,7 @@
 package me.despical.oitc.commands;
 
-import me.despical.commandframework.Command;
 import me.despical.commandframework.CommandArguments;
+import me.despical.commandframework.annotations.Command;
 import me.despical.commons.string.StringUtils;
 import me.despical.commons.util.Collections;
 import me.despical.oitc.ConfigPreferences;
@@ -26,7 +26,6 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-import static me.despical.commandframework.Command.SenderType.PLAYER;
 import static me.despical.oitc.api.StatsStorage.StatisticType.*;
 
 /**
@@ -43,7 +42,7 @@ public class PlayerCommands extends AbstractCommand {
 	@Command(
 		name = "oitc.join",
 		usage = "/oitc join <arena>",
-		senderType = PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
 	public void joinCommand(Player player, CommandArguments arguments) {
 		if (arguments.isArgumentsEmpty()) {
@@ -64,7 +63,7 @@ public class PlayerCommands extends AbstractCommand {
 	@Command(
 		name = "oitc.randomjoin",
 		usage = "/oitc randomjoin",
-		senderType = PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
 	public void randomJoinCommand(CommandArguments arguments) {
 		if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
@@ -88,7 +87,7 @@ public class PlayerCommands extends AbstractCommand {
 	@Command(
 		name = "oitc.leave",
 		usage = "/oitc leave",
-		senderType = PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
 	public void leaveCommand(CommandArguments arguments) {
 		if (plugin.getOption(ConfigPreferences.Option.DISABLE_LEAVE_COMMAND)) {
@@ -114,7 +113,7 @@ public class PlayerCommands extends AbstractCommand {
 	@Command(
 		name = "oitc.stats",
 		usage = "/oitc stats <player>",
-		senderType = PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
 	public void statsCommand(CommandArguments arguments) {
 		final Player sender = arguments.getSender();
@@ -154,7 +153,7 @@ public class PlayerCommands extends AbstractCommand {
 	@Command(
 		name = "oitc.top",
 		usage = "/oitc top <statistic type>",
-		senderType = PLAYER
+		senderType = Command.SenderType.PLAYER
 	)
 	public void leaderboardCommand(CommandArguments arguments) {
 		String path = "commands.statistics.";
