@@ -290,11 +290,11 @@ public class AdminCommands extends AbstractCommand {
 			if (isPlayer) {
 				((Player) sender).spigot().sendMessage(
 					new ComponentBuilder(ChatColor.DARK_GRAY + " • ")
-					.append(usage)
-					.color(ChatColor.AQUA)
-					.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, usage))
-					.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(desc)))
-					.create());
+						.append(usage)
+						.color(ChatColor.AQUA)
+						.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, usage))
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(desc)))
+						.create());
 			} else {
 				sender.sendMessage(chatManager.coloredRawMessage(" &8• &b" + usage + " &3- &b" + desc));
 			}
