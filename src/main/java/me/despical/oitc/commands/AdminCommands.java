@@ -8,6 +8,7 @@ import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.miscellaneous.MiscUtils;
 import me.despical.commons.serializer.LocationSerializer;
 import me.despical.commons.string.StringMatcher;
+import me.despical.commons.util.Strings;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
@@ -272,27 +273,28 @@ public class AdminCommands extends AbstractCommand {
 	@Command(
 		name = "oitc.help",
 		usage = "/oitc help",
+		desc = "Displays a list of available commands along with their descriptions.",
 		permission = "oitc.admin.help"
 	)
 	public void helpCommand(CommandArguments arguments) {
 		final boolean isPlayer = arguments.isSenderPlayer();
 		final CommandSender sender = arguments.getSender();
 
-		arguments.sendMessage("");
-		MiscUtils.sendCenteredMessage(sender, "&3&l---- One in the Chamber ----");
+		MiscUtils.sendCenteredMessage(arguments.getSender(), "&3&lOne in the Chamber");
+		MiscUtils.sendCenteredMessage(arguments.getSender(), "&3[&boptional argument&3] &b- &3<&brequired argument&3>");
 		arguments.sendMessage("");
 
 		for (final Command command : plugin.getCommandFramework().getSubCommands()) {
-			String usage = command.usage(), desc = command.desc();
+			String usage = formatCommandUsage(command.usage()), desc = command.desc();
 
-			if (desc.isEmpty() || usage.isEmpty()) continue;
+			if (desc.isEmpty()) continue;
 
 			if (isPlayer) {
 				((Player) sender).spigot().sendMessage(
 					new ComponentBuilder(ChatColor.DARK_GRAY + " • ")
 						.append(usage)
 						.color(ChatColor.AQUA)
-						.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, usage))
+						.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command.usage()))
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(desc)))
 						.create());
 			} else {
@@ -357,5 +359,21 @@ public class AdminCommands extends AbstractCommand {
 		}
 
 		return String.join(".", matchingParts);
+	}
+
+	private String formatCommandUsage(String usage) {
+		usage = "&3" + usage;
+
+		final char[] array = usage.toCharArray();
+		final StringBuilder buffer = new StringBuilder(usage);
+
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] == '[' || array[i] == '<') {
+				buffer.insert(i, "&b");
+				return Strings.format(buffer.toString());
+			}
+		}
+
+		return Strings.format(usage);
 	}
 }
