@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class GameItemEvents extends ListenerAdapter {
+public class GameItemEvents extends EventListener {
 
 	private final Set<User> leaveConfirmations;
 

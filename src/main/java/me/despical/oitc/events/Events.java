@@ -60,7 +60,7 @@ import java.util.regex.Pattern;
  * <p>
  * Created at 02.07.2020
  */
-public class Events extends ListenerAdapter {
+public class Events extends EventListener {
 
 	public Events(Main plugin) {
 		super(plugin);
@@ -504,7 +504,7 @@ public class Events extends ListenerAdapter {
 	}
 
 	private void registerLegacyEvents() {
-		registerIf(XReflection.supports(9) && XReflection.supportsPatch(2), new Listener() {
+		registerIf(XReflection.supports(9, 2), new Listener() {
 
 			@EventHandler
 			public void onItemSwap(PlayerSwapHandItemsEvent event) {

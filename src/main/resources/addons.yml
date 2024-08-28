@@ -1,0 +1,3 @@
+Oraxen:
+  # Should we enable support custom item models if we find Oraxen?
+  Enabled: true

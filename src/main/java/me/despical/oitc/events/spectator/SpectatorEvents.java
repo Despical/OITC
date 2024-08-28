@@ -19,7 +19,7 @@
 package me.despical.oitc.events.spectator;
 
 import me.despical.oitc.Main;
-import me.despical.oitc.events.ListenerAdapter;
+import me.despical.oitc.events.EventListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -32,7 +32,7 @@ import org.bukkit.event.player.*;
  * <p>
  * Created at 02.07.2020
  */
-public class SpectatorEvents extends ListenerAdapter {
+public class SpectatorEvents extends EventListener {
 
 	public SpectatorEvents(Main plugin) {
 		super (plugin);

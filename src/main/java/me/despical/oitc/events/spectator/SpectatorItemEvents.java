@@ -23,7 +23,7 @@ import me.despical.commons.item.ItemUtils;
 import me.despical.commons.number.NumberUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
-import me.despical.oitc.events.ListenerAdapter;
+import me.despical.oitc.events.EventListener;
 import org.bukkit.ChatColor;
 import org.bukkit.SkullType;
 import org.bukkit.World;
@@ -45,7 +45,7 @@ import java.util.List;
  * <p>
  * Created at 02.07.2020
  */
-public class SpectatorItemEvents extends ListenerAdapter {
+public class SpectatorItemEvents extends EventListener {
 
 	public SpectatorItemEvents(Main plugin) {
 		super (plugin);

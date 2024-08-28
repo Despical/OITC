@@ -1,17 +1,25 @@
 package me.despical.oitc.util;
 
+import me.despical.commons.compat.XMaterial;
+import me.despical.oitc.Main;
+import me.despical.oitc.addons.oraxen.OraxenAddon;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.NoSuchElementException;
 
 /**
  * @author Despical
  * <p>
  * Created at 2.07.2024
  */
-public class Utils {
+public final class Utils {
+
+	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	private Utils() {
 	}
@@ -41,5 +49,15 @@ public class Utils {
 		} else {
 			inv.setItem(slot, itemStack);
 		}
+	}
+
+	public static ItemStack getItem(String material) {
+		if (material.startsWith("oraxen:")) {
+			material = material.substring(7);
+
+			return plugin.getAddonManager().<OraxenAddon>getAddon("Oraxen").orElseThrow(NoSuchElementException::new).getItem(material);
+		}
+
+		return XMaterial.matchXMaterial(material).orElseThrow(NoSuchElementException::new).parseItem();
 	}
 }

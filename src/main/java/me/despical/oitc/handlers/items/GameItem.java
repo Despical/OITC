@@ -19,7 +19,7 @@
 package me.despical.oitc.handlers.items;
 
 import me.despical.commons.item.ItemBuilder;
-import org.bukkit.Material;
+import me.despical.oitc.util.Utils;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemFlag;
@@ -29,6 +29,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -42,14 +43,23 @@ public class GameItem {
 	private final int slot;
 	private final List<Action> actions;
 
-	public GameItem(String displayName, Material material, int slot, List<String> lore, List<String> actions) {
-		this.itemStack = new ItemBuilder(material).name(displayName).lore(lore).unbreakable(true).flag(ItemFlag.HIDE_UNBREAKABLE).build();
+	public GameItem(String displayName, String material, int slot, List<String> lore, List<String> actions) {
+		this.itemStack = new ItemBuilder(Utils.getItem(material))
+			.name(displayName)
+			.lore(lore)
+			.unbreakable(true)
+			.flag(ItemFlag.HIDE_UNBREAKABLE)
+			.build();
 		this.slot = slot;
 		this.actions = actions.stream().map(Action::valueOf).collect(Collectors.toList());
 	}
 
-	public GameItem(String displayName, Material material, int slot, List<String> lore, List<ItemFlag> flags, Map<Enchantment, Integer> enchants) {
-		ItemBuilder builder = new ItemBuilder(material).name(displayName).lore(lore).unbreakable(true).flag(ItemFlag.HIDE_UNBREAKABLE);
+	public GameItem(String displayName, String material, int slot, List<String> lore, List<ItemFlag> flags, Map<Enchantment, Integer> enchants) {
+		ItemBuilder builder = new ItemBuilder(Utils.getItem(material))
+			.name(displayName)
+			.lore(lore)
+			.unbreakable(true)
+			.flag(ItemFlag.HIDE_UNBREAKABLE);
 
 		enchants.forEach(builder::enchantment);
 		flags.forEach(builder::flag);
@@ -75,9 +85,8 @@ public class GameItem {
 		final ItemMeta meta = item.getItemMeta();
 		final ItemMeta itemStackMeta = itemStack.getItemMeta();
 
-		return
-			item.getType() == itemStack.getType() &&
-			meta.getDisplayName().equals(itemStackMeta.getDisplayName()) &&
-			meta.getLore() != null && meta.getLore().equals(itemStackMeta.getLore());
+		return item.getType() == itemStack.getType() &&
+			Objects.equals(meta.getDisplayName(), itemStackMeta.getDisplayName()) &&
+			Objects.equals(meta.getLore(), itemStackMeta.getLore());
 	}
 }

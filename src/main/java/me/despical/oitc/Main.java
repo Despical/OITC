@@ -24,12 +24,13 @@ import me.despical.commons.scoreboard.ScoreboardLib;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
 import me.despical.commons.util.UpdateChecker;
+import me.despical.oitc.addons.AddonManager;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaUtils;
 import me.despical.oitc.commands.AbstractCommand;
-import me.despical.oitc.events.ListenerAdapter;
+import me.despical.oitc.events.EventListener;
 import me.despical.oitc.handlers.BungeeManager;
 import me.despical.oitc.handlers.ChatManager;
 import me.despical.oitc.handlers.PermissionsManager;
@@ -63,6 +64,7 @@ public class Main extends JavaPlugin {
 	private SignManager signManager;
 	private ConfigPreferences configPreferences;
 	private ChatManager chatManager;
+	private AddonManager addonManager;
 	private UserManager userManager;
 	private PermissionsManager permissionsManager;
 	private GameItemManager gameItemManager;
@@ -117,6 +119,7 @@ public class Main extends JavaPlugin {
 		if ((configPreferences = new ConfigPreferences(this)).getOption(ConfigPreferences.Option.DATABASE_ENABLED)) database = new MysqlDatabase(this, "mysql");
 
 		chatManager = new ChatManager(this);
+		addonManager = new AddonManager(this);
 		languageManager = new LanguageManager(this);
 		userManager = new UserManager(this);
 		signManager = new SignManager(this);
@@ -131,7 +134,7 @@ public class Main extends JavaPlugin {
 		if (chatManager.isPapiEnabled()) new PlaceholderManager(this);
 
 		ScoreboardLib.setPluginInstance(this);
-		ListenerAdapter.registerEvents(this);
+		EventListener.registerEvents(this);
 		AbstractCommand.registerCommands(this);
 		User.cooldownHandlerTask();
 
@@ -156,8 +159,6 @@ public class Main extends JavaPlugin {
 		UpdateChecker.init(this, 81185).requestUpdateCheck().whenComplete((result, exception) -> {
 			if (result.requiresUpdate()) {
 				getLogger().info("Found a new version available: v" + result.getNewestVersion());
-				getLogger().info("Download it SpigotMC:");
-				getLogger().info("https://spigotmc.org/resources/81185");
 			}
 		});
 	}
@@ -188,6 +189,11 @@ public class Main extends JavaPlugin {
 	@NotNull
 	public ChatManager getChatManager() {
 		return chatManager;
+	}
+
+	@NotNull
+	public AddonManager getAddonManager() {
+		return addonManager;
 	}
 
 	@NotNull

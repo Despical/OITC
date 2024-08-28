@@ -26,7 +26,7 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaState;
-import me.despical.oitc.events.ListenerAdapter;
+import me.despical.oitc.events.EventListener;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,7 +43,7 @@ import java.util.Map;
  * <p>
  * Created at 02.07.2020
  */
-public class BungeeManager extends ListenerAdapter {
+public class BungeeManager extends EventListener {
 
 	private final String motd, hubName;
 	private final boolean motdEnabled, shutdownWhenGameEnds, connectToHub;

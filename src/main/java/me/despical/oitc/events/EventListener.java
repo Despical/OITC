@@ -31,14 +31,14 @@ import org.bukkit.event.Listener;
  * <p>
  * Created at 31.07.2022
  */
-public abstract class ListenerAdapter implements Listener {
+public abstract class EventListener implements Listener {
 
 	protected final Main plugin;
 	protected final ArenaRegistry arenaRegistry;
 	protected final ChatManager chatManager;
 	protected final UserManager userManager;
 
-	public ListenerAdapter(Main plugin) {
+	public EventListener(Main plugin) {
 		this.plugin = plugin;
 		this.arenaRegistry = plugin.getArenaRegistry();
 		this.chatManager = plugin.getChatManager();
@@ -46,17 +46,17 @@ public abstract class ListenerAdapter implements Listener {
 		this.plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
-	protected void registerIf(boolean cond, Listener listener) {
+	protected final void registerIf(boolean cond, Listener listener) {
 		if (!cond) return;
 
 		plugin.getServer().getPluginManager().registerEvents(listener, plugin);
 	}
 
 	public static void registerEvents(Main plugin) {
-		final Class<?>[] listenerAdapters = {SpectatorEvents.class, Events.class, SpectatorItemEvents.class, GameItemEvents.class};
+		final Class<?>[] listeners = {SpectatorEvents.class, Events.class, SpectatorItemEvents.class, GameItemEvents.class};
 
 		try {
-			for (final Class<?> listenerAdapter : listenerAdapters) {
+			for (final Class<?> listenerAdapter : listeners) {
 				listenerAdapter.getConstructor(Main.class).newInstance(plugin);
 			}
 		} catch (Exception exception) {

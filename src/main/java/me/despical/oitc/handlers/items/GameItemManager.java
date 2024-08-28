@@ -51,7 +51,7 @@ public class GameItemManager {
 
 	public GameItemManager(final Main plugin) {
 		this.plugin = plugin;
-		this.arrowItem = new GameItem("&7Arrow", XMaterial.ARROW.parseMaterial(), 7, new ArrayList<>(), new ArrayList<>());
+		this.arrowItem = new GameItem("&7Arrow", "ARROW", 7, new ArrayList<>(), new ArrayList<>());
 		this.kits = new HashMap<>();
 		this.gameItems = new HashMap<>();
 		this.registerItems();
@@ -94,7 +94,7 @@ public class GameItemManager {
 
 			for (final String id : section.getKeys(false)) {
 				final String path = String.format("items.%s.", id);
-				final GameItem gameItem = new GameItem(config.getString(path + "name"), XMaterial.valueOf(config.getString(path + "material")).parseMaterial(), config.getInt(path + "slot"), config.getStringList(path + "lore"), config.getStringList(path + "actions"));
+				final GameItem gameItem = new GameItem(config.getString(path + "name"), config.getString(path + "material"), config.getInt(path + "slot"), config.getStringList(path + "lore"), config.getStringList(path + "actions"));
 
 				this.gameItems.put(id, gameItem);
 			}
@@ -125,8 +125,7 @@ public class GameItemManager {
 
 				final Map<Enchantment, Integer> enchants = config.getStringList(path + "enchantments").stream().collect(Collectors.toMap(value -> Enchantment.getByName(value.split(":")[0]), value -> NumberUtils.getInt(value.split(":")[1], 1)));
 				final List<ItemFlag> flags = config.getStringList(path + "item-flags").stream().map(ItemFlag::valueOf).collect(Collectors.toList());
-				final XMaterial material = XMaterial.valueOf(config.getString(path + "material"));
-				final GameItem gameItem = new GameItem(config.getString(path + "name"), material.parseMaterial(), slot, config.getStringList(path + "lore"), flags, enchants);
+				final GameItem gameItem = new GameItem(config.getString(path + "name"), config.getString(path + "material"), slot, config.getStringList(path + "lore"), flags, enchants);
 
 				kitItems.add(gameItem);
 			}
