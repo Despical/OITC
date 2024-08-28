@@ -3,8 +3,11 @@ main: me.despical.oitc.Main
 author: Despical
 version: ${project.version}
 api-version: 1.13
-softdepend: [PlaceholderAPI, Multiverse-Core]
-website: https://www.spigotmc.org/resources/81185/
+softdepend:
+  - PlaceholderAPI
+  - Multiverse-Core
+  - ProtocolLib
+  - Oraxen
 
 permissions:
   oitc.admin.*:
