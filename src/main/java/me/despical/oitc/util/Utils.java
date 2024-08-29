@@ -10,8 +10,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.NoSuchElementException;
-
 /**
  * @author Despical
  * <p>
@@ -55,9 +53,9 @@ public final class Utils {
 		if (material.startsWith("oraxen:")) {
 			material = material.substring(7);
 
-			return plugin.getAddonManager().<OraxenAddon>getAddon("Oraxen").orElseThrow(NoSuchElementException::new).getItem(material);
+			return plugin.getAddonManager().<OraxenAddon>getAddon("Oraxen").orElseThrow().getItem(material);
 		}
 
-		return XMaterial.matchXMaterial(material).orElseThrow(NoSuchElementException::new).parseItem();
+		return XMaterial.matchXMaterial(material).orElseThrow().parseItem();
 	}
 }
