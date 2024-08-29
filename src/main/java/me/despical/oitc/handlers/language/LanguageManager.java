@@ -43,6 +43,7 @@ public class LanguageManager {
 				new Locale("Turkish", "tr_TR", "Despical", "turkish", "türkçe", "turkce", "tr", "tr_TR"),
 				new Locale("German", "de_DE", "Dreandor", "deutsch", "german", "de", "de_DE"),
 				new Locale("Russian", "ru_RU", "WowExotic", "russian", "ru", "ru_RU"),
+				new Locale("Serbian", "sr_SR", "Mortssi", "serbian", "sr", "sr_SR"),
 				new Locale("Chinese (Taiwan)", "zh_TW", "HappyAreaBean", "zh_TW", "taiwan", "zh_TW"),
 				new Locale("Chinese (Hong Kong)", "zh_HK", "HappyAreaBean", "zh_HK", "honk_kong", "zh_HK"),
 				new Locale("Chinese (China)", "zh_CN", "HappyAreaBean", "zh_CN", "chinese", "zh_CN"))
