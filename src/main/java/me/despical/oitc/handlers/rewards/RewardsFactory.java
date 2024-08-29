@@ -45,8 +45,7 @@ public class RewardsFactory {
 	public RewardsFactory(final Main plugin) {
 		this.plugin = plugin;
 		this.rewards = new HashSet<>();
-
-		registerRewards();
+		this.registerRewards();
 	}
 
 	public void performReward(final User user, final Reward.RewardType type) {
@@ -78,6 +77,11 @@ public class RewardsFactory {
 				}
 			}
 		}
+	}
+
+	public void reload() {
+		this.rewards.clear();
+		this.registerRewards();
 	}
 
 	private String formatCommandPlaceholders(final Reward.SubReward reward, final User user) {

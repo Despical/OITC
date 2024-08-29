@@ -30,10 +30,6 @@ public class AddonManager {
 		if (isEnabled("Oraxen")) this.addons.add(new OraxenAddon(plugin));
 	}
 
-	public Set<Addon<?>> getAddons() {
-		return addons;
-	}
-
 	@SuppressWarnings("unchecked")
 	public <A extends Addon<?>> Optional<A> getAddon(String name) {
 		return (Optional<A>) this.addons.stream().filter(addon -> name.equals(addon.getName())).findFirst();

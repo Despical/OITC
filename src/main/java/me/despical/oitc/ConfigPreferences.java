@@ -36,16 +36,24 @@ import java.util.function.Function;
  */
 public class ConfigPreferences {
 
+	private final Main plugin;
 	private final Map<Option, Boolean> options;
 
 	public ConfigPreferences(Main plugin) {
+		this.plugin = plugin;
 		this.options = new HashMap<>();
+		this.loadOptions();
+	}
 
-		plugin.saveDefaultConfig();
-
+	private void loadOptions() {
 		for (Option option : Option.values()) {
 			options.put(option, plugin.getConfig().getBoolean(option.path, option.def));
 		}
+	}
+
+	public void reload() {
+		this.options.clear();
+		this.loadOptions();
 	}
 
 	public boolean getOption(Option option) {

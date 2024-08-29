@@ -164,7 +164,7 @@ public class Main extends JavaPlugin {
 	}
 
 	private void setupConfigurationFiles() {
-		Collections.streamOf("arenas", "bungee", "rewards", "stats", "items", "mysql", "messages").filter(name -> !new File(getDataFolder(),name + ".yml").exists()).forEach(name -> saveResource(name + ".yml", false));
+		Collections.streamOf("config", "arenas", "bungee", "rewards", "stats", "items", "mysql", "messages").filter(name -> !new File(getDataFolder(),name + ".yml").exists()).forEach(name -> saveResource(name + ".yml", false));
 	}
 
 	@NotNull
@@ -229,6 +229,16 @@ public class Main extends JavaPlugin {
 
 	public boolean getOption(ConfigPreferences.Option option) {
 		return configPreferences.getOption(option);
+	}
+
+	public void reload() {
+		this.reloadConfig();
+		this.configPreferences.reload();
+		this.chatManager.reload();
+		this.permissionsManager.loadPermissions();
+		this.gameItemManager.reloadItems();
+		this.addonManager.reload();
+		this.rewardsFactory.reload();
 	}
 
 	private void saveAllUserStatistics() {

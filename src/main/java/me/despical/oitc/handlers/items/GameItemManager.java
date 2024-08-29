@@ -80,6 +80,11 @@ public class GameItemManager {
 		Utils.addItem(player, arrow.getItemStack(), arrow.getSlot());
 	}
 
+	public void reloadItems() {
+		this.gameItems.clear();
+		this.registerItems();
+	}
+
 	private void registerItems() {
 		final FileConfiguration config = ConfigUtils.getConfig(plugin, "items");
 

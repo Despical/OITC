@@ -17,6 +17,7 @@ permissions:
       oitc.updatenotify: true
       oitc.admin.create: true
       oitc.admin.edit: true
+      oitc.admin.reload: true
       oitc.admin.delete: true
       oitc.admin.list: true
       oitc.admin.stop: true

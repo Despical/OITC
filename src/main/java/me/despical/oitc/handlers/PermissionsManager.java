@@ -28,13 +28,14 @@ import org.bukkit.entity.Player;
  */
 public class PermissionsManager {
 
-	private final boolean suppressPerms;
-	private final String joinFullPerm, joinPerm;
+	private boolean suppressPerms;
+	private String joinFullPerm, joinPerm;
+
+	private final Main plugin;
 
 	public PermissionsManager(Main plugin) {
-		this.suppressPerms = plugin.getConfig().getBoolean("Basic-Permissions.Suppress-Permissions");
-		this.joinPerm = plugin.getConfig().getString("Basic-Permissions.Join-Permission");
-		this.joinFullPerm = plugin.getConfig().getString("Basic-Permissions.Full-Games-Permission");
+		this.plugin = plugin;
+		this.loadPermissions();
 	}
 
 	public boolean hasJoinPerm(Player player, String arena) {
@@ -49,5 +50,11 @@ public class PermissionsManager {
 
 	public String getJoinPerm() {
 		return joinPerm;
+	}
+
+	public void loadPermissions() {
+		this.suppressPerms = plugin.getConfig().getBoolean("Basic-Permissions.Suppress-Permissions");
+		this.joinPerm = plugin.getConfig().getString("Basic-Permissions.Join-Permission");
+		this.joinFullPerm = plugin.getConfig().getString("Basic-Permissions.Full-Games-Permission");
 	}
 }

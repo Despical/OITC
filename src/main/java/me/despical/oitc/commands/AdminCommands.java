@@ -224,6 +224,18 @@ public class AdminCommands extends AbstractCommand {
 	}
 
 	@Command(
+		name = "oitc.reload",
+		permission = "oitc.admin.reload",
+		desc = "Reloads the configuration files.",
+		usage = "/oitc reload"
+	)
+	public void reloadCommand(CommandArguments arguments) {
+		plugin.reload();
+
+		arguments.sendMessage("&aSystem files reloaded successfully!");
+	}
+
+	@Command(
 		name = "oitc.stop",
 		permission = "oitc.admin.stop",
 		desc = "Stop the arena that you're in",
@@ -298,7 +310,7 @@ public class AdminCommands extends AbstractCommand {
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(desc)))
 						.create());
 			} else {
-				sender.sendMessage(chatManager.coloredRawMessage(" &8• &b" + usage + " &3- &b" + desc));
+				arguments.sendMessage(" &8• &b" + usage + " &3- &b" + desc);
 			}
 		}
 
