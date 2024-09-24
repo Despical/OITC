@@ -44,15 +44,15 @@ public class AdminCommands extends AbstractCommand {
 
 	@Command(
 		name = "oitc",
-		usage = "/oitc help",
-		desc = "Main command of One in the Chamber."
+		usage = "/oitc",
+		desc = "Main command of the plugin."
 	)
 	public void mainCommand(CommandArguments arguments) {
 		if (arguments.isArgumentsEmpty()) {
-			arguments.sendMessage(chatManager.coloredRawMessage("&3This server is running &bOne in the Chamber " + plugin.getDescription().getVersion() + " &3by &bDespical&3!"));
+			arguments.sendMessage("&3This server is running &bOne in the Chamber {0}&3by &bDespical&3.", plugin.getDescription().getVersion());
 
 			if (arguments.hasPermission("oitc.admin")) {
-				arguments.sendMessage(chatManager.coloredRawMessage("&3Commands: &b/" + arguments.getLabel() + " help"));
+				arguments.sendMessage("&3Commands: &b/{0} help", arguments.getLabel());
 			}
 
 			return;

@@ -27,7 +27,7 @@ public final class Utils {
 
 		try {
 			effect = new PotionEffect(type, duration, amplifier, false, false, false);
-		} catch (Exception | Error throwable) {
+		} catch (Throwable throwable) {
 			effect = new PotionEffect(type, duration, amplifier, false, false);
 		}
 
