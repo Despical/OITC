@@ -2,10 +2,11 @@
 
 <div align="center">
 
+[![](https://github.com/Despical/OITC/actions/workflows/build.yml/badge.svg)](https://github.com/Despical/OITC/actions/workflows/build.yml)
+[![](https://img.shields.io/github/v/release/Despical/OITC)](https://github.com/Despical/OITC/releases/latest)
 [![](https://jitpack.io/v/Despical/OITC.svg)](https://jitpack.io/#Despical/OITC)
-[![](https://img.shields.io/badge/JavaDocs-latest-lime.svg)](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html)
-[![Support](https://img.shields.io/badge/Patreon-Support-lime.svg?logo=Patreon)](https://www.patreon.com/despical)
-[![](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-lime.svg?logo=BuyMeACoffee)](https://www.buymeacoffee.com/despical)
+[![](https://img.shields.io/badge/License-GPLv3-blue.svg)](../LICENSE)
+[![](https://img.shields.io/badge/javadoc-latest-lime.svg)](https://javadoc.jitpack.io/com/github/Despical/OITC/latest/javadoc/index.html)
 
 One in the Chamber is an old Minecraft minigame. Each player is equipped with a sword, bow and arrow.
 The arrows do one hit one kill damage and if player missed the shot they can't receive a new arrow until they die
@@ -22,7 +23,7 @@ or killing other players. When a player reaches 25 points the game ends and winn
 - [Buy me a Coffee](https://www.buymeacoffee.com/despical)
 
 ## License
-This code is under [GPL-3.0 License](http://www.gnu.org/licenses/gpl-3.0.html)
+This code is under [GPL-3.0 License](http://www.gnu.org/licenses/gpl-3.0.html).
 
 See the [LICENSE](https://github.com/Despical/OITC/blob/master/LICENSE) file for required notices and attributions.
 
@@ -81,9 +82,9 @@ If you want to help us with translating take a look at our [language repository]
 ## Building from source
 To build this project from source code, run the following from Git Bash:
 ```
-git clone https://www.github.com/Despical/OITC.git && cd OITC
+git clone https://www.github.com/Despical/OITC && cd OITC
 mvn clean package -Dmaven.javadoc.skip=true
 ```
 
 > [!IMPORTANT]  
-> **[Maven](https://maven.apache.org/)** must be installed to build.
+> **[Maven](https://maven.apache.org/)** must be installed to build this project.
