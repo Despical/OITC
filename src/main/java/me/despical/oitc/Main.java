@@ -28,7 +28,8 @@ import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaRegistry;
 import me.despical.oitc.arena.ArenaUtils;
-import me.despical.oitc.commands.AbstractCommand;
+import me.despical.oitc.command.AdminCommands;
+import me.despical.oitc.command.PlayerCommands;
 import me.despical.oitc.events.EventListener;
 import me.despical.oitc.handlers.BungeeManager;
 import me.despical.oitc.handlers.ChatManager;
@@ -129,10 +130,12 @@ public class Main extends JavaPlugin {
 
 		ScoreboardLib.setPluginInstance(this);
 		EventListener.registerEvents(this);
-		AbstractCommand.registerCommands(this);
 		User.cooldownHandlerTask();
 
 		startPluginMetrics();
+
+		new AdminCommands();
+		new PlayerCommands();
 
 		if (configPreferences.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
 			getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);

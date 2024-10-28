@@ -1,11 +1,10 @@
-package me.despical.oitc.commands;
+package me.despical.oitc.command;
 
 import me.despical.commandframework.CommandArguments;
 import me.despical.commandframework.annotations.Command;
 import me.despical.commons.string.StringUtils;
 import me.despical.commons.util.Collections;
 import me.despical.oitc.ConfigPreferences;
-import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
@@ -33,11 +32,7 @@ import static me.despical.oitc.api.StatsStorage.StatisticType.*;
  * <p>
  * Created at 3.07.2023
  */
-public class PlayerCommands extends AbstractCommand {
-
-	public PlayerCommands(Main plugin) {
-		super(plugin);
-	}
+public class PlayerCommands extends AbstractCommandHandler {
 
 	@Command(
 		name = "oitc.join",

@@ -1,4 +1,4 @@
-package me.despical.oitc.commands;
+package me.despical.oitc.command;
 
 import me.despical.commandframework.CommandArguments;
 import me.despical.commandframework.CommandFramework;
@@ -9,7 +9,6 @@ import me.despical.commons.miscellaneous.MiscUtils;
 import me.despical.commons.serializer.LocationSerializer;
 import me.despical.commons.string.StringMatcher;
 import me.despical.commons.util.Strings;
-import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaState;
@@ -36,11 +35,7 @@ import java.util.stream.Collectors;
  * <p>
  * Created at 3.07.2023
  */
-public class AdminCommands extends AbstractCommand {
-
-	public AdminCommands(Main plugin) {
-		super(plugin);
-	}
+public class AdminCommands extends AbstractCommandHandler {
 
 	@Command(
 		name = "oitc",
