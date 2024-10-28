@@ -22,7 +22,7 @@ import me.despical.commons.configuration.ConfigUtils;
 import me.despical.commons.sorter.SortUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.user.User;
-import me.despical.oitc.user.data.MysqlManager;
+import me.despical.oitc.user.data.MySQLStatistics;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,7 +34,6 @@ import java.sql.Statement;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -46,12 +45,10 @@ public class StatsStorage {
 	private static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
 	public static Map<UUID, Integer> getStats(StatisticType stat) {
-		if (plugin.getUserManager().getDatabase() instanceof MysqlManager) {
-			MysqlManager mysqlManager = (MysqlManager) plugin.getUserManager().getDatabase();
-
-			try (Connection connection = plugin.getMysqlDatabase().getConnection()) {
+		if (plugin.getUserManager().getDatabase() instanceof MySQLStatistics mySQLManager) {
+			try (Connection connection = mySQLManager.getDatabase().getConnection()) {
 				Statement statement = connection.createStatement();
-				ResultSet set = statement.executeQuery("SELECT UUID, " + stat.name + " FROM " + mysqlManager.getTable() + " ORDER BY " + stat.name);
+				ResultSet set = statement.executeQuery("SELECT UUID, " + stat.name + " FROM " + mySQLManager.getTableName() + " ORDER BY " + stat.name);
 				Map<UUID, Integer> column = new LinkedHashMap<>();
 				
 				while (set.next()) {
@@ -60,7 +57,7 @@ public class StatsStorage {
 
 				return column;
 			} catch (SQLException exception) {
-				plugin.getLogger().log(Level.WARNING, "SQL Exception occurred! " + exception.getSQLState() + " (" + exception.getErrorCode() + ")");
+				exception.printStackTrace();
 				return null;
 			}
 		}
@@ -76,15 +73,22 @@ public class StatsStorage {
 	}
 
 	public enum StatisticType {
-		KILLS("kills"), DEATHS("deaths"), GAMES_PLAYED("gamesplayed"), HIGHEST_SCORE("highestscore"),
-		LOSES("loses"), WINS("wins"), LOCAL_KILLS("local_kills", false), LOCAL_DEATHS("local_deaths", false),
+
+		DEATHS("deaths"),
+		GAMES_PLAYED("gamesplayed"),
+		HIGHEST_SCORE("highestscore"),
+		KILLS("kills"),
+		LOSES("loses"),
+		WINS("wins"),
+		LOCAL_DEATHS("local_deaths", false),
+		LOCAL_KILLS("local_kills", false),
 		LOCAL_KILL_STREAK("local_kill_streak", false);
 
-		final String name;
-		final boolean persistent;
+		private final String name;
+		private final boolean persistent;
 
 		StatisticType(String name) {
-			this (name, true);
+			this(name, true);
 		}
 
 		StatisticType(String name, boolean persistent) {

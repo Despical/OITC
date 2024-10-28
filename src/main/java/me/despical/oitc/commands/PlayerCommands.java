@@ -11,7 +11,7 @@ import me.despical.oitc.arena.Arena;
 import me.despical.oitc.arena.ArenaManager;
 import me.despical.oitc.arena.ArenaState;
 import me.despical.oitc.user.User;
-import me.despical.oitc.user.data.MysqlManager;
+import me.despical.oitc.user.data.MySQLStatistics;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -195,10 +195,10 @@ public class PlayerCommands extends AbstractCommand {
 			} catch (NullPointerException ex) {
 				UUID current = (UUID) stats.keySet().toArray()[stats.keySet().toArray().length - 1];
 
-				if (plugin.getOption(ConfigPreferences.Option.DATABASE_ENABLED)) {
-					try (Connection connection = plugin.getMysqlDatabase().getConnection()) {
+				if (plugin.getUserManager().getDatabase() instanceof MySQLStatistics mySQLManager) {
+					try (Connection connection = mySQLManager.getDatabase().getConnection()) {
 						Statement statement = connection.createStatement();
-						ResultSet set = statement.executeQuery("SELECT name FROM " + ((MysqlManager) plugin.getUserManager().getDatabase()).getTable() + " WHERE UUID='" + current.toString() + "'");
+						ResultSet set = statement.executeQuery("SELECT name FROM " + ((MySQLStatistics) plugin.getUserManager().getDatabase()).getTableName() + " WHERE UUID='" + current.toString() + "'");
 
 						if (set.next()) {
 							sender.sendMessage(formatMessage(statistic, set.getString(1), i + 1, stats.get(current)));

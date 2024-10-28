@@ -21,9 +21,9 @@ package me.despical.oitc.user;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
-import me.despical.oitc.user.data.FileStats;
-import me.despical.oitc.user.data.MysqlManager;
-import me.despical.oitc.user.data.UserDatabase;
+import me.despical.oitc.user.data.FlatFileStatistics;
+import me.despical.oitc.user.data.MySQLStatistics;
+import me.despical.oitc.user.data.AbstractDatabase;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -39,11 +39,11 @@ import java.util.stream.Collectors;
 public class UserManager {
 
 	private final Set<User> users;
-	private final UserDatabase database;
+	private final AbstractDatabase database;
 
 	public UserManager(Main plugin) {
 		this.users = new HashSet<>();
-		this.database = plugin.getOption(ConfigPreferences.Option.DATABASE_ENABLED) ? new MysqlManager(plugin) : new FileStats(plugin);
+		this.database = plugin.getOption(ConfigPreferences.Option.DATABASE_ENABLED) ? new MySQLStatistics() : new FlatFileStatistics();
 
 		plugin.getServer().getOnlinePlayers().forEach(this::getUser);
 	}
@@ -84,7 +84,7 @@ public class UserManager {
 		users.remove(getUser(player));
 	}
 
-	public UserDatabase getDatabase() {
+	public AbstractDatabase getDatabase() {
 		return database;
 	}
 }

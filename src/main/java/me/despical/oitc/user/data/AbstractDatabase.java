@@ -18,19 +18,26 @@
 
 package me.despical.oitc.user.data;
 
+import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * @author Despical
  * <p>
  * Created at 02.07.2020
  */
-public interface UserDatabase {
+public sealed abstract class AbstractDatabase permits MySQLStatistics, FlatFileStatistics {
 
-	void saveStatistic(User user, StatsStorage.StatisticType stat);
+	protected static final Main plugin = JavaPlugin.getPlugin(Main.class);
 
-	void saveAllStatistic(User user);
+	public abstract void saveStatistic(User user, StatsStorage.StatisticType stat);
 
-	void loadStatistics(User user);
+	public abstract void saveAllStatistic(User user);
+
+	public abstract void loadStatistics(User user);
+
+	public void shutdown() {
+	}
 }

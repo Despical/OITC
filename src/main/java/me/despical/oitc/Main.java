@@ -19,7 +19,6 @@
 package me.despical.oitc;
 
 import me.despical.commandframework.CommandFramework;
-import me.despical.commons.database.MysqlDatabase;
 import me.despical.commons.scoreboard.ScoreboardLib;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
@@ -41,7 +40,7 @@ import me.despical.oitc.handlers.rewards.RewardsFactory;
 import me.despical.oitc.handlers.sign.SignManager;
 import me.despical.oitc.user.User;
 import me.despical.oitc.user.UserManager;
-import me.despical.oitc.user.data.MysqlManager;
+import me.despical.oitc.user.data.MySQLStatistics;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.entity.Player;
@@ -60,7 +59,6 @@ public class Main extends JavaPlugin {
 	private ArenaRegistry arenaRegistry;
 	private BungeeManager bungeeManager;
 	private RewardsFactory rewardsFactory;
-	private MysqlDatabase database;
 	private SignManager signManager;
 	private ConfigPreferences configPreferences;
 	private ChatManager chatManager;
@@ -76,17 +74,14 @@ public class Main extends JavaPlugin {
 		initializeClasses();
 		checkUpdate();
 
-		getLogger().info("Initialization finished. Consider donating: https://buymeacoffee.com/despical");
+		getLogger().info("Initialization finished.");
+		getLogger().info("Join our Discord server: https://discord.gg/uXVU8jmtpU");
 	}
 
 	@Override
 	public void onDisable() {
 		saveAllUserStatistics();
 		
-		if (database != null) {
-			database.shutdownConnPool();
-		}
-
 		for (Arena arena : arenaRegistry.getArenas()) {
 			arena.getScoreboardManager().stopAllScoreboards();
 
@@ -116,8 +111,7 @@ public class Main extends JavaPlugin {
 	private void initializeClasses() {
 		setupConfigurationFiles();
 
-		if ((configPreferences = new ConfigPreferences(this)).getOption(ConfigPreferences.Option.DATABASE_ENABLED)) database = new MysqlDatabase(this, "mysql");
-
+		configPreferences = new ConfigPreferences(this);
 		chatManager = new ChatManager(this);
 		addonManager = new AddonManager(this);
 		languageManager = new LanguageManager(this);
@@ -175,11 +169,6 @@ public class Main extends JavaPlugin {
 	@NotNull
 	public BungeeManager getBungeeManager() {
 		return bungeeManager;
-	}
-
-	@NotNull
-	public MysqlDatabase getMysqlDatabase() {
-		return database;
 	}
 
 	public SignManager getSignManager() {
@@ -242,18 +231,19 @@ public class Main extends JavaPlugin {
 	}
 
 	private void saveAllUserStatistics() {
+		var userDatabase = userManager.getDatabase();
+
 		for (final Player player : getServer().getOnlinePlayers()) {
 			final User user = userManager.getUser(player);
 
-			if (userManager.getDatabase() instanceof MysqlManager) {
-				final MysqlManager mysqlManager = (MysqlManager) userManager.getDatabase();
-				final StringBuilder builder = new StringBuilder(" SET ");
+			if (userDatabase instanceof MySQLStatistics mysqlManager) {
+				StringBuilder builder = new StringBuilder(" SET ");
 
-				for (final StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
+				for (StatsStorage.StatisticType stat : StatsStorage.StatisticType.values()) {
 					if (!stat.isPersistent()) continue;
 
-					final int value = user.getStat(stat);
-					final String name = stat.getName();
+					int value = user.getStat(stat);
+					String name = stat.getName();
 
 					if (builder.toString().equalsIgnoreCase(" SET ")) {
 						builder.append(name).append("=").append(value);
@@ -262,13 +252,15 @@ public class Main extends JavaPlugin {
 					builder.append(", ").append(name).append("=").append(value);
 				}
 
-				final String update = builder.toString();
+				String update = builder.toString();
 
-				mysqlManager.getDatabase().executeUpdate(String.format("UPDATE %s%s WHERE UUID='%s';", mysqlManager.getTable(), update, user.getUniqueId().toString()));
+				mysqlManager.getDatabase().executeUpdate(String.format("UPDATE %s%s WHERE UUID='%s';", mysqlManager.getTableName(), update, user.getUniqueId().toString()));
 				continue;
 			}
 
-			userManager.getDatabase().saveAllStatistic(user);
+			userDatabase.saveAllStatistic(user);
 		}
+
+		userDatabase.shutdown();
 	}
 }

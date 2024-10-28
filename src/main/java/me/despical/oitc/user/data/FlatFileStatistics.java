@@ -19,7 +19,6 @@
 package me.despical.oitc.user.data;
 
 import me.despical.commons.configuration.ConfigUtils;
-import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.user.User;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -29,13 +28,11 @@ import org.bukkit.configuration.file.FileConfiguration;
  * <p>
  * Created at 02.07.2020
  */
-public class FileStats implements UserDatabase {
+public non-sealed class FlatFileStatistics extends AbstractDatabase {
 
-	private final Main plugin;
 	private final FileConfiguration config;
 
-	public FileStats(Main plugin) {
-		this.plugin = plugin;
+	public FlatFileStatistics() {
 		this.config = ConfigUtils.getConfig(plugin, "stats");
 	}
 
