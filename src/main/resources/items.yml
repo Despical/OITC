@@ -49,8 +49,6 @@ kits:
       lore: []
       enchantments:
         - "LUCK:1"
-      item-flags:
-        - "HIDE_ENCHANTS"
     '7':
       material: ARROW
       name: "&7Arrow"
@@ -68,8 +66,6 @@ kits:
       lore: []
       enchantments:
         - "LUCK:1"
-      item-flags:
-        - "HIDE_ENCHANTS"
     '7':
       material: ARROW
       name: "&7Arrow"

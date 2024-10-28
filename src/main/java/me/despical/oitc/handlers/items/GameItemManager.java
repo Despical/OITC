@@ -29,7 +29,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -129,8 +128,7 @@ public class GameItemManager {
 				}
 
 				final Map<Enchantment, Integer> enchants = config.getStringList(path + "enchantments").stream().collect(Collectors.toMap(value -> Enchantment.getByName(value.split(":")[0]), value -> NumberUtils.getInt(value.split(":")[1], 1)));
-				final List<ItemFlag> flags = config.getStringList(path + "item-flags").stream().map(ItemFlag::valueOf).collect(Collectors.toList());
-				final GameItem gameItem = new GameItem(config.getString(path + "name"), config.getString(path + "material"), slot, config.getStringList(path + "lore"), flags, enchants);
+				final GameItem gameItem = new GameItem(config.getString(path + "name"), config.getString(path + "material"), slot, config.getStringList(path + "lore"), enchants);
 
 				kitItems.add(gameItem);
 			}
