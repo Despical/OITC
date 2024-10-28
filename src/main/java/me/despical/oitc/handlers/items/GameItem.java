@@ -47,7 +47,7 @@ public class GameItem {
 			.name(displayName)
 			.lore(lore)
 			.unbreakable(true)
-			.hideToolTip()
+			.hideTooltip()
 			.build();
 		this.slot = slot;
 		this.actions = actions.stream().map(Action::valueOf).collect(Collectors.toList());
@@ -58,7 +58,7 @@ public class GameItem {
 			.name(displayName)
 			.lore(lore)
 			.unbreakable(true)
-			.hideToolTip();
+			.hideTooltip();
 
 		enchants.forEach(builder::enchantment);
 
