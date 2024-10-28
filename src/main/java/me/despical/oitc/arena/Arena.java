@@ -59,7 +59,9 @@ public class Arena extends BukkitRunnable {
 	private final Map<ArenaOption, Integer> arenaOptions;
 	private final Map<GameLocation, Location> gameLocations;
 
-	private boolean forceStart, ready;
+	private boolean forceStart;
+	private boolean ready;
+	private boolean taskStarted;
 	private String mapName = "";
 	private ArenaState arenaState = ArenaState.INACTIVE;
 	private List<Location> playerSpawnPoints;
@@ -272,8 +274,17 @@ public class Arena extends BukkitRunnable {
 	}
 
 	public void start() {
+		if (taskStarted) return;
+
+		this.taskStarted = true;
 		this.runTaskTimer(plugin, 20L, 20L);
 		this.setArenaState(ArenaState.RESTARTING);
+	}
+
+	public void stop() {
+		if (taskStarted) {
+			cancel();
+		}
 	}
 
 	public void addPlayer(Player player) {

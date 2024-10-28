@@ -153,6 +153,8 @@ public class AdminCommands extends AbstractCommandHandler {
 			return;
 		}
 
+		arena.stop();
+
 		ArenaManager.stopGame(true, arena);
 		arenaRegistry.unregisterArena(arena);
 
