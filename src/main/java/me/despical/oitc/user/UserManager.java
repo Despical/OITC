@@ -26,9 +26,7 @@ import me.despical.oitc.user.data.MySQLStatistics;
 import me.despical.oitc.user.data.AbstractDatabase;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,38 +36,26 @@ import java.util.stream.Collectors;
  */
 public class UserManager {
 
-	private final Set<User> users;
+	private final Map<UUID, User> users;
 	private final AbstractDatabase database;
 
 	public UserManager(Main plugin) {
-		this.users = new HashSet<>();
+		this.users = new HashMap<>();
 		this.database = plugin.getOption(ConfigPreferences.Option.DATABASE_ENABLED) ? new MySQLStatistics() : new FlatFileStatistics();
 
-		plugin.getServer().getOnlinePlayers().forEach(this::getUser);
+		plugin.getServer().getOnlinePlayers().forEach(this::addUser);
 	}
 
 	public User getUser(Player player) {
-		final UUID uuid = player.getUniqueId();
-
-		for (User user : users) {
-			if (user.getUniqueId().equals(uuid)) {
-				return user;
-			}
-		}
-
-		final User user = new User(player);
-		users.add(user);
-
-		database.loadStatistics(user);
-		return user;
+		return users.getOrDefault(player.getUniqueId(), this.addUser(player));
 	}
-	
+
 	public Set<User> getUsers(Arena arena) {
 		return arena.getPlayers().stream().map(this::getUser).collect(Collectors.toSet());
 	}
 
 	public Set<User> getUsers() {
-		return users;
+		return Set.copyOf(users.values());
 	}
 
 	public void saveAllStatistic(User user) {
@@ -80,8 +66,16 @@ public class UserManager {
 		database.loadStatistics(getUser(player));
 	}
 
+	public User addUser(Player player) {
+		User user = new User(player);
+		database.loadStatistics(user);
+
+		users.put(player.getUniqueId(), user);
+		return user;
+	}
+
 	public void removeUser(Player player) {
-		users.remove(getUser(player));
+		users.remove(player.getUniqueId());
 	}
 
 	public AbstractDatabase getDatabase() {

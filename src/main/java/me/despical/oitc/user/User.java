@@ -58,7 +58,7 @@ public class User {
 	private double attackCooldown;
 	private Scoreboard cachedScoreboard;
 
-	public User(Player player) {
+	User(Player player) {
 		this.uuid = player.getUniqueId();
 		this.name = player.getName();
 		this.pinnedPage = new Page(null, "", 0, 0);

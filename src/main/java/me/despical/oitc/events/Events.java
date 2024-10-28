@@ -26,7 +26,6 @@ import me.despical.commons.miscellaneous.PlayerUtils;
 import me.despical.commons.reflection.XReflection;
 import me.despical.commons.serializer.InventorySerializer;
 import me.despical.commons.util.Collections;
-import me.despical.commons.util.UpdateChecker;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
@@ -53,6 +52,9 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
@@ -62,10 +64,12 @@ import java.util.regex.Pattern;
  */
 public class Events extends EventListener {
 
+	private final Map<UUID, Arena> teleportToEnd;
+
 	public Events(Main plugin) {
 		super(plugin);
-
-		registerLegacyEvents();
+		this.teleportToEnd = new HashMap<>();
+		this.registerLegacyEvents();
 	}
 
 	@EventHandler
@@ -82,7 +86,17 @@ public class Events extends EventListener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		Player eventPlayer = event.getPlayer();
-		userManager.loadStatistics(eventPlayer);
+		userManager.addUser(eventPlayer);
+
+		Arena arena = teleportToEnd.get(eventPlayer.getUniqueId());
+
+		if (arena != null) {
+			plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+				eventPlayer.teleport(arena.getEndLocation());
+
+				teleportToEnd.remove(eventPlayer.getUniqueId());
+			}, 1L);
+		}
 
 		if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			arenaRegistry.getBungeeArena().teleportToLobby(eventPlayer);
@@ -104,28 +118,11 @@ public class Events extends EventListener {
 	}
 
 	@EventHandler
-	public void onJoinCheckVersion(PlayerJoinEvent event) {
-		if (!plugin.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED) || !event.getPlayer().hasPermission("oitc.updatenotify")) {
-			return;
-		}
-
-		plugin.getServer().getScheduler().runTaskLater(plugin, () -> UpdateChecker.init(plugin, 81185).requestUpdateCheck().whenComplete((result, exception) -> {
-			if (result.requiresUpdate()) {
-				final Player player = event.getPlayer();
-
-				player.sendMessage(chatManager.coloredRawMessage("&3[OITC] &bFound an update: v" + result.getNewestVersion() + " Download:"));
-				player.sendMessage(chatManager.coloredRawMessage("&3>> &bhttps://spigotmc.org/resources/81185"));
-			}
-		}), 25);
-	}
-
-	@EventHandler
 	public void onLobbyDamage(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof Player)) {
+		if (!(event.getEntity() instanceof Player player)) {
 			return;
 		}
 
-		final Player player = (Player) event.getEntity();
 		final Arena arena = arenaRegistry.getArena(player);
 
 		if (arena == null || arena.getArenaState() == ArenaState.IN_GAME) {
@@ -151,6 +148,8 @@ public class Events extends EventListener {
 
 		if (arena != null) {
 			ArenaManager.leaveAttempt(player, arena, true);
+
+			teleportToEnd.put(player.getUniqueId(), arena);
 		}
 
 		userManager.removeUser(player);
@@ -223,18 +222,16 @@ public class Events extends EventListener {
 	}
 
 	@EventHandler
-	public void onHangingBreakEvent(HangingBreakByEntityEvent event) {
+	public void onHangingBreak(HangingBreakByEntityEvent event) {
 		if (event.getEntity() instanceof ItemFrame || event.getEntity() instanceof Painting) {
 			if (event.getRemover() instanceof Player && arenaRegistry.isInArena((Player) event.getRemover())) {
 				event.setCancelled(true);
 				return;
 			}
 
-			if (!(event.getRemover() instanceof Arrow)) {
+			if (!(event.getRemover() instanceof Arrow arrow)) {
 				return;
 			}
-
-			Arrow arrow = (Arrow) event.getRemover();
 
 			if (arrow.getShooter() instanceof Player && arenaRegistry.isInArena((Player) arrow.getShooter())) {
 				event.setCancelled(true);
@@ -244,10 +241,7 @@ public class Events extends EventListener {
 
 	@EventHandler
 	public void onDamageEntity(EntityDamageByEntityEvent e) {
-		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Player)) return;
-
-		Player damager = (Player) e.getDamager();
-		Player player = (Player) e.getEntity();
+		if (!(e.getEntity() instanceof Player player && e.getDamager() instanceof Player damager)) return;
 
 		if (arenaRegistry.isInArena(player) && arenaRegistry.isInArena(damager)) {
 			User user = plugin.getUserManager().getUser(player);
@@ -261,14 +255,8 @@ public class Events extends EventListener {
 
 	@EventHandler
 	public void onArrowDamage(EntityDamageByEntityEvent e) {
-		if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Arrow)) return;
-
-		Arrow arrow = (Arrow) e.getDamager();
-
-		if (!(arrow.getShooter() instanceof Player)) return;
-
-		Player shooter = (Player) arrow.getShooter();
-		Player player = (Player) e.getEntity();
+		if (!(e.getEntity() instanceof Player player && e.getDamager() instanceof Arrow arrow)) return;
+		if (!(arrow.getShooter() instanceof Player shooter)) return;
 
 		if (arenaRegistry.isInArena(player) && arenaRegistry.isInArena(shooter)) {
 			if (!player.getUniqueId().equals(shooter.getUniqueId())) {
@@ -383,11 +371,9 @@ public class Events extends EventListener {
 
 	@EventHandler
 	public void onItemMove(InventoryClickEvent e) {
-		if (!(e.getWhoClicked() instanceof Player)) {
+		if (!(e.getWhoClicked() instanceof Player player)) {
 			return;
 		}
-
-		Player player = (Player) e.getWhoClicked();
 
 		if (userManager.getUser(player).getArena() == null) return;
 
@@ -416,11 +402,9 @@ public class Events extends EventListener {
 
 	@EventHandler
 	public void onFallDamage(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof Player)) {
+		if (!(event.getEntity() instanceof Player victim)) {
 			return;
 		}
-
-		Player victim = (Player) event.getEntity();
 
 		if (!arenaRegistry.isInArena(victim)) {
 			return;
