@@ -3,7 +3,6 @@ package me.despical.oitc.command;
 import me.despical.commandframework.CommandArguments;
 import me.despical.commandframework.annotations.Command;
 import me.despical.commons.string.StringUtils;
-import me.despical.commons.util.Collections;
 import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
@@ -18,12 +17,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 import static me.despical.oitc.api.StatsStorage.StatisticType.*;
 
@@ -65,12 +60,17 @@ public class PlayerCommands extends AbstractCommandHandler {
 			return;
 		}
 
-		List<Arena> arenas = plugin.getArenaRegistry().getArenas().stream().filter(arena -> Collections.contains(arena.getArenaState(), ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING) && arena.getPlayers().size() < arena.getMaximumPlayers()).collect(Collectors.toList());
+		List<Arena> arenas = plugin.getArenaRegistry().getArenas()
+			.stream()
+			.filter(arena -> arena.isArenaState(ArenaState.WAITING_FOR_PLAYERS, ArenaState.STARTING))
+			.filter(arena -> arena.getPlayers().size() < arena.getMaximumPlayers())
+			.sorted(Comparator.comparing(arena -> arena.getPlayers().size()))
+			.toList();
 		Player player = arguments.getSender();
 
 		if (!arenas.isEmpty()) {
-			boolean noPlayers = arenas.stream().anyMatch(arena -> arena.getPlayers().isEmpty());
-			Arena arena = arenas.get(noPlayers ? ThreadLocalRandom.current().nextInt(arenas.size()) : 0);
+			int index = arenas.stream().allMatch(arena -> arena.getPlayers().isEmpty()) ? ThreadLocalRandom.current().nextInt(arenas.size()) : arenas.size() - 1;
+			Arena arena = arenas.get(index);
 
 			ArenaManager.joinAttempt(player, arena);
 			return;
@@ -111,8 +111,8 @@ public class PlayerCommands extends AbstractCommandHandler {
 		senderType = Command.SenderType.PLAYER
 	)
 	public void statsCommand(CommandArguments arguments) {
-		final Player sender = arguments.getSender();
-		final User user = plugin.getUserManager().getUser(sender);
+		Player sender = arguments.getSender();
+		User user = plugin.getUserManager().getUser(sender);
 
 		if (arguments.isArgumentsEmpty()) {
 			chatManager.getStringList("commands.stats_command.messages").stream().map(message -> formatStats(message, true, user)).forEach(sender::sendMessage);
@@ -127,8 +127,8 @@ public class PlayerCommands extends AbstractCommandHandler {
 		}
 
 		targetOptional.ifPresent(player -> {
-			final User targetUser = plugin.getUserManager().getUser(player);
-			final boolean self = sender.equals(player);
+			User targetUser = plugin.getUserManager().getUser(player);
+			boolean self = sender.equals(player);
 
 			chatManager.getStringList("commands.stats_command.messages").stream().map(message -> formatStats(message, self, targetUser)).forEach(sender::sendMessage);
 		});
