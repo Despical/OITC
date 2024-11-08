@@ -161,7 +161,9 @@ public class Main extends JavaPlugin {
 	}
 
 	private void setupConfigurationFiles() {
-		Collections.streamOf("config", "arenas", "bungee", "rewards", "stats", "items", "mysql", "messages").filter(name -> !new File(getDataFolder(),name + ".yml").exists()).forEach(name -> saveResource(name + ".yml", false));
+		saveDefaultConfig();
+
+		Collections.streamOf("arenas", "bungee", "rewards", "stats", "items", "mysql", "messages").filter(name -> !new File(getDataFolder(),name + ".yml").exists()).forEach(name -> saveResource(name + ".yml", false));
 	}
 
 	@NotNull
@@ -236,9 +238,7 @@ public class Main extends JavaPlugin {
 	private void saveAllUserStatistics() {
 		var userDatabase = userManager.getDatabase();
 
-		for (final Player player : getServer().getOnlinePlayers()) {
-			final User user = userManager.getUser(player);
-
+		for (User user : userManager.getUsers()) {
 			if (userDatabase instanceof MySQLStatistics mysqlManager) {
 				StringBuilder builder = new StringBuilder(" SET ");
 
