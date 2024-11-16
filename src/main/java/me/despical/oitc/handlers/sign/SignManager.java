@@ -165,6 +165,8 @@ public class SignManager implements Listener {
 		ArenaSign arenaSign = getArenaSignByBlock(e.getClickedBlock());
 
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && arenaSign != null) {
+			e.setCancelled(true);
+
 			Arena arena = arenaSign.getArena();
 
 			if (arena == null) {
