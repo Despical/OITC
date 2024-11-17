@@ -164,7 +164,7 @@ public class User {
 		Optional.ofNullable(player.getAttribute(Attribute.GENERIC_ATTACK_SPEED)).ifPresent(attribute -> {
 			this.attackCooldown = attribute.getBaseValue();
 
-			attribute.setBaseValue(plugin.getConfig().getDouble("Hit-Cooldown-Delay", 4));
+			attribute.setBaseValue(plugin.getConfig().getDouble("Hit-Cooldown-Delay", 20));
 		});
 	}
 
@@ -175,7 +175,13 @@ public class User {
 
 		if (player == null) return;
 
-		Optional.ofNullable(player.getAttribute(Attribute.GENERIC_ATTACK_SPEED)).ifPresent(attribute -> attribute.setBaseValue(this.attackCooldown));
+		Optional.ofNullable(player.getAttribute(Attribute.GENERIC_ATTACK_SPEED)).ifPresent(attribute -> {
+			if (attackCooldown == 0) {
+				attackCooldown = attribute.getDefaultValue();
+			}
+
+			attribute.setBaseValue(attackCooldown);
+		});
 	}
 
 	public void setPinnedPage(final Page pinnedPage) {

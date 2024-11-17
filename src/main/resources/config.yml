@@ -75,7 +75,7 @@ Chat-Format-Enabled: true
 Disable-Separate-Chat: false
 
 # The delay between hitting players. ONLY EFFECTED in Minecraft 1.9+
-Hit-Cooldown-Delay: 16
+Hit-Cooldown-Delay: 20
 
 # Basic permissions for game, permissions explained here: https://github.com/Despical/OITC/wiki/Commands-and-permissions#basic-permissions
 Basic-Permissions:
