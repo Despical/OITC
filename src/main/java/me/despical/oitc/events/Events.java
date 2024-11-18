@@ -55,7 +55,6 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * @author Despical
@@ -171,11 +170,11 @@ public class Events extends EventListener {
 			}
 		}
 
-		if (event.getPlayer().isOp() || event.getPlayer().hasPermission("oitc.admin")) {
+		if (event.getPlayer().hasPermission("oitc.admin")) {
 			return;
 		}
 
-		if (Collections.contains(event.getMessage(), "/oneinthechamber", "/oitc", "leave", "stats")) {
+		if (Collections.contains(event.getMessage(), "/oneinthechamber", "/oitc", "/oitc leave", "/oitc stats")) {
 			return;
 		}
 
@@ -452,19 +451,19 @@ public class Events extends EventListener {
 		}
 
 		if (plugin.getOption(ConfigPreferences.Option.CHAT_FORMAT_ENABLED)) {
-			String message = formatChatPlaceholders(chatManager.message("In-Game.Game-Chat-Format"), player, event.getMessage().replaceAll(Pattern.quote("[$\\]"), ""));
+			String message = formatChatPlaceholders(chatManager.message("In-Game.Game-Chat-Format"), player, event.getMessage());
 
 			if (!plugin.getOption(ConfigPreferences.Option.DISABLE_SEPARATE_CHAT)) {
 				event.setCancelled(true);
 
-				final boolean dead = userManager.getUser(player).isSpectator();
+				boolean dead = userManager.getUser(player).isSpectator();
 
 				for (Player p : arena.getPlayers()) {
 					if (dead && arena.getPlayersLeft().contains(p)) {
 						continue;
 					}
 
-					p.sendMessage(dead ? formatChatPlaceholders(chatManager.message("In-Game.Game-Death-Format"), player, null) + message : message);
+					p.sendMessage(dead ? formatChatPlaceholders(chatManager.message("In-Game.Game-Death-Format"), player, message) : message);
 				}
 
 				plugin.getServer().getConsoleSender().sendMessage(message);
