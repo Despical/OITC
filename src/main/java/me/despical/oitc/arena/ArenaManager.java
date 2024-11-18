@@ -207,7 +207,7 @@ public class ArenaManager {
 		arena.removePlayer(player);
 
 		if (arena.getArenaState() == ArenaState.IN_GAME && !user.isSpectator()) {
-			if (arena.getPlayersLeft().size() - 1 == 1) {
+			if (arena.getPlayersLeft().size() == 1) {
 				stopGame(false, arena);
 				return;
 			}
