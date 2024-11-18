@@ -90,8 +90,8 @@ public class ScoreboardManager {
 	}
 
 	private List<Entry> formatScoreboard(Player player) {
-		final EntryBuilder builder = new EntryBuilder();
-		final List<String> lines;
+		EntryBuilder builder = new EntryBuilder();
+		List<String> lines;
 
 		if (arena.isArenaState(ArenaState.IN_GAME, ArenaState.ENDING)) {
 			lines = chatManager.getStringList("Scoreboard.Content.Playing");
@@ -99,10 +99,10 @@ public class ScoreboardManager {
 			lines = chatManager.getStringList("Scoreboard.Content." + arena.getArenaState().getDefaultName());
 		}
 
-		final User user = plugin.getUserManager().getUser(player);
+		User user = plugin.getUserManager().getUser(player);
 
-		for (final String line : lines) {
-			final String formattedLine = formatScoreboardLine(line, user);
+		for (String line : lines) {
+			String formattedLine = formatScoreboardLine(line, user);
 
 			if (formattedLine.equals("%empty%")) continue;
 
@@ -126,7 +126,7 @@ public class ScoreboardManager {
 		formattedLine = formattedLine.replace("%deaths%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_DEATHS)));
 		formattedLine = formattedLine.replace("%kill_streak%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
 
-		final Map<Player, Integer> leaderboard = getSortedLeaderboard();
+		Map<Player, Integer> leaderboard = getSortedLeaderboard();
 
 		for (int i = 0, size = arena.getPlayersLeft().size(); i <= arena.getMaximumPlayers(); i++) {
 			formattedLine = formattedLine.replace("%top_player_" + (i + 1) + "%", size > i ? formatTopPlayer(leaderboard, getTopPlayerName(leaderboard, i), i) : "%empty%");
@@ -140,7 +140,9 @@ public class ScoreboardManager {
 	}
 
 	public Map<Player, Integer> getSortedLeaderboard() {
-		Map<Player, Integer> statistics = arena.getPlayersLeft().stream().collect(Collectors.toMap(player -> player, player -> StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS), (a, b) -> b));
+		Map<Player, Integer> statistics = arena.getPlayersLeft()
+			.stream()
+			.collect(Collectors.toMap(player -> player, player -> StatsStorage.getUserStats(player, StatsStorage.StatisticType.LOCAL_KILLS), (a, b) -> b));
 
 		return statistics.entrySet().stream().sorted(Map.Entry.<Player, Integer>comparingByValue().reversed()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}

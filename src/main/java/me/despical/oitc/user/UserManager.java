@@ -47,7 +47,13 @@ public class UserManager {
 	}
 
 	public User getUser(Player player) {
-		return users.getOrDefault(player.getUniqueId(), this.addUser(player));
+		User user = users.get(player.getUniqueId());
+
+		if (user != null) {
+			return user;
+		}
+
+		return this.addUser(player);
 	}
 
 	public Set<User> getUsers(Arena arena) {
