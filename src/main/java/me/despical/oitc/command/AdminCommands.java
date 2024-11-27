@@ -44,7 +44,7 @@ public class AdminCommands extends AbstractCommandHandler {
 	)
 	public void mainCommand(CommandArguments arguments) {
 		if (arguments.isArgumentsEmpty()) {
-			arguments.sendMessage("&3This server is running &bOne in the Chamber {0}&3by &bDespical&3.", plugin.getDescription().getVersion());
+			arguments.sendMessage("&3This server is running &bOne in the Chamber {0} &3by &bDespical&3.", plugin.getDescription().getVersion());
 
 			if (arguments.hasPermission("oitc.admin")) {
 				arguments.sendMessage("&3Commands: &b/{0} help", arguments.getLabel());

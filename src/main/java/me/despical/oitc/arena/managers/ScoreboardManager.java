@@ -104,7 +104,9 @@ public class ScoreboardManager {
 		for (String line : lines) {
 			String formattedLine = formatScoreboardLine(line, user);
 
-			if (formattedLine.equals("%empty%")) continue;
+			if (formattedLine.equals("%empty%")) {
+				continue;
+			}
 
 			builder.next(formattedLine);
 		}
@@ -113,30 +115,27 @@ public class ScoreboardManager {
 	}
 
 	private String formatScoreboardLine(String line, User user) {
-		String formattedLine = line;
-		Player player = user.getPlayer();
-
-		formattedLine = formattedLine.replace("%time%", Integer.toString(arena.getTimer()));
-		formattedLine = formattedLine.replace("%formatted_time%", StringFormatUtils.formatIntoMMSS(arena.getTimer()));
-		formattedLine = formattedLine.replace("%map_name%", arena.getMapName());
-		formattedLine = formattedLine.replace("%players%", Integer.toString(arena.getPlayers().size()));
-		formattedLine = formattedLine.replace("%max_players%", Integer.toString(arena.getMaximumPlayers()));
-		formattedLine = formattedLine.replace("%min_players%", Integer.toString(arena.getMinimumPlayers()));
-		formattedLine = formattedLine.replace("%kills%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILLS)));
-		formattedLine = formattedLine.replace("%deaths%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_DEATHS)));
-		formattedLine = formattedLine.replace("%kill_streak%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
+		line = line.replace("%time%", Integer.toString(arena.getTimer()));
+		line = line.replace("%formatted_time%", StringFormatUtils.formatIntoMMSS(arena.getTimer()));
+		line = line.replace("%map_name%", arena.getMapName());
+		line = line.replace("%players%", Integer.toString(arena.getPlayers().size()));
+		line = line.replace("%max_players%", Integer.toString(arena.getMaximumPlayers()));
+		line = line.replace("%min_players%", Integer.toString(arena.getMinimumPlayers()));
+		line = line.replace("%kills%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILLS)));
+		line = line.replace("%deaths%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_DEATHS)));
+		line = line.replace("%kill_streak%", Integer.toString(user.getStat(StatsStorage.StatisticType.LOCAL_KILL_STREAK)));
 
 		Map<Player, Integer> leaderboard = getSortedLeaderboard();
 
 		for (int i = 0, size = arena.getPlayersLeft().size(); i <= arena.getMaximumPlayers(); i++) {
-			formattedLine = formattedLine.replace("%top_player_" + (i + 1) + "%", size > i ? formatTopPlayer(leaderboard, getTopPlayerName(leaderboard, i), i) : "%empty%");
+			line = line.replace("%top_player_" + (i + 1) + "%", size > i ? formatTopPlayer(leaderboard, getTopPlayerName(leaderboard, i), i) : "%empty%");
 		}
 
 		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-			formattedLine = PlaceholderAPI.setPlaceholders(player, formattedLine);
+			line = PlaceholderAPI.setPlaceholders(user.getPlayer(), line);
 		}
 
-		return chatManager.coloredRawMessage(formattedLine);
+		return chatManager.coloredRawMessage(line);
 	}
 
 	public Map<Player, Integer> getSortedLeaderboard() {
@@ -149,7 +148,10 @@ public class ScoreboardManager {
 
 	@NotNull
 	public String getTopPlayerName(Map<Player, Integer> leaderboard, int rank) {
-		List<String> names = leaderboard.keySet().stream().map(Player::getName).collect(Collectors.toList());
+		List<String> names = leaderboard.keySet()
+			.stream()
+			.map(Player::getName)
+			.toList();
 
 		return rank < leaderboard.size() ? names.get(rank) : "";
 	}

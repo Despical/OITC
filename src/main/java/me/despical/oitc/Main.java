@@ -137,8 +137,8 @@ public class Main extends JavaPlugin {
 		new AdminCommands();
 		new PlayerCommands();
 
-		if (configPreferences.getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
-			getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
+		if (getOption(ConfigPreferences.Option.NAME_TAGS_HIDDEN)) {
+			getServer().getScheduler().runTaskTimer(this, () -> getServer().getOnlinePlayers().forEach(ArenaUtils::updateNameTagsVisibility), 60, 140);
 		}
 	}
 
@@ -151,13 +151,11 @@ public class Main extends JavaPlugin {
 	}
 	
 	private void checkUpdate() {
-		if (!configPreferences.getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED)) return;
+		if (!getOption(ConfigPreferences.Option.UPDATE_NOTIFIER_ENABLED)) {
+			return;
+		}
 
-		UpdateChecker.init(this, 81185).requestUpdateCheck().whenComplete((result, exception) -> {
-			if (result.requiresUpdate()) {
-				getLogger().info("Found a new version available: v" + result.getNewestVersion());
-			}
-		});
+		UpdateChecker.init(this, 81185).onNewUpdate(result -> getLogger().info("Found a new version available: v" + result.getNewestVersion()));
 	}
 
 	private void setupConfigurationFiles() {
