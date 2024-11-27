@@ -39,6 +39,9 @@ Respawn-Protection:
   # Should players be invisible for a limited time after respawning? (time in ticks)
   Invisibility: 0
 
+# Should we create some cool scoreboards?
+Scoreboard-Enabled: true
+
 # See messages.yml for game bar messages.
 # Should we create a game bar for in-game players?
 Game-Bar-Enabled: true

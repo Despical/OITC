@@ -86,6 +86,7 @@ public class ConfigPreferences {
 		LEVEL_COUNTDOWN_ENABLED(false),
 		NAME_TAGS_HIDDEN,
 		REGEN_ENABLED(false),
+		SCOREBOARD_ENABLED,
 		UPDATE_NOTIFIER_ENABLED;
 
 		final String path;

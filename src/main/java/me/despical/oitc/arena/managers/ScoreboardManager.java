@@ -25,6 +25,7 @@ import me.despical.commons.scoreboard.type.Entry;
 import me.despical.commons.scoreboard.type.Scoreboard;
 import me.despical.commons.scoreboard.type.ScoreboardHandler;
 import me.despical.commons.string.StringFormatUtils;
+import me.despical.oitc.ConfigPreferences;
 import me.despical.oitc.Main;
 import me.despical.oitc.api.StatsStorage;
 import me.despical.oitc.arena.Arena;
@@ -57,6 +58,10 @@ public class ScoreboardManager {
 	}
 
 	public void createScoreboard(Player player) {
+		if (!plugin.getOption(ConfigPreferences.Option.SCOREBOARD_ENABLED)) {
+			return;
+		}
+
 		Scoreboard scoreboard = ScoreboardLib.createScoreboard(player).setHandler(new ScoreboardHandler() {
 
 			@Override
