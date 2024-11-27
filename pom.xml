@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.despical</groupId>
 	<artifactId>one-in-the-chamber</artifactId>
-	<version>2.7.7</version>
+	<version>2.7.8</version>
 
 	<name>One In The Chamber</name>
 	<inceptionYear>2019</inceptionYear>
@@ -61,7 +61,7 @@
 		<dependency>
 			<groupId>com.github.Despical</groupId>
 			<artifactId>Commons</artifactId>
-			<version>1.8.83</version>
+			<version>1.8.84</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Despical</groupId>
