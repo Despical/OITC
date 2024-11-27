@@ -19,6 +19,7 @@
 package me.despical.oitc.handlers;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.despical.commons.string.StringFormatUtils;
 import me.despical.oitc.Main;
 import me.despical.oitc.arena.Arena;
 import me.despical.oitc.user.User;
@@ -67,59 +68,42 @@ public class PlaceholderManager extends PlaceholderExpansion {
 	public String onPlaceholderRequest(Player player, @NotNull String id) {
 		if (player == null) return null;
 
-		final User user = plugin.getUserManager().getUser(player);
+		User user = plugin.getUserManager().getUser(player);
 
-		switch (id.toLowerCase()) {
-			case "online_players":
-				return Long.toString(plugin.getArenaRegistry().getArenas().stream().map(arena -> arena.getPlayers().size()).count());
-			case "kills":
-				return KILLS.from(user);
-			case "deaths":
-				return DEATHS.from(user);
-			case "games_played":
-				return GAMES_PLAYED.from(user);
-			case "highest_score":
-				return HIGHEST_SCORE.from(user);
-			case "wins":
-				return WINS.from(user);
-			case "loses":
-				return LOSES.from(user);
-			case "local_kills":
-				return LOCAL_KILLS.from(user);
-			case "local_deaths":
-				return LOCAL_DEATHS.from(user);
-			case "local_kill_streak":
-				return LOCAL_KILL_STREAK.from(user);
-			default:
-				return handleArenaPlaceholderRequest(id);
-		}
+		return switch (id.toLowerCase()) {
+			case "online_players" ->
+				Long.toString(plugin.getArenaRegistry().getArenas().stream().map(arena -> arena.getPlayers().size()).count());
+			case "kills" -> KILLS.from(user);
+			case "deaths" -> DEATHS.from(user);
+			case "games_played" -> GAMES_PLAYED.from(user);
+			case "highest_score" -> HIGHEST_SCORE.from(user);
+			case "wins" -> WINS.from(user);
+			case "loses" -> LOSES.from(user);
+			case "local_kills" -> LOCAL_KILLS.from(user);
+			case "local_deaths" -> LOCAL_DEATHS.from(user);
+			case "local_kill_streak" -> LOCAL_KILL_STREAK.from(user);
+			default -> handleArenaPlaceholderRequest(id);
+		};
 	}
 
 	private String handleArenaPlaceholderRequest(String id) {
-		final String[] data = id.split(":");
-		final Arena arena = plugin.getArenaRegistry().getArena(data[0]);
+		String[] data = id.split(":");
+		Arena arena = plugin.getArenaRegistry().getArena(data[0]);
 
 		if (arena == null) return null;
 
-		switch (data[1].toLowerCase()) {
-			case "id":
-				return arena.getId();
-			case "players":
-				return Integer.toString(arena.getPlayers().size());
-			case "players_left":
-				return Integer.toString(arena.getPlayersLeft().size());
-			case "max_players":
-				return Integer.toString(arena.getMaximumPlayers());
-			case "min_players":
-				return Integer.toString(arena.getMinimumPlayers());
-			case "state":
-				return arena.getArenaState().name();
-			case "state_pretty":
-				return arena.getArenaState().getFormattedName();
-			case "map_name":
-				return arena.getMapName();
-			default:
-				return null;
-		}
+		return switch (data[1].toLowerCase()) {
+			case "id" -> arena.getId();
+			case "timer" -> Integer.toString(arena.getTimer());
+			case "timer_pretty" -> StringFormatUtils.formatIntoMMSS(arena.getTimer());
+			case "players" -> Integer.toString(arena.getPlayers().size());
+			case "players_left" -> Integer.toString(arena.getPlayersLeft().size());
+			case "max_players" -> Integer.toString(arena.getMaximumPlayers());
+			case "min_players" -> Integer.toString(arena.getMinimumPlayers());
+			case "state" -> arena.getArenaState().name();
+			case "state_pretty" -> arena.getArenaState().getFormattedName();
+			case "map_name" -> arena.getMapName();
+			default -> null;
+		};
 	}
 }
