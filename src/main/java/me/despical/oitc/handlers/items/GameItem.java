@@ -22,6 +22,7 @@ import me.despical.commons.item.ItemBuilder;
 import me.despical.oitc.util.Utils;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.block.Action;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -47,7 +48,7 @@ public class GameItem {
 			.name(displayName)
 			.lore(lore)
 			.unbreakable(true)
-			.hideTooltip()
+			.flag(ItemFlag.values())
 			.build();
 		this.slot = slot;
 		this.actions = actions.stream().map(Action::valueOf).collect(Collectors.toList());
@@ -58,7 +59,7 @@ public class GameItem {
 			.name(displayName)
 			.lore(lore)
 			.unbreakable(true)
-			.hideTooltip();
+			.flag(ItemFlag.values());
 
 		enchants.forEach(builder::enchantment);
 

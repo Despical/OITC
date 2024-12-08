@@ -9,9 +9,7 @@ import me.despical.oitc.handlers.items.GameItem;
 import me.despical.oitc.user.User;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
@@ -31,8 +29,6 @@ public class GameItemEvents extends EventListener {
 
 	@EventHandler
 	public void onLeaveItemClicked(final PlayerInteractEvent event) {
-		if (event.getAction() == Action.PHYSICAL) return;
-
 		final User user = plugin.getUserManager().getUser(event.getPlayer());
 		final Arena arena = user.getArena();
 
@@ -83,6 +79,10 @@ public class GameItemEvents extends EventListener {
 	}
 
 	private void leaveArena(Player player, Arena arena) {
+		if (!arenaRegistry.isInArena(player)) {
+			return;
+		}
+
 		if (plugin.getOption(ConfigPreferences.Option.BUNGEE_ENABLED)) {
 			plugin.getBungeeManager().connectToHub(player);
 		} else {
@@ -92,8 +92,6 @@ public class GameItemEvents extends EventListener {
 
 	@EventHandler
 	public void onForceStartItemClicked(final PlayerInteractEvent event) {
-		if (event.getAction() == Action.PHYSICAL) return;
-
 		final User user = plugin.getUserManager().getUser(event.getPlayer());
 		final Arena arena = user.getArena();
 
@@ -125,9 +123,6 @@ public class GameItemEvents extends EventListener {
 
 	@EventHandler
 	public void onPlayAgain(PlayerInteractEvent event) {
-		if (event.getAction() == Action.PHYSICAL) return;
-
-		ItemStack itemStack = event.getItem();
 		Player player = event.getPlayer();
 		Arena currentArena = arenaRegistry.getArena(player);
 

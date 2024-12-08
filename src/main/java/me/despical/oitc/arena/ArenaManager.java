@@ -148,7 +148,7 @@ public class ArenaManager {
 
 		if (arena.isArenaState(ArenaState.IN_GAME, ArenaState.ENDING)) {
 			user.setSpectator(true);
-			user.addGameItems("teleporter-item", "settings-item");
+			user.addGameItems("leave-item", "settings-item");
 
 			arena.teleportToStartLocation(player);
 
@@ -209,7 +209,6 @@ public class ArenaManager {
 		if (arena.getArenaState() == ArenaState.IN_GAME && !user.isSpectator()) {
 			if (arena.getPlayersLeft().size() == 1) {
 				stopGame(false, arena);
-				return;
 			}
 		}
 
